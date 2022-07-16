@@ -6,7 +6,7 @@ import createEngine, {
 } from "@projectstorm/react-diagrams";
 
 import BodyWidget from "./graph/BodyWidget";
-import { useEngineState } from "../store/nodestore";
+import { useEngineState } from "../store/nodeStore";
 
 function DBGraph() {
   const engine = useEngineState((state) => state.engine);

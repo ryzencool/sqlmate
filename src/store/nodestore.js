@@ -3,7 +3,7 @@ import createEngine, {
   DiagramModel,
   DefaultNodeModel,
 } from "@projectstorm/react-diagrams";
-import { JSCustomNodeFactory } from "../components/graph/JSCustomNodeFactory.jsx";
+import { JSCustomNodeFactory } from "../components/graph/JSCustomNodeFactory.jsx.jsx";
 import { Engineering } from "@mui/icons-material";
 
 const initEngine = () => {

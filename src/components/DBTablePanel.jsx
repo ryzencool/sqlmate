@@ -12,52 +12,59 @@ import {
   ExpandMoreOutlined,
   SecurityUpdateWarningOutlined,
 } from "@mui/icons-material";
-import { useEngineState } from "../store/nodestore";
+import { useEngineState } from "../store/nodeStore";
 import { DefaultNodeModel } from "@projectstorm/react-diagrams";
+import { useTableListState } from "../store/tableListStore";
 function DBTablePanel() {
-  const [tableList, setTableList] = useState([]);
-
   const engine = useEngineState((state) => state.engine);
   const setEngine = useEngineState((state) => state.setEngine);
+  const tableList = useTableListState((state) => state.tableList);
+  const setTableList = useTableListState((state) => state.setTableList);
   const addTable = () => {
+    let tableName = "table_" + (tableList.length + 1);
+    let node = new DefaultNodeModel(tableName, "rgb(0,192,255)");
+    node.setPosition(100, 300);
+    node.addInPort("id");
+    node.addOutPort("int");
     setTableList([
       ...tableList,
       {
-        tableName: "table1",
+        active: true,
+        tableName: tableName,
         columns: [
           {
             columnName: "id",
             columnType: "int",
           },
         ],
+        node: node,
       },
     ]);
 
-    let node3 = new DefaultNodeModel("Node 4", "rgb(0,192,255)");
-    node3.addOutPort("Out");
-    node3.addInPort();
-    node3.setPosition(100, 300);
-    engine.getModel().addNode(node3);
+    engine.getModel().addNode(node);
     engine.repaintCanvas();
   };
 
   const addColumn = (tableName) => {
-    let res = tableList
-      .filter((it) => it.tableName == tableName)
-      .map((it) => {
-        return {
-          ...it,
-          columns: [
-            ...it.columns,
-            {
-              columnName: "c1",
-              columnType: "int",
-            },
-          ],
-        };
-      });
+    console.log(tableName);
+    let tempList = tableList;
+    let activeIndex = tempList.findIndex((it) => it.tableName == tableName);
+    let activeTable = tempList[activeIndex];
+    let columnName = activeTable.columns.length;
 
-    setTableList(res);
+    activeTable.columns = [
+      ...activeTable.columns,
+      {
+        columnName: "column_" + columnName,
+        columnType: "int",
+      },
+    ];
+
+    activeTable.node.addOutPort("int");
+    activeTable.node.addInPort("column_" + columnName);
+    engine.repaintCanvas();
+    // 找到对应的node
+    setTableList([...tempList]);
   };
 
   return (
@@ -78,6 +85,7 @@ function DBTablePanel() {
               <div className="mt-0">
                 {it.columns != null &&
                   it.columns.map((col) => {
+                    console.log(col);
                     return (
                       <div className="flex flex-row justify-between items-center gap-2">
                         <Input placeholder={col.columnName} />
