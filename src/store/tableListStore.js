@@ -1,9 +1,20 @@
 import create from "zustand";
 
 export const useTableListState = create((set, get) => ({
-  tableList: [],
-  setTableList: (tableList) => {
-    console.log("store", tableList);
-    return set((state) => ({ tableList: tableList }));
-  },
+    tableList: [],
+    setTableList: (tableList) => {
+        console.log(tableList)
+        return set((state) => ({tableList: tableList}));
+    },
 }));
+
+
+export const useActiveTable = create((set, get) => (
+    {
+        table: {
+            columns: []
+        },
+        setTable: tab =>
+            (set(state => ({table: tab})))
+    }
+))

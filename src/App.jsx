@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import CustomeRouter from "./Router";
+import CustomRouter from "./Router";
 import { useSqlState } from "./store/sqlStore";
 import initSqlJs from "sql.js";
 import sqlWasm from "sql.js/dist/sql-wasm.wasm?url";
@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div className="App">
-      <CustomeRouter />
+      <CustomRouter />
     </div>
   );
 }

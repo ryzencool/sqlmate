@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Error from "./pages/Error";
 
-const CustomeRouter = () => {
+const CustomRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -16,4 +16,4 @@ const CustomeRouter = () => {
   );
 };
 
-export default CustomeRouter;
+export default CustomRouter;
