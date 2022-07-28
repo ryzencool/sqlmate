@@ -11,10 +11,9 @@ export const useTableListState = create((set, get) => ({
 
 export const useActiveTable = create((set, get) => (
     {
-        table: {
-            columns: []
-        },
+        table: {},
         setTable: tab =>
             (set(state => ({table: tab})))
     }
 ))
+

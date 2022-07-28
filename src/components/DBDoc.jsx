@@ -1,47 +1,85 @@
 import React, {useState} from 'react'
 import {useActiveTable, useTableListState} from "../store/tableListStore";
-import {Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {addColumn, delColumn, listTableColumns} from "../api/dbApi";
+import {createColumnHelper, flexRender, getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 
 
 function DBDoc(props) {
-
+    const queryClient = useQueryClient()
     const activeTable = useActiveTable(s => s.table)
-    const setActiveTable = useActiveTable(s => s.setTable)
-    const [activeColumn, setActiveColumn] = useState(null)
-    const tableList = useTableListState(s => s.tableList)
-    const setTableList = useTableListState(s => s.setTableList)
+    const activeTableId = activeTable.id;
 
-    // 添加列
-    const addColumn = () => {
-        console.log("添加字段")
-        // 1. 修改activeTable
-        let tempTable = {...activeTable}
-        tempTable.columns.push({
-            columnId: tempTable.columns.length + 1,
-            columnName: "col" + (tempTable.columns.length + 1),
-            columnType: "int",
-        });
-        setActiveTable(tempTable);
-        // 2. 修改tableList
-        modifyTableList(activeTable.tableName, tempTable)
-        // 3. 同步给后端
-    }
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [editColumn, setEditColumn] = useState({})
+
+    const colHelper = createColumnHelper()
 
 
-    const modifyTableList = (tableName, tempTable) => {
-        let tempList = [...tableList];
-        let index = tempList.findIndex(ele => ele.tableName === tableName)
-        tempList[index] = tempTable
-        setTableList([...tempList])
-    }
+    const columns = [
+        colHelper.accessor("name", {
+            header: () => <div>名称</div>,
+            cell: info => info.getValue(),
+        }),
+        colHelper.accessor("type", {
+            header: () => <div>类型</div>,
+            cell: info => info.getValue(),
+        }),
+        colHelper.accessor("note", {
+            header: () => <div>备注</div>,
+            cell: info => info.getValue(),
+        }),
+        colHelper.accessor("settings", {
+            header: () => <div>配置</div>,
+            cell: info => info.getValue(),
+        }),
+        colHelper.accessor("comment", {
+            header: () => <div>注释</div>,
+            cell: info => info.getValue(),
+        }),
+        colHelper.accessor("operate", {
+            header: () => <div>操作</div>,
+            cell: info => {
+                console.log("表单属性" ,info.row.original.id);
+                return <div><Button onClick={() => {
+                    delCol.mutate({
+                        columnId: info.row.original.id
+                    })
+                }
+                }>删除</Button> <Button>修改</Button><Button>提交</Button></div>;
+            },
+        }),
 
-    const delColumn = (columnName) => {
-        let tempTable = {...activeTable}
-        tempTable.columns = tempTable.columns.filter(it => it.columnName !== columnName);
-        setActiveTable(tempTable);
-        modifyTableList(activeTable.tableName, tempTable)
-    }
+    ]
 
+
+
+    const tableColumns = useQuery(["activeTableColumn"],
+        () => listTableColumns({tableId: activeTable.id}),
+        {
+            enabled: !!activeTableId && activeTableId > 0
+        })
+    console.log("表：", tableColumns.data)
+
+    const table = useReactTable({
+            data: tableColumns?.data?.data?.data,
+            columns,
+            getCoreRowModel: getCoreRowModel()
+        }
+    )
+
+    const addCol = useMutation(addColumn, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["activeTableColumn"])
+        }
+    })
+
+    const delCol = useMutation(delColumn, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["activeTableColumn"])
+        }
+    })
 
     return (
         <div className={"flex flex-col gap-5 "}>
@@ -62,49 +100,102 @@ function DBDoc(props) {
             </div>
             <div>
                 <div className={"text-xl font-bold"}>字段</div>
-                <div className={"mt-2"}>
-                    <TableContainer component={Paper}>
-                        <Table className={"w-full"} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>名称</TableCell>
-                                    <TableCell>类型</TableCell>
-                                    <TableCell>配置</TableCell>
-                                    <TableCell>关系</TableCell>
-                                    <TableCell>备注</TableCell>
-                                    <TableCell>操作</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {activeTable.columns !== null
-                                    && activeTable.columns.length > 0
-                                    && activeTable.columns.map((row) => (
-                                        <TableRow
-                                            key={row.columnName}
-                                            sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                                        >
-                                            <TableCell component="th" scope="row">
-                                                {row.columnName}
-                                            </TableCell>
-                                            <TableCell>{row.columnType}</TableCell>
-                                            <TableCell>{row.properties}</TableCell>
-                                            <TableCell>{row.ralationShip}</TableCell>
-                                            <TableCell>{row.note}</TableCell>
-                                            <TableCell><Button size={"small"} onClick={() => {
-                                                delColumn(row.columnName)
-                                            }}>删除</Button></TableCell>
-                                        </TableRow>
-                                    ))}
-                            </TableBody>
-                        </Table>
-                        <div className={"w-full flex justify-center items-center"}>
-                            <Button onClick={() => {
-                                addColumn()
-                            }}>+</Button>
-                        </div>
-                    </TableContainer>
+                <div><Button>添加</Button></div>
+                <div>
+                    <table>
+                        <thead>
+                        {table.getHeaderGroups().map(group => (
+                            <tr key={group.id}>
+                                {group.headers.map(header => (
+                                    <th key={header.id}>
+                                        {header.isPlaceholder ? null : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                    </th>
+                                ))}
+                            </tr>
+                        ))}
+                        </thead>
+
+                        <tbody>
+                        {tableColumns.isLoading === false && table.getRowModel().rows.map(row => {
+                            console.log("渲染")
+                            return <tr key={row.id}>
+                                {row.getVisibleCells().map(cell => (
+                                    <td key={cell.id}>
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </td>
+                                ))}
+                            </tr>
+                        })}
+                        </tbody>
+                    </table>
                 </div>
 
+                <div>
+                    <Button onClick={() => {
+                        setDialogOpen(true)
+                    }}>
+                        新增
+                    </Button>
+                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                        <DialogTitle>新增</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="字段名称"
+                                fullWidth
+                                variant="standard"
+                                onChange={(evt) => {
+                                    setEditColumn({
+                                        ...editColumn,
+                                        name: evt.target.value
+                                    })
+                                }}
+                            />
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="type"
+                                label="类型"
+                                fullWidth
+                                variant="standard"
+                                onChange={(evt) => {
+                                    setEditColumn({
+                                        ...editColumn,
+                                        type: evt.target.value
+                                    })
+                                }}
+                            />
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="note"
+                                label="备注"
+                                fullWidth
+                                variant="standard"
+                                onChange={(evt) => {
+                                    setEditColumn({
+                                        ...editColumn,
+                                        note: evt.target.value
+                                    })
+                                }}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setDialogOpen(false)}>取消</Button>
+                            <Button onClick={() => {
+                                addCol.mutate({
+                                    ...editColumn,
+                                    tableId: activeTable.id
+                                })
+                                setDialogOpen(false)}}>确定</Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
 
             </div>
 

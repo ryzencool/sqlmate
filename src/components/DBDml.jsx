@@ -1,80 +1,32 @@
 import React from 'react'
 import CodeEditor from '@uiw/react-textarea-code-editor';
-
+import {useActiveTable} from "../store/tableListStore";
+import {useQuery} from "@tanstack/react-query";
+import {dbmlTable} from "../api/dbApi";
+import {exporter, Parser} from '@dbml/core'
 
 export default function DBDml() {
 
-    const [code, setCode] = React.useState(
-        `create table user (
-    id int not null default 0 autoincrement primary key,
-    name varchar not null unique key default '',
-    age int not null default 0,
-    phone not null default '', 
-)`
-    );
 
-    return <div className={"flex flex-col gap-3"}>
-        <div className={"flex flex-col gap-1"}>
+    const activeTable = useActiveTable(s => s.table)
+    const activeTableId = activeTable.id
+    const dbml = useQuery(["dbml"], () => dbmlTable({
+        tableId: activeTableId
+    }), {
+        enabled: !!activeTableId && activeTableId > 0
+    })
+
+    if (dbml.isLoading) {
+        return <div>isLoading</div>
+    }
+
+    console.log("dbml:", Parser.parse(dbml.data.data.data, 'dbml'))
+
+    return <div className={"flex flex-col gap-3 "}>
+        <div className={"flex flex-col gap-1 overflow-auto"}>
             <div className={"font-bold "}>Mysql</div>
-            <CodeEditor
-                value={code}
-                language="sql"
-                placeholder="Please enter JS code."
-                onChange={(evn) => setCode(evn.target.value)}
-                padding={15}
-                style={{
-                    fontSize: 12,
-                    borderRadius: 10,
-                    backgroundColor: "#f5f5f5",
-                    fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                }}
-            />
+           <div>{exporter.export(dbml.data.data.data, "mysql")}</div>
         </div>
-        <div className={"flex flex-col gap-1"}>
-            <div className={"font-bold "}>Postgresql</div>
-            <CodeEditor
-                value={code}
-                language="sql"
-                placeholder="Please enter JS code."
-                onChange={(evn) => setCode(evn.target.value)}
-                padding={15}
-                style={{
-                    fontSize: 12,
-                    backgroundColor: "#f5f5f5",
-                    fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                }}
-            />
-        </div>
-        <div className={"flex flex-col gap-1"}>
-            <div className={"font-bold "}>Sqlite</div>
-            <CodeEditor
-                value={code}
-                language="sql"
-                placeholder="Please enter JS code."
-                onChange={(evn) => setCode(evn.target.value)}
-                padding={15}
-                style={{
-                    fontSize: 12,
-                    backgroundColor: "#f5f5f5",
-                    fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                }}
-            />
-        </div>
-        <div className={"flex flex-col gap-1"}>
-            <div className={"font-bold "}>SqlServer</div>
-            <CodeEditor
-                value={code}
-                language="sql"
-                placeholder="Please enter JS code."
-                onChange={(evn) => setCode(evn.target.value)}
-                
-                padding={15}
-                style={{
-                    fontSize: 12,
-                    backgroundColor: "#f5f5f5",
-                    fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-                }}
-            />
-        </div>
+
     </div>
 }

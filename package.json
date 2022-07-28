@@ -8,13 +8,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dbml/core": "^2.4.2",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mui/icons-material": "^5.8.4",
     "@mui/lab": "^5.0.0-alpha.91",
     "@mui/material": "^5.9.1",
     "@projectstorm/react-diagrams": "^6.7.4",
+    "@tanstack/react-query": "^4.0.10",
+    "@tanstack/react-table": "^8.5.2",
     "@uiw/react-textarea-code-editor": "^2.0.3",
+    "axios": "^0.27.2",
     "butterfly-dag": "^4.3.6",
     "closest": "^0.0.1",
     "clsx": "^1.2.1",

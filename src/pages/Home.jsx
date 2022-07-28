@@ -1,6 +1,5 @@
 import {Button} from "@mui/material";
 import React from "react";
-import DBGraph from "../components/DBGraph";
 import DBTablePanel from "../components/DBTablePanel";
 import {useSqlState} from "../store/sqlStore";
 import DBFeatTabs from "../components/DBFeatTabs";
@@ -38,6 +37,7 @@ function Home() {
 
             <div className="grid grid-cols-5 flex-grow">
                 <div className="col-span-1 bg-orange-400">
+
                     <DBTablePanel/>
                 </div>
                 <div className="col-span-4 bg-green-400">

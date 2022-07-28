@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button,} from "@mui/material";
 import {DefaultPortModel,} from "@projectstorm/react-diagrams";
 import {useActiveTable, useTableListState} from "../store/tableListStore";
@@ -9,15 +9,29 @@ import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
+import {useQuery} from "@tanstack/react-query";
+import {listTables} from "../api/dbApi";
 
 // 左侧的数据表栏目
 function DBTablePanel() {
+
     const engine = Engine;
     const tableList = useTableListState(state => state.tableList);
     const db = useSqlState(state => state.db);
     const setTableList = useTableListState(state => state.setTableList);
     const setActiveTable = useActiveTable(state => state.setTable)
 
+    const tables = useQuery(['tables'], () => {
+        return listTables({
+            projectId: 1
+        })
+    })
+
+
+
+    console.log(tables.isLoading)
+
+    console.log("data is:" , tables.data)
 
     const [editingTable, setEditingTable] = useState({
         tableName: "",
@@ -148,32 +162,40 @@ function DBTablePanel() {
                 <div>数据表</div>
                 <Button onClick={() => addTable()}>新建表</Button>
             </div>
+            <div>
+
+                {!tables.isLoading  &&
+                    tables.data.data.data.map(it =>  <div key={it.id} onClick={() => setActiveTable(it)}>
+                        {it.name}
+                    </div>)
+                }
+            </div>
 
             <div>
-                <TreeView
-                    aria-label="file system navigator"
-                    defaultCollapseIcon={<ExpandMoreIcon/>}
-                    defaultExpandIcon={<ChevronRightIcon/>}
-                    sx={{height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto'}}
-                >
+                {/*<TreeView*/}
+                {/*    aria-label="file system navigator"*/}
+                {/*    defaultCollapseIcon={<ExpandMoreIcon/>}*/}
+                {/*    defaultExpandIcon={<ChevronRightIcon/>}*/}
+                {/*    sx={{height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto'}}*/}
+                {/*>*/}
 
-                    {
-                        tableList !== null && tableList.length > 0 &&  tableList.map(table => (
-                                <TreeItem nodeId={table.tableName} label={table.tableName} onClick={() => {
-                                    setActiveTable(table)
-                                }}>
-                                    {
-                                        table.columns != null &&
-                                        table.columns.length > 0 &&
-                                        table.columns.map(col => (
-                                            <TreeItem nodeId={col.columnName} label={col.columnName}/>
-                                        ))
-                                    }
-                                </TreeItem>
-                            )
-                        )
-                    }
-                </TreeView>
+                {/*    {*/}
+                {/*        tableList !== null && tableList.length > 0 &&  tableList.map(table => (*/}
+                {/*                <TreeItem nodeId={table.tableName} label={table.tableName} onClick={() => {*/}
+                {/*                    setActiveTable(table)*/}
+                {/*                }}>*/}
+                {/*                    {*/}
+                {/*                        table.columns != null &&*/}
+                {/*                        table.columns.length > 0 &&*/}
+                {/*                        table.columns.map(col => (*/}
+                {/*                            <TreeItem nodeId={col.columnName} label={col.columnName}/>*/}
+                {/*                        ))*/}
+                {/*                    }*/}
+                {/*                </TreeItem>*/}
+                {/*            )*/}
+                {/*        )*/}
+                {/*    }*/}
+                {/*</TreeView>*/}
             </div>
         </div>
     );
