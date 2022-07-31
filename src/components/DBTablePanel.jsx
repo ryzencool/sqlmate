@@ -164,11 +164,11 @@ function DBTablePanel() {
             </div>
             <div>
 
-                {!tables.isLoading  &&
-                    tables.data.data.data.map(it =>  <div key={it.id} onClick={() => setActiveTable(it)}>
-                        {it.name}
-                    </div>)
-                }
+                {/*{!tables.isLoading  &&*/}
+                {/*    tables.data.data.data.map(it =>  <div key={it.id} onClick={() => setActiveTable(it)}>*/}
+                {/*        {it.name}*/}
+                {/*    </div>)*/}
+                {/*}*/}
             </div>
 
             <div>

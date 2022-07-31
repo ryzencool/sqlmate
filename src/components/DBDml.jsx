@@ -1,5 +1,4 @@
 import React from 'react'
-import CodeEditor from '@uiw/react-textarea-code-editor';
 import {useActiveTable} from "../store/tableListStore";
 import {useQuery} from "@tanstack/react-query";
 import {dbmlTable} from "../api/dbApi";

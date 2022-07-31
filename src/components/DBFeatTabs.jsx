@@ -8,6 +8,7 @@ import DBConsole from "./DBConsole";
 import DBData from "./DBData";
 import DBDml from "./DBDml";
 import DBDdl from "./DBDdl";
+import DBCode from "./DBCode";
 
 
 const FeatPanel = (props) => {
@@ -73,7 +74,7 @@ function DBFeatTabs() {
                 <DBDml/>
             </FeatPanel>
             <FeatPanel value={value} index={5}>
-                假数据
+                <DBCode/>
             </FeatPanel>
             <FeatPanel value={value} index={6}>
                 假数据
