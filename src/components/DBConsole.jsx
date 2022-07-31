@@ -6,9 +6,7 @@ import { sql } from "@codemirror/lang-sql";
 import {useSqlState} from "../store/sqlStore";
 export default function DBConsole() {
 
-
     const db = useSqlState(s => s.db)
-
     const [selectedCode, setSelectedCode] = useState("")
 
     const [sqlResult, setSqlResult] = useState("")
@@ -33,7 +31,7 @@ export default function DBConsole() {
     }
 
     return (<div className={"w-full flex flex-col gap-3"}>
-        <div className={"w-full flex flex-col gap-1"}>
+        <div className={"w-1/2 flex flex-col gap-1"}>
             <div>
                 <Button onClick={() => executeSql()}>运行</Button>
                 <Button>格式化</Button>
@@ -41,29 +39,33 @@ export default function DBConsole() {
                 <Button>收藏</Button>
                 <Button>模拟数据</Button>
             </div>
-            <div className={"h-64 bg-amber-50 w-full flex flex-col gap-1 overflow-auto"}>
+            <div className={"h-64  w-full flex flex-col gap-1 border-r-2 p-3 border-amber-400"}>
                 <CodeMirror
-                    className={"h-64"}
+                    height={"200px"}
+                    width={""}
+                    theme={"dark"}
                     value={"select * from film"}
                     extensions={[sql()]}
                     onStatistics={data => {
                         console.log(data.selectionCode)
                         setSelectedCode(data.selectionCode)
                     }}
+
                 />
+                <div className={"w-full flex flex-col gap-1"}>
+                    <div>结果集</div>
+                    <div>
+                        {sqlResult}
+                    </div>
+                    <div>
+                        { sqlResData.columns.map(it => <div>{it}</div>)}
+                        { sqlResData.values.map(it => <div>{it}</div>)}
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div className={"w-full flex flex-col gap-1"}>
-            <div>结果集</div>
-            <div>
-                {sqlResult}
-            </div>
-            <div>
-                { sqlResData.columns.map(it => <div>{it}</div>)}
-                { sqlResData.values.map(it => <div>{it}</div>)}
-            </div>
-        </div>
+
 
     </div>)
 }

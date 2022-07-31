@@ -1,16 +1,12 @@
-import React, {useEffect, useState} from "react";
-import {Button,} from "@mui/material";
+import React, {useState} from "react";
 import {DefaultPortModel,} from "@projectstorm/react-diagrams";
 import {useActiveTable, useTableListState} from "../store/tableListStore";
 import {JSCustomNodeModel} from "./graph/JSCustomNodeModel";
 import Engine from "../store/nodeStore";
 import {useSqlState} from "../store/sqlStore";
-import TreeView from '@mui/lab/TreeView';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import TreeItem from '@mui/lab/TreeItem';
 import {useQuery} from "@tanstack/react-query";
 import {listTables} from "../api/dbApi";
+import Button from "@mui/material/Button";
 
 // 左侧的数据表栏目
 function DBTablePanel() {
@@ -28,10 +24,9 @@ function DBTablePanel() {
     })
 
 
-
     console.log(tables.isLoading)
 
-    console.log("data is:" , tables.data)
+    console.log("data is:", tables.data)
 
     const [editingTable, setEditingTable] = useState({
         tableName: "",
@@ -154,49 +149,24 @@ function DBTablePanel() {
     };
 
 
-
-
     return (
-        <div>
-            <div className="flex flex-row items-center p-2 bg-yellow-500 justify-between">
-                <div>数据表</div>
-                <Button onClick={() => addTable()}>新建表</Button>
+        <div className={"flex flex-col justify-center items-center gap-2"}>
+            <div className="flex flex-col items-center  justify-between w-full gap-1">
+                <div className={"w-11/12 mt-2"}>
+                    <input placeholder={"搜索"} className={"p-1 rounded-md w-full border-neutral-300 border-2"}/>
+                </div>
+                <Button className={"bg-black text-white w-11/12"} >创建表</Button>
             </div>
-            <div>
-
-                {/*{!tables.isLoading  &&*/}
-                {/*    tables.data.data.data.map(it =>  <div key={it.id} onClick={() => setActiveTable(it)}>*/}
-                {/*        {it.name}*/}
-                {/*    </div>)*/}
-                {/*}*/}
+            <div className={"w-full flex flex-col justify-center items-center text-sm min-h-0 overflow-hidden"}>
+                {!tables.isLoading &&
+                    tables.data.data.data.map(it => (
+                        <div key={it.id} onClick={() => setActiveTable(it)}
+                             className={"bg-neutral-100 p-2 w-11/12 mt-2 rounded-md"}>
+                            {it.name}
+                        </div>))
+                }
             </div>
 
-            <div>
-                {/*<TreeView*/}
-                {/*    aria-label="file system navigator"*/}
-                {/*    defaultCollapseIcon={<ExpandMoreIcon/>}*/}
-                {/*    defaultExpandIcon={<ChevronRightIcon/>}*/}
-                {/*    sx={{height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto'}}*/}
-                {/*>*/}
-
-                {/*    {*/}
-                {/*        tableList !== null && tableList.length > 0 &&  tableList.map(table => (*/}
-                {/*                <TreeItem nodeId={table.tableName} label={table.tableName} onClick={() => {*/}
-                {/*                    setActiveTable(table)*/}
-                {/*                }}>*/}
-                {/*                    {*/}
-                {/*                        table.columns != null &&*/}
-                {/*                        table.columns.length > 0 &&*/}
-                {/*                        table.columns.map(col => (*/}
-                {/*                            <TreeItem nodeId={col.columnName} label={col.columnName}/>*/}
-                {/*                        ))*/}
-                {/*                    }*/}
-                {/*                </TreeItem>*/}
-                {/*            )*/}
-                {/*        )*/}
-                {/*    }*/}
-                {/*</TreeView>*/}
-            </div>
         </div>
     );
 }

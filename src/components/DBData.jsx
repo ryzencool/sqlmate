@@ -5,11 +5,35 @@ import {Button, Paper, Table, TableCell, TableContainer, TableHead, TableRow} fr
 // 展现相关联的表的数据
 export default function DBData() {
 
+    const databaseData = {
+        rel: [
+            {
+                "tableA": "user",
+                "tableB": "userDetail",
+                "rel": 1
+            },{
+                "tableA": "user",
+                "tableB": "order",
+                "rel": 2
+            }
+
+        ]
+    }
+
+    const createDate = () => {
+        let oneToOne = databaseData.rel.filter(it => it.rel === 1)
+        oneToOne.map(it => {
+            // 创造左边
+        })
+    }
+
     const activeTable = useActiveTable(s => s.table)
 
-    const generateData = () => {}
+    const generateData = () => {
+    }
 
-    const clearData = () => {}
+    const clearData = () => {
+    }
 
     return <div className={"w-full flex flex-col gap-3"}>
         <div className={"w-full flex flex-row gap-3"}>

@@ -46,19 +46,20 @@ function DBFeatTabs() {
     return (
         <Box sx={{width: '100%'}}>
             <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab label="文档" {...a11yProps(0)} />
-                    <Tab label="UML" {...a11yProps(1)} />
+                <Tabs size={"small"} value={value} onChange={handleChange} aria-label="basic tabs example">
+                    <Tab   label="文档" {...a11yProps(0)} />
+                    <Tab label="ER图" {...a11yProps(1)} />
                     <Tab label="控制台" {...a11yProps(2)} />
                     <Tab label="数据" {...a11yProps(3)} />
                     <Tab label="DML" {...a11yProps(4)} />
                     <Tab label="代码" {...a11yProps(5)} />
                     <Tab label="版本" {...a11yProps(6)} />
-                    <Tab label="DDL" {...a11yProps(7)} />
+                    <Tab label="SQL库" {...a11yProps(7)} />
+                    <Tab label="优化" {...a11yProps(8)} />
 
                 </Tabs>
             </Box>
-            <FeatPanel value={value} index={0}>
+            <FeatPanel value={value} index={0} >
                 <DBDoc/>
             </FeatPanel>
             <FeatPanel value={value} index={1}>
@@ -78,6 +79,9 @@ function DBFeatTabs() {
             </FeatPanel>
             <FeatPanel value={value} index={6}>
                 假数据
+            </FeatPanel>
+            <FeatPanel value={value} index={7}>
+                <DBDdl/>
             </FeatPanel>
             <FeatPanel value={value} index={7}>
                 <DBDdl/>

@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
-import {useActiveTable, useTableListState} from "../store/tableListStore";
+import {useActiveTable} from "../store/tableListStore";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {addColumn, delColumn, listTableColumns} from "../api/dbApi";
 import {createColumnHelper, flexRender, getCoreRowModel, useReactTable} from "@tanstack/react-table";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 
 
 function DBDoc(props) {
@@ -38,21 +38,9 @@ function DBDoc(props) {
             header: () => <div>注释</div>,
             cell: info => info.getValue(),
         }),
-        colHelper.accessor("operate", {
-            header: () => <div>操作</div>,
-            cell: info => {
-                console.log("表单属性" ,info.row.original.id);
-                return <div><Button onClick={() => {
-                    delCol.mutate({
-                        columnId: info.row.original.id
-                    })
-                }
-                }>删除</Button> <Button>修改</Button><Button>提交</Button></div>;
-            },
-        }),
+
 
     ]
-
 
 
     const tableColumns = useQuery(["activeTableColumn"],
@@ -84,30 +72,44 @@ function DBDoc(props) {
     return (
         <div className={"flex flex-col gap-5 "}>
             <div className={"flex-col flex gap-2"}>
-                <div className={"text-xl font-bold"}>
-                    {activeTable.tableName}
+                <div className={"text-base font-bold"}>
+                    User
                 </div>
                 <div className={"flex flex-col gap-1"}>
-                    <div className={"flex flex-row gap-3 text-xs"}>
-                        <div className={"text-gray-500"}>创建人</div>
-                        <div>zmy</div>
-                    </div>
-                    <div className={"flex flex-row gap-3 text-xs"}>
+                    <div className={"grid grid-cols-2 grid-rows-2 gap-2 text-sm w-1/6"}>
+                        <div className={"text-gray-500 col-span-1 text-sm"}>创建人</div>
+                        <div className={"col-span-1"}>zmy</div>
                         <div className={"text-gray-500"}>备注</div>
                         <div>用户表</div>
                     </div>
                 </div>
             </div>
             <div>
-                <div className={"text-xl font-bold"}>字段</div>
-                <div><Button>添加</Button></div>
-                <div>
-                    <table>
+                <div className={"text-base font-bold"}>字段</div>
+                <div className={"mt-3"}>
+                    <div className={"flex flex-row items-center gap-2"}>
+                        <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
+                            setDialogOpen(true)
+                        }}>
+                            新增
+                        </button>
+                        <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
+                            setDialogOpen(true)
+                        }}>
+                            删除
+                        </button>
+                        <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
+                            setDialogOpen(true)
+                        }}>
+                            编辑
+                        </button>
+                    </div>
+                    <table className={"w-full mt-2"}>
                         <thead>
                         {table.getHeaderGroups().map(group => (
-                            <tr key={group.id}>
+                            <tr key={group.id} className={"border-b-2 border-neutral-100 "}>
                                 {group.headers.map(header => (
-                                    <th key={header.id}>
+                                    <th key={header.id} className={"text-left p-2 text-sm font-normal"}>
                                         {header.isPlaceholder ? null : flexRender(
                                             header.column.columnDef.header,
                                             header.getContext()
@@ -117,13 +119,12 @@ function DBDoc(props) {
                             </tr>
                         ))}
                         </thead>
-
                         <tbody>
                         {tableColumns.isLoading === false && table.getRowModel().rows.map(row => {
                             console.log("渲染")
-                            return <tr key={row.id}>
+                            return <tr key={row.id} className={"border-b-2 border-neutral-100 text-sm"}>
                                 {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id}>
+                                    <td key={cell.id} className={"text-left p-2 "}>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </td>
                                 ))}
@@ -134,11 +135,7 @@ function DBDoc(props) {
                 </div>
 
                 <div>
-                    <Button onClick={() => {
-                        setDialogOpen(true)
-                    }}>
-                        新增
-                    </Button>
+
                     <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                         <DialogTitle>新增</DialogTitle>
                         <DialogContent>
@@ -192,7 +189,8 @@ function DBDoc(props) {
                                     ...editColumn,
                                     tableId: activeTable.id
                                 })
-                                setDialogOpen(false)}}>确定</Button>
+                                setDialogOpen(false)
+                            }}>确定</Button>
                         </DialogActions>
                     </Dialog>
                 </div>
@@ -200,12 +198,12 @@ function DBDoc(props) {
             </div>
 
             <div>
-                <div className={"text-xl font-bold"}>索引</div>
+                <div className={"text-base font-bold"}>索引</div>
             </div>
 
 
             <div>
-                <div className={"text-xl font-bold"}>关系图</div>
+                <div className={"text-base font-bold"}>关系图</div>
             </div>
         </div>
     )
