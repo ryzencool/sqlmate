@@ -1,10 +1,39 @@
-import React, {useState} from 'react'
+import React, {useMemo, useState} from 'react'
 import {useActiveTable} from "../store/tableListStore";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {addColumn, delColumn, listTableColumns} from "../api/dbApi";
-import {createColumnHelper, flexRender, getCoreRowModel, useReactTable} from "@tanstack/react-table";
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
+import {
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    useReactTable
+} from "@tanstack/react-table";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, styled, TextField} from "@mui/material";
 
+
+function IndeterminateCheckbox({
+                                   indeterminate =false,
+                                   className = "",
+                                   ...rest
+                               }) {
+    const ref = React.useRef(null);
+
+    React.useEffect(() => {
+        if (typeof indeterminate === "boolean") {
+            ref.current.indeterminate = !rest.checked && indeterminate;
+        }
+    }, [ref, indeterminate]);
+
+    return (
+        <input
+            type="checkbox"
+            ref={ref}
+            className={className + " cursor-pointer"}
+            {...rest}
+        />
+    );
+}
 
 function DBDoc(props) {
     const queryClient = useQueryClient()
@@ -13,47 +42,80 @@ function DBDoc(props) {
 
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editColumn, setEditColumn] = useState({})
-
-    const colHelper = createColumnHelper()
-
-
-    const columns = [
-        colHelper.accessor("name", {
-            header: () => <div>名称</div>,
-            cell: info => info.getValue(),
-        }),
-        colHelper.accessor("type", {
-            header: () => <div>类型</div>,
-            cell: info => info.getValue(),
-        }),
-        colHelper.accessor("note", {
-            header: () => <div>备注</div>,
-            cell: info => info.getValue(),
-        }),
-        colHelper.accessor("settings", {
-            header: () => <div>配置</div>,
-            cell: info => info.getValue(),
-        }),
-        colHelper.accessor("comment", {
-            header: () => <div>注释</div>,
-            cell: info => info.getValue(),
-        }),
-
-
-    ]
-
-
+    const [rowSelection, setRowSelection] = React.useState({});
     const tableColumns = useQuery(["activeTableColumn"],
         () => listTableColumns({tableId: activeTable.id}),
         {
             enabled: !!activeTableId && activeTableId > 0
         })
-    console.log("表：", tableColumns.data)
+
+    const columns = useMemo(() => {
+        return [
+            {
+                id: "select",
+                header: ({table}) => (
+                    <IndeterminateCheckbox
+                        {...{
+                            checked: false,
+                            indeterminate: table.getIsSomeRowsSelected(),
+                            onChange: table.getToggleAllRowsSelectedHandler()
+                        }}
+                    />
+                ),
+                cell: ({row}) => (
+                    <div className="px-1">
+                        <IndeterminateCheckbox
+                            {...{
+                                checked: row.getIsSelected(),
+                                indeterminate: row.getIsSomeSelected(),
+                                onChange: row.getToggleSelectedHandler()
+                            }}
+                        />
+                    </div>
+                )
+            },
+            {
+                accessorKey: "name",
+                header: () => <div>名称</div>,
+                cell: (info) => info.getValue(),
+            },
+            {
+                accessorKey: "type",
+                header: () => <div>类型</div>,
+                cell: (info) => info.getValue(),
+            },
+            {
+                accessorKey: "note",
+                header: () => <div>备注</div>,
+                cell: (info) => info.getValue(),
+            },
+            {
+                accessorKey: "settings",
+                header: () => <div>配置</div>,
+                cell: (info) => info.getValue(),
+            },
+            {
+                accessorKey: "comment",
+                header: () => <div>注释</div>,
+                cell: (info) => info.getValue(),
+            },
+        ]
+    }, [])
+
+
+
 
     const table = useReactTable({
             data: tableColumns?.data?.data?.data,
             columns,
-            getCoreRowModel: getCoreRowModel()
+            state: {
+                rowSelection
+            },
+            onRowSelectionChange: setRowSelection,
+            getCoreRowModel: getCoreRowModel(),
+            getFilteredRowModel: getFilteredRowModel(),
+            getPaginationRowModel: getPaginationRowModel(),
+            debugTable: true
         }
     )
 
@@ -69,6 +131,19 @@ function DBDoc(props) {
         }
     })
 
+    const CDialog = styled(Dialog) (({theme}) =>(
+        {
+
+            '& .MuiPaper-root.MuiDialog-paper': {
+                backgroundColor: "black"
+            },
+            '& .MuiDialogActions-root': {
+                padding: theme.spacing(1),
+            },
+        }
+    ))
+
+    console.log("编号", rowSelection)
     return (
         <div className={"flex flex-col gap-5 "}>
             <div className={"flex-col flex gap-2"}>
@@ -135,8 +210,7 @@ function DBDoc(props) {
                 </div>
 
                 <div>
-
-                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                    <Dialog  open={dialogOpen} onClose={() => setDialogOpen(false)}>
                         <DialogTitle>新增</DialogTitle>
                         <DialogContent>
                             <TextField
