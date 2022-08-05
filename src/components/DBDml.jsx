@@ -67,7 +67,7 @@ export default function DBDml() {
                 <Tab label="MYSQL" {...a11yProps(0)} />
 
             </Tabs>
-            <TabPanel value={value} index={0}>
+            <TabPanel value={value} index={0} className={"w-full"}>
                 <DBDmlDetail props={"mysql"} />
             </TabPanel>
 

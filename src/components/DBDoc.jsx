@@ -194,7 +194,7 @@ function DBDoc(props) {
         <div className={"flex flex-col gap-5  "}>
             <div className={"flex-col flex gap-2"}>
                 <div className={"text-base font-bold"}>
-                    User
+                    {activeTable.name}
                 </div>
                 <div className={"flex flex-col gap-1"}>
                     <div className={"grid grid-cols-2 grid-rows-2 gap-2 text-sm w-1/6"}>

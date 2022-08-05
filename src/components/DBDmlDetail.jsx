@@ -24,7 +24,7 @@ export default function DBDmlDetail(props) {
 
 
     return <div className={"w-full"}>
-        <div className={"flex flex-row flex-wrap w-full justify-between gap-2 "}>
+        <div className={"w-full flex flex-col gap-5"}>
             <CodeComponent title={"建表语句"} code={exporter.export(dbml.data.data.data, "mysql")}/>
             <CodeComponent title={"建表语句"} code={exporter.export(dbml.data.data.data, "mysql")}/>
             <CodeComponent title={"建表语句"} code={exporter.export(dbml.data.data.data, "mysql")}/>
@@ -33,12 +33,11 @@ export default function DBDmlDetail(props) {
     </div>
 }
 
-
 const CodeComponent = (props) => {
     let {title, code} = props
 
 
-    return   <div >
+    return   <div className={"w-full"}>
         <div className={"pb-2"}>{title}</div>
         <CopyBlock
             text={code}
@@ -48,6 +47,7 @@ const CodeComponent = (props) => {
                 {
                     paddingRight: "40px",
                     paddingTop: "10px",
+                    width: "100%",
                     borderRadius: "10px",
                 }
             }
