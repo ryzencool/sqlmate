@@ -1,6 +1,9 @@
 import React from 'react'
+import {useNavigate} from 'react-router'
 
 export default function Index() {
+
+    const navigate = useNavigate()
 
     return <div className={'w-screen h-screen bg-indigo-50'}>
         <div className={'w-screen h-16  grid grid-cols-6 items-center'}>
@@ -9,6 +12,11 @@ export default function Index() {
             </div>
             <div className={"col-span-4 flex flex-row gap-6 items-center text-indigo-700"}>
                 <div>特性</div>
+                <div onClick={() => {
+                    navigate("/home")
+                }
+                }>项目
+                </div>
                 <div>模版</div>
                 <div>更新</div>
             </div>
@@ -26,7 +34,9 @@ export default function Index() {
             </div>
             <div className={"mt-16 flex flex-row gap-8"}>
                 <div className={"bg-white  rounded-md pl-4 pr-4 pt-2 pb-2 text-lg w-36 text-center"}>了解一下</div>
-                <div className={"bg-indigo-800 text-white rounded-md pl-4 pr-4 pt-2 pb-2 text-lg w-36 text-center"}>开始吧</div>
+                <div
+                    className={"bg-indigo-800 text-white rounded-md pl-4 pr-4 pt-2 pb-2 text-lg w-36 text-center"}>开始吧
+                </div>
             </div>
         </div>
     </div>

@@ -1,9 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Button} from "@mui/material";
 import CodeMirror from "@uiw/react-codemirror";
 import {sql} from "@codemirror/lang-sql";
 import {useSqlState} from "../store/sqlStore";
 import './style.css'
+import {useQuery} from "@tanstack/react-query";
+import {listTables} from "../api/dbApi";
 export default function DBConsole() {
 
     const db = useSqlState(s => s.db)
@@ -16,6 +18,18 @@ export default function DBConsole() {
         values: []
     })
 
+    const tables = useQuery(["projectTables"],  () => listTables({
+        projectId: 1
+    }))
+
+
+    // 创建所有的表
+    useEffect(() => {
+        console.log("找到所有的表了",)
+        tables.data.data.data.forEach(it => {
+            db.exec("")
+        })
+    }, [tables])
 
     const executeSql = () => {
         try {

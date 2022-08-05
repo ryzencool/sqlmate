@@ -4,13 +4,17 @@ import Home from "./pages/Home";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Error from "./pages/Error";
+import Dashboard from "./pages/Dashboard";
+import Header from "./pages/Header";
 
 const CustomRouter = () => {
     return (
         <Routes>
             <Route path="/index" element={<Index/>}/>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/home" element={<Home/>}/>
+            <Route path="/header" element={<Header/>}>
+                <Route path={"home"} element={<Home/>}/>
+                <Route path={"dashboard"} element={<Dashboard/>}/>
+            </Route>
             <Route path="/about" element={<About/>}/>
             <Route path="/profile" element={<Profile/>}/>
             <Route path="*" element={<Error/>}/>

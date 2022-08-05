@@ -44,7 +44,7 @@ function DBFeatTabs() {
         setValue(newValue);
     };
     return (
-        <Box sx={{width: '100%'}}>
+        <Box sx={{width: '100%'}} className={"h-full"}>
             <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                 <Tabs size={"small"} value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab   label="文档" {...a11yProps(0)} />
@@ -59,7 +59,8 @@ function DBFeatTabs() {
 
                 </Tabs>
             </Box>
-            <FeatPanel value={value} index={0} >
+            <Box  className={"h-[calc(100vh-5rem)] overflow-auto"}>
+            <FeatPanel value={value} index={0}  >
                 <DBDoc/>
             </FeatPanel>
             <FeatPanel value={value} index={1}>
@@ -86,6 +87,7 @@ function DBFeatTabs() {
             <FeatPanel value={value} index={7}>
                 <DBDdl/>
             </FeatPanel>
+            </Box>
         </Box>
     )
 }

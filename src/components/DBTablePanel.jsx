@@ -7,6 +7,8 @@ import {useSqlState} from "../store/sqlStore";
 import {useQuery} from "@tanstack/react-query";
 import {listTables} from "../api/dbApi";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import {List, ListItem, ListItemButton, ListItemText} from "@mui/material";
 
 // 左侧的数据表栏目
 function DBTablePanel() {
@@ -150,22 +152,97 @@ function DBTablePanel() {
 
 
     return (
-        <div className={"flex flex-col justify-center items-center gap-2"}>
+        <div className={"flex flex-col justify-center items-center gap-2 h-full"}>
             <div className="flex flex-col items-center  justify-between w-full gap-1">
-                <div className={"w-11/12 mt-2"}>
+                <div className={"w-11/12"}>
                     <input placeholder={"搜索"} className={"p-1 rounded-md w-full border-neutral-300 border-2"}/>
                 </div>
                 <Button className={"bg-black text-white w-11/12"} >创建表</Button>
             </div>
-            <div className={"w-full flex flex-col justify-center items-center text-sm min-h-0 overflow-hidden"}>
-                {!tables.isLoading &&
-                    tables.data.data.data.map(it => (
-                        <div key={it.id} onClick={() => setActiveTable(it)}
-                             className={"bg-neutral-100 p-2 w-11/12 mt-2 rounded-md"}>
-                            {it.name}
-                        </div>))
-                }
-            </div>
+            <Box className={"w-full flex flex-col justify-center items-center text-sm overflow-auto h-5/6 pt-10"} >
+                <List>
+
+                    {!tables.isLoading &&
+                        tables.data.data.data.map(it => (
+                            <ListItem disablePadding onClick={() => setActiveTable(it)}>
+                                <ListItemButton>
+                                    <ListItemText primary={it.name}/>
+                                </ListItemButton>
+                            </ListItem>))
+
+                    }
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Cuu"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem><ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemText primary="Inbox"/>
+                    </ListItemButton>
+                </ListItem><ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemText primary="Inbox"/>
+                    </ListItemButton>
+                </ListItem><ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemText primary="Inbox"/>
+                    </ListItemButton>
+                </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary="Inbox"/>
+                        </ListItemButton>
+                    </ListItem>
+
+
+                </List>
+
+            </Box>
 
         </div>
     );

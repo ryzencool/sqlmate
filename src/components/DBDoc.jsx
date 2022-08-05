@@ -1,19 +1,24 @@
 import React, {useMemo, useState} from 'react'
 import {useActiveTable} from "../store/tableListStore";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {addColumn, delColumn, listTableColumns} from "../api/dbApi";
+import {addColumn, delColumn, getProject, listTableColumns, listTableIndexes} from "../api/dbApi";
+
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    useReactTable
-} from "@tanstack/react-table";
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, styled, TextField} from "@mui/material";
+    Button,
+    Checkbox,
+    Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControlLabel,
+    TextField
+} from "@mui/material";
+import ZTable from "./ZTable";
 
 
 function IndeterminateCheckbox({
-                                   indeterminate =false,
+                                   indeterminate = false,
                                    className = "",
                                    ...rest
                                }) {
@@ -42,12 +47,70 @@ function DBDoc(props) {
 
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editColumn, setEditColumn] = useState({})
-    const [rowSelection, setRowSelection] = React.useState({});
+
+
+    const project = useQuery(["project"], () => getProject({projectId: 1}))
+
+
     const tableColumns = useQuery(["activeTableColumn"],
         () => listTableColumns({tableId: activeTable.id}),
         {
             enabled: !!activeTableId && activeTableId > 0
         })
+    const tableIndexes = useQuery(['tableIndexes'],
+        () => listTableIndexes({tableId: activeTable.id}), {
+            enabled: !!activeTableId && activeTableId > 0
+        })
+
+
+    const indexes = useMemo(() => {
+        return [
+            {
+                id: "select",
+                header: ({table}) => (
+                    <IndeterminateCheckbox
+                        {...{
+                            checked: false,
+                            indeterminate: table.getIsSomeRowsSelected(),
+                            onChange: table.getToggleAllRowsSelectedHandler()
+                        }}
+                    />
+                ),
+                cell: ({row}) => (
+                    <div className="px-1">
+                        <IndeterminateCheckbox
+                            {...{
+                                checked: row.getIsSelected(),
+                                indeterminate: row.getIsSomeSelected(),
+                                onChange: row.getToggleSelectedHandler()
+                            }}
+                        />
+                    </div>
+                )
+            },
+            {
+                accessorKey: "name",
+                header: () => <div>名称</div>,
+                cell: (info) => info.getValue(),
+            },
+            {
+                accessorKey: "type",
+                header: () => <div>类型</div>,
+                cell: (info) => info.getValue(),
+            },
+            {
+                accessorKey: "note",
+                header: () => <div>字段</div>,
+                cell: (info) => (
+                    <div>
+                        {info.row.original.columns.map(it => <div>
+                            {it}
+                        </div>)}
+                    </div>
+                ),
+            },
+        ]
+    })
 
     const columns = useMemo(() => {
         return [
@@ -92,7 +155,15 @@ function DBDoc(props) {
             {
                 accessorKey: "settings",
                 header: () => <div>配置</div>,
-                cell: (info) => info.getValue(),
+                cell: (info) => {
+                    return (<div className={"flex flex-row gap-1"}>
+                        {info.row.original.isPrimaryKey && <Chip label={"pk"} size={"small"}/>}
+                        {info.row.original.isAutoIncrement && <Chip label={"auto inc"}/>}
+                        {info.row.original.isNull && <Chip label={"not null"}/>}
+                        {info.row.original.isUniqueKey && <Chip label={"unique"}/>}
+                    </div>)
+                },
+
             },
             {
                 accessorKey: "comment",
@@ -102,22 +173,6 @@ function DBDoc(props) {
         ]
     }, [])
 
-
-
-
-    const table = useReactTable({
-            data: tableColumns?.data?.data?.data,
-            columns,
-            state: {
-                rowSelection
-            },
-            onRowSelectionChange: setRowSelection,
-            getCoreRowModel: getCoreRowModel(),
-            getFilteredRowModel: getFilteredRowModel(),
-            getPaginationRowModel: getPaginationRowModel(),
-            debugTable: true
-        }
-    )
 
     const addCol = useMutation(addColumn, {
         onSuccess: () => {
@@ -131,21 +186,12 @@ function DBDoc(props) {
         }
     })
 
-    const CDialog = styled(Dialog) (({theme}) =>(
-        {
+    const getSelectedRow = (params) => {
+        console.log(params)
+    }
 
-            '& .MuiPaper-root.MuiDialog-paper': {
-                backgroundColor: "black"
-            },
-            '& .MuiDialogActions-root': {
-                padding: theme.spacing(1),
-            },
-        }
-    ))
-
-    console.log("编号", rowSelection)
     return (
-        <div className={"flex flex-col gap-5 "}>
+        <div className={"flex flex-col gap-5  "}>
             <div className={"flex-col flex gap-2"}>
                 <div className={"text-base font-bold"}>
                     User
@@ -179,38 +225,12 @@ function DBDoc(props) {
                             编辑
                         </button>
                     </div>
-                    <table className={"w-full mt-2"}>
-                        <thead>
-                        {table.getHeaderGroups().map(group => (
-                            <tr key={group.id} className={"border-b-2 border-neutral-100 "}>
-                                {group.headers.map(header => (
-                                    <th key={header.id} className={"text-left p-2 text-sm font-normal"}>
-                                        {header.isPlaceholder ? null : flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                        </thead>
-                        <tbody>
-                        {tableColumns.isLoading === false && table.getRowModel().rows.map(row => {
-                            console.log("渲染")
-                            return <tr key={row.id} className={"border-b-2 border-neutral-100 text-sm"}>
-                                {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id} className={"text-left p-2 "}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </td>
-                                ))}
-                            </tr>
-                        })}
-                        </tbody>
-                    </table>
+                    {!tableColumns.isLoading && <ZTable data={tableColumns?.data?.data?.data} columns={columns}
+                                                        getSelectedRow={it => getSelectedRow(it)}/>}
                 </div>
 
                 <div>
-                    <Dialog  open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                         <DialogTitle>新增</DialogTitle>
                         <DialogContent>
                             <TextField
@@ -255,6 +275,45 @@ function DBDoc(props) {
                                     })
                                 }}
                             />
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="note"
+                                label="默认值"
+                                fullWidth
+                                variant="standard"
+                                onChange={(evt) => {
+                                    setEditColumn({
+                                        ...editColumn,
+                                        note: evt.target.value
+                                    })
+                                }}
+                            />
+                            <FormControlLabel
+                                value="top"
+                                control={<Checkbox/>}
+                                label="主键"
+                                labelPlacement="end"
+                            />
+                            <FormControlLabel
+                                value="top"
+                                control={<Checkbox/>}
+                                label="可空"
+                                labelPlacement="end"
+                            />
+                            <FormControlLabel
+                                value="top"
+                                control={<Checkbox/>}
+                                label="自增"
+                                labelPlacement="end"
+                            />
+                            <FormControlLabel
+                                value="top"
+                                control={<Checkbox/>}
+                                label="唯一"
+                                labelPlacement="end"
+                            />
+
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={() => setDialogOpen(false)}>取消</Button>
@@ -273,6 +332,10 @@ function DBDoc(props) {
 
             <div>
                 <div className={"text-base font-bold"}>索引</div>
+                <div>
+                    {!tableIndexes.isLoading && <ZTable data={tableIndexes?.data?.data?.data} columns={indexes}
+                                                        getSelectedRow={it => getSelectedRow(it)}/>}
+                </div>
             </div>
 
 
