@@ -120,7 +120,5 @@ export default function DBConsole() {
                     </div>
                 </div>
             </div>
-
-
         </div>)
 }

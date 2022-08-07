@@ -13,10 +13,14 @@ export default function Index() {
             <div className={"col-span-4 flex flex-row gap-6 items-center text-indigo-700"}>
                 <div>特性</div>
                 <div onClick={() => {
-                    navigate("/home")
+                    navigate("/header/home")
                 }
                 }>项目
                 </div>
+                <div onClick={() => {
+                    navigate("/header/dashboard")
+                }
+                }>控制台</div>
                 <div>模版</div>
                 <div>更新</div>
             </div>

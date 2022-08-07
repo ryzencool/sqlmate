@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react'
 import {useActiveTable} from "../store/tableListStore";
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {addColumn, delColumn, getProject, listTableColumns, listTableIndexes} from "../api/dbApi";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {addColumn, delColumn} from "../api/dbApi";
 
 import {
     Button,
@@ -15,6 +15,7 @@ import {
     TextField
 } from "@mui/material";
 import ZTable from "./ZTable";
+import {useGetProject, useListColumn, useListIndex} from "../store/rq/reactQueryStore";
 
 
 function IndeterminateCheckbox({
@@ -49,18 +50,16 @@ function DBDoc(props) {
     const [editColumn, setEditColumn] = useState({})
 
 
-    const project = useQuery(["project"], () => getProject({projectId: 1}))
+    const project = useGetProject({projectId: 1})
 
+    const tableColumns = useListColumn({tableId: activeTable.id}, {
+        enabled: !!activeTableId && activeTableId > 0
 
-    const tableColumns = useQuery(["activeTableColumn"],
-        () => listTableColumns({tableId: activeTable.id}),
-        {
-            enabled: !!activeTableId && activeTableId > 0
-        })
-    const tableIndexes = useQuery(['tableIndexes'],
-        () => listTableIndexes({tableId: activeTable.id}), {
-            enabled: !!activeTableId && activeTableId > 0
-        })
+    })
+
+    const tableIndexes = useListIndex({tableId: activeTable.id}, {
+        enabled: !!activeTableId && activeTableId > 0
+    })
 
 
     const indexes = useMemo(() => {

@@ -84,7 +84,7 @@ function DBFeatTabs() {
             <FeatPanel value={value} index={7}>
                 <DBDdl/>
             </FeatPanel>
-            <FeatPanel value={value} index={7}>
+            <FeatPanel value={value} index={8}>
                 <DBDdl/>
             </FeatPanel>
             </Box>

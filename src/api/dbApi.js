@@ -7,6 +7,7 @@ const delTableColumnUrl = "/tableColumn/del"
 const addTableColumnUrl = "/tableColumn/add"
 const dbmlTableUrl = "/dbml/table"
 const listTableIndexesUrl = "/tableIndex/list"
+const getCodeTemplateUrl = "/codeTemplate/get"
 export function getProject(params) {
     return get(getProjectUrl, params)
 }
@@ -37,4 +38,9 @@ export function addColumn(params) {
 
 export function dbmlTable(params) {
     return get(dbmlTableUrl, params)
+}
+
+export function getCodeTemplate(params) {
+    return get(getCodeTemplateUrl, params)
+
 }
