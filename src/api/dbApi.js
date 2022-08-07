@@ -8,6 +8,9 @@ const addTableColumnUrl = "/tableColumn/add"
 const dbmlTableUrl = "/dbml/table"
 const listTableIndexesUrl = "/tableIndex/list"
 const getCodeTemplateUrl = "/codeTemplate/get"
+const listProjectSqlUrl = "/projectSql/list"
+const addProjectSqlUrl = "/projectSql/add"
+
 export function getProject(params) {
     return get(getProjectUrl, params)
 }
@@ -43,4 +46,14 @@ export function dbmlTable(params) {
 export function getCodeTemplate(params) {
     return get(getCodeTemplateUrl, params)
 
+}
+
+
+export function listProjectSql(params) {
+    return get(listProjectSqlUrl, params)
+}
+
+
+export function addProjectSql(params) {
+    return post(addProjectSqlUrl, params)
 }
