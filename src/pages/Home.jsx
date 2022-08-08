@@ -4,6 +4,7 @@ import DBFeatTabs from "../components/DBFeatTabs";
 
 
 export default function Home() {
+
     return (
         <div className="grid grid-cols-5 h-full">
             <div className="col-span-1  ">

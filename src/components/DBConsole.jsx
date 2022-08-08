@@ -5,10 +5,9 @@ import {sql} from "@codemirror/lang-sql";
 import {useSqlState} from "../store/sqlStore";
 import './style.css'
 import {createColumnHelper,} from '@tanstack/react-table'
-import {useQuery} from "@tanstack/react-query";
-import {listTableColumns, listTables} from "../api/dbApi";
 import {useActiveTable} from "../store/tableListStore";
 import ZTable from "./ZTable";
+import {useListColumn, useListTables} from "../store/rq/reactQueryStore";
 
 export default function DBConsole() {
 
@@ -22,23 +21,16 @@ export default function DBConsole() {
     const [resultData, setResultData] = useState([]);
     const [sqlResData, setSqlResDate] = useState({
         columns: [],
-        values: []
+        values: [  ]
     })
 
+    const tableColumns = useListColumn({
+        tableId: activeTable.id
+    }, {
+        enabled: !!activeTableId && activeTableId > 0
+    })
 
-    const tableColumns = useQuery(["activeTableColumn"],
-        () => listTableColumns({tableId: activeTable.id}),
-        {
-            enabled: !!activeTableId && activeTableId > 0
-        })
-
-    const tables = useQuery(["projectTables"], () => listTables({
-        projectId: 1
-    }))
-
-    const generateSql = () => {
-
-    }
+    const tables =useListTables({projectId: 1})
 
     // 创建当前表
     useEffect(() => {
@@ -115,7 +107,7 @@ export default function DBConsole() {
                             {sqlResult}
                         </div>
                         <div>
-                            <ZTable data={resultData} columns={resultHeader} />
+                            <ZTable data={resultData} columns={resultHeader}/>
                         </div>
                     </div>
                 </div>

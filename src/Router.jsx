@@ -11,19 +11,21 @@ import Template from "./pages/Template";
 import DashProject from "./pages/DashProject";
 import CodeSettings from "./pages/CodeSettings";
 import CodeTemplateEdit from "./pages/CodeTemplateEdit";
+import PublicProject from "./pages/PublicProject";
 
 const CustomRouter = () => {
     return (
         <Routes>
             <Route path="/index" element={<Index/>}/>
             <Route path="/header" element={<Header/>}>
-                <Route path={"home"} element={<Home/>}/>
+                <Route path={"home/:id"} element={<Home/>}/>
                 <Route path={"dashboard"} element={<Dashboard/>}>
                     <Route path={"favorite"} element={<Favorite/>}/>
                     <Route path={"pubTemplate"} element={<Template/>}/>
                     <Route path={"project"} element={<DashProject/>}/>
                     <Route path={"codeSettings"} element={<CodeSettings/>}/>
-                    <Route path={"codeTemplateEdit"} element={<CodeTemplateEdit/>}/>
+                    <Route path={"codeTemplateEdit/:id"} element={<CodeTemplateEdit/>}/>
+                    <Route path={"publicProject"} element={<PublicProject/>}/>
                 </Route>
             </Route>
             <Route path="/about" element={<About/>}/>

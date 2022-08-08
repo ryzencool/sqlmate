@@ -10,7 +10,14 @@ const listTableIndexesUrl = "/tableIndex/list"
 const getCodeTemplateUrl = "/codeTemplate/get"
 const listProjectSqlUrl = "/projectSql/list"
 const addProjectSqlUrl = "/projectSql/add"
-
+const queryOptimizerUrl = "/queryOptimizer"
+const listCodeTemplateUrl = "/codeTemplate/list"
+const addCodeTemplateUrl = "/codeTemplate/add"
+const updateCodeTemplateFileUrl = "/codeTemplate/update"
+const addTemplateFileUrl = "/codeTemplate/file/add"
+const listTemplateFileUrl = "/codeTemplate/file/list"
+const getTemplateFileUrl = "/codeTemplate/file/get"
+const pagePublicProjectUrl = "/project/public/page"
 export function getProject(params) {
     return get(getProjectUrl, params)
 }
@@ -38,7 +45,6 @@ export function addColumn(params) {
 }
 
 
-
 export function dbmlTable(params) {
     return get(dbmlTableUrl, params)
 }
@@ -56,4 +62,37 @@ export function listProjectSql(params) {
 
 export function addProjectSql(params) {
     return post(addProjectSqlUrl, params)
+}
+
+export function queryOptimizer(params) {
+    return post(queryOptimizerUrl, params)
+}
+
+export function listCodeTemplate(params) {
+    return get(listCodeTemplateUrl, params)
+}
+
+export function addCodeTemplate(params) {
+    return post(addCodeTemplateUrl, params)
+}
+
+export function updateCodeTemplateFile(params) {
+    return post(updateCodeTemplateFileUrl, params);
+}
+
+export function addTemplateFile(params) {
+    return post(addTemplateFileUrl, params)
+}
+
+
+export function listTemplateFile(params) {
+    return get(listTemplateFileUrl, params)
+}
+
+export function getTemplateFile(params) {
+    return get(getTemplateFileUrl, params)
+}
+
+export function pagePublicProject(params) {
+    return get(pagePublicProjectUrl, params)
 }

@@ -1,13 +1,14 @@
 import React, {useState} from 'react'
 import CodeMirror from "@uiw/react-codemirror";
 import {javascript} from "@codemirror/lang-javascript";
-import {useQuery} from "@tanstack/react-query";
-import {dbmlTable} from "../api/dbApi";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {addTemplateFile, dbmlTable} from "../api/dbApi";
 import {Parser} from "@dbml/core";
 import {useSqlState} from "../store/sqlStore";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {
+    Card,
     Dialog,
     DialogActions,
     DialogContent,
@@ -19,10 +20,16 @@ import {
 } from "@mui/material";
 import DBDmlDetail from "../components/DBDmlDetail";
 import Button from "@mui/material/Button";
+import {autocompletion} from "@codemirror/autocomplete";
+import {useParams, useSearchParams} from "react-router-dom";
+import {useListTemplateFile} from "../store/rq/reactQueryStore";
+import mustache from "mustache/mustache.mjs";
+import {CopyBlock, nord} from "react-code-blocks";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-
+    const {id} = useParams()
+    console.log("id是", id)
     return (
         <div
             role="tabpanel"
@@ -49,76 +56,116 @@ function a11yProps(index) {
 
 export default function CodeTemplateEdit() {
     const [code, setCode] = useState("")
+
+    const [tableCode, setTableCode] = useState("")
     // 获取对应的表的数据，json
     const [value, setValue] = React.useState(0);
     const [open, setOpen] = React.useState(false);
     const [fileName, setFileName] = React.useState("")
-
+    const {id} = useParams()
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    const saveTpl = () => {
+    const queryClient = useQueryClient()
 
-    }
+    const templateFileAdd = useMutation(addTemplateFile, {
+        onSuccess: () => {
+            queryClient.invalidateQueries("templateFiles")
+        }
+    })
+
+    const templateFiles = useListTemplateFile({templateId: id})
 
     const handleClose = () => {
         setOpen(false);
     };
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
 
-    return (<div >
+    const handleSubmitCode = useMutation()
+
+
+    return (<div className={'p-4'}>
         <Button onClick={handleClickOpen}>新增文件</Button>
+
+        <div >
+            {
+                !templateFiles.isLoading && templateFiles.data.data?.data.map(
+                    it => <Card className={'p-2 flex-col gap-2 flex'}>
+                        <div>{it.fileName}</div>
+                        <CopyBlock
+                            text={it.transferFn}
+                            theme={nord}
+                            language={"javascript"}
+                            customStyle={
+                                {
+                                    paddingRight: "40px",
+                                    paddingTop: "10px",
+                                    width: "100%",
+                                    borderRadius: "10px",
+                                }
+                            }
+                        />
+                        <CopyBlock
+                            text={it.content}
+                            theme={nord}
+                            language={"sql"}
+                            customStyle={
+                                {
+                                    paddingRight: "40px",
+                                    paddingTop: "10px",
+                                    width: "100%",
+                                    borderRadius: "10px",
+                                }
+                            }
+                        />
+                    </Card>
+                )
+            }
+        </div>
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>新增文件</DialogTitle>
             <DialogContent >
+                <div>转换代码</div>
+                <CodeMirror
+                    height={"300px"}
+                    width={"600px"}
+                    theme={"light"}
+                    value={tableCode}
+                    extensions={[javascript()]}
+                    className={"rounded-2xl"}
+                    onChange={e =>{setTableCode(e)}}
+
+                />
                 <TextField label={"文件名称"} size={"small"} value={fileName} onChange={(e) => {
                     setFileName(e.target.value)
                 }}/>
+                <div className={"flex flex-row w-5/6"}>
                 <CodeMirror
                     height={"300px"}
                     width={"600px"}
                     theme={"light"}
                     value={code}
-                    extensions={[javascript()]}
+                    extensions={[javascript(), autocompletion()]}
                     className={"rounded-2xl"}
+                    onChange={e =>setCode(e)}
                 />
+
+                </div>
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>取消</Button>
-                <Button onClick={handleClose}>保存</Button>
+                <Button onClick={() => {
+                    templateFileAdd.mutate({
+                        fileName: fileName,
+                        templateId: id,
+                        transferFn: tableCode,
+                        content: code
+                    })
+
+                    setOpen(false)
+                }}>保存</Button>
             </DialogActions>
         </Dialog>
-        <Box
-            sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex'}}
-        >
-            <Tabs
-                orientation="vertical"
-                variant="scrollable"
-                value={value}
-                onChange={handleChange}
-                aria-label="Vertical tabs example"
-                sx={{ borderRight: 1, borderColor: 'divider' }}
-            >
-                <Tab label="MYSQL" {...a11yProps(0)} />
-                <Tab label="SQL" {...a11yProps(1)} />
-
-            </Tabs>
-            <TabPanel value={value} index={0} className={"w-full"}>
-                <div>tttt</div>
-            </TabPanel>
-            <TabPanel value={value} index={1} className={"w-full"}>
-                <div>tttt1</div>
-            </TabPanel>
-        </Box>
-        {/*<CodeMirror*/}
-        {/*    height={"300px"}*/}
-        {/*    theme={"light"}*/}
-        {/*    value={code}*/}
-        {/*    extensions={[javascript()]}*/}
-        {/*    className={"rounded-2xl"}*/}
-        {/*/>*/}
     </div>)
 }

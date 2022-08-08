@@ -11,7 +11,8 @@ import Box from "@mui/material/Box";
 import {List, ListItem, ListItemButton, ListItemText} from "@mui/material";
 
 // 左侧的数据表栏目
-function DBTablePanel() {
+function DBTablePanel(props) {
+
 
     const engine = Engine;
     const tableList = useTableListState(state => state.tableList);

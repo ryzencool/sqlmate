@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import {Tab, Tabs} from "@mui/material";
 import mustache from "mustache/mustache.mjs";
 import {CopyBlock, nord} from "react-code-blocks";
+import {useGetTemplateFile} from "../store/rq/reactQueryStore";
 
 function TabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -45,14 +46,8 @@ export default function DBCode() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    //
-    // const tableColumns = useListTable({tableId: activeTableId}, {
-    //     enabled: !!activeTableId && activeTableId > 0
-    // })
-    // const codeTemplate = useGetCodeTemplate({templateId: 1}, {
-    //     enabled: false
-    // })
 
+    const templateFiles = useGetTemplateFile({templateId: 1})
 
     const dbml = useQuery(["dbml"], () => dbmlTable({
         tableId: activeTableId
@@ -66,20 +61,6 @@ export default function DBCode() {
 
     const database = Parser.parse(dbml.data.data.data, 'dbml')
     console.log("数据库", database.schemas[0].tables[0])
-    const tpl = `class {{name}} {
-    {{#fields}}
-    public {{type.type_name}} {{name}};
-    {{/fields}}
-}`
-
-    let transferJs = `(a) => {
-        return {
-            ...a,
-            name: a.name.toUpperCase()
-        }
-    }`
-    let funcBody = eval(transferJs)
-    const func = new Function('obj', `return {...obj, name: lll}`)
     return (<div className={"w-full"}>
         <Box
             sx={{flexGrow: 1, bgcolor: 'background.paper', display: 'flex'}}
@@ -98,19 +79,35 @@ export default function DBCode() {
 
             </Tabs>
             <TabPanel value={value} index={0}>
-                <CopyBlock
-                    text={mustache.render(tpl, funcBody(database.schemas[0].tables[0]))}
-                    theme={nord}
-                    language={"java"} ka
-                    customStyle={
-                        {
-                            paddingRight: "40px",
-                            paddingTop: "10px",
-                            width: "100%",
-                            borderRadius: "10px",
-                        }
+                {!templateFiles.isLoading && templateFiles.data.data?.data.map(
+                    file => {
+                        console.log("当前的文件是：", file)
+                        let funcBody = eval(file.transferFn)
+
+                        let tpl = file.content
+                        let fileName = file.fileName
+                        let newObj = funcBody(database.schemas[0].tables[0])
+                        return (<div key={file.id}>
+                                <div>{mustache.render(fileName, newObj)}</div>
+                            <CopyBlock
+                                text={mustache.render(tpl, newObj)}
+                                theme={nord}
+                                language={"java"} ka
+                                customStyle={
+                                    {
+                                        paddingRight: "40px",
+                                        paddingTop: "10px",
+                                        width: "100%",
+                                        borderRadius: "10px",
+                                    }
+                                }
+                            />
+                            </div>
+                        )
                     }
-                />
+                )}
+
+
 
             </TabPanel>
             <TabPanel value={value} index={1}>

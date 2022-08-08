@@ -16,7 +16,8 @@ export default function DashMenu() {
             </ListItem>
             <ListItem disablePadding>
                 <ListItemButton>
-                    <ListItemText primary="公共模版"/>
+                    <ListItemText primary="公共模版"
+                    onClick={() => navigate("/header/dashboard/publicProject")}/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>

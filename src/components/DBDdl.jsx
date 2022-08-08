@@ -1,15 +1,19 @@
 import React, {useState} from 'react'
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {CopyBlock, nord} from "react-code-blocks";
 import CodeMirror from "@uiw/react-codemirror";
 import {sql} from "@codemirror/lang-sql";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {addProjectSql} from "../api/dbApi";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {addProjectSql, queryOptimizer} from "../api/dbApi";
 import {useListProjectSql} from "../store/rq/reactQueryStore";
 
 
 export default function DBDdl() {
     const [open, setOpen] = React.useState(false);
+
+
+
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -23,6 +27,12 @@ export default function DBDdl() {
 
     const queryClient = useQueryClient()
 
+    const [optimizerParam, setOptimizerParam] = useState({})
+
+    const optimizer = useQuery(["queryOptimizer", optimizerParam],
+        () => queryOptimizer(queryOptimizer), {
+        enabled: !!optimizerParam
+    })
 
     const projectSqls = useListProjectSql({projectId: 1})
 
@@ -62,6 +72,16 @@ export default function DBDdl() {
                                             }
                                         }
                                     />
+                                    <div>
+                                        <Button onClick={ () => {
+                                            // setOptimizerParam({
+                                            //     sql: it.sql
+                                            // })
+                                            handleClickOptOpen("paper")
+                                        }
+
+                                        }>调优</Button>
+                                    </div>
                                 </div>
                             )
                         })
@@ -104,5 +124,6 @@ export default function DBDdl() {
                 }}>提交</Button>
             </DialogActions>
         </Dialog>
+
     </div>
 }
