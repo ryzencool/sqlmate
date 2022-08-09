@@ -1,11 +1,11 @@
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {
     getCodeTemplate,
-    getProject, getTemplateFile, listCodeTemplate,
+    getProject, getTable, getTemplateFile, listCodeTemplate,
     listProjectSql,
     listTableColumns,
     listTableIndexes,
-    listTables, listTemplateFile, pagePublicProject, queryOptimizer
+    listTables, listTeam, listTeamUser, listTemplateFile, pagePublicProject, queryOptimizer
 } from "../../api/dbApi";
 
 export const useGetProject = (params) => useQuery(['project'], () => getProject(params))
@@ -52,4 +52,17 @@ export const useGetTemplateFile = (params = {}, options = {}) => {
 
 export const usePagePublicProject = (params = {}, options= {}) => {
     return useQuery(["publicProjects"], () => pagePublicProject(params), options)
+}
+
+export const useGetTable = (params = {}, options = {}) => {
+    return useQuery(['table'], () => getTable(params), options)
+}
+
+
+export const useListTeam = (params = {}, options= {}) => {
+    return useQuery(['teams'], () => listTeam(params), options)
+}
+
+export const useListTeamUser = (search, options= {}) => {
+    return useQuery(['teamUsers', search], () => listTeamUser(search), options)
 }

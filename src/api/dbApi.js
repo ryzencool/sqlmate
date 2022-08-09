@@ -2,6 +2,7 @@ import {get, post} from '../utils/httpUtil'
 
 const getProjectUrl = "/project/get"
 const listTablesUrl = "/table/list"
+const getTableUrl = "/table/get"
 const listTableColumnsUrl = "/tableColumn/list"
 const delTableColumnUrl = "/tableColumn/del"
 const addTableColumnUrl = "/tableColumn/add"
@@ -18,6 +19,12 @@ const addTemplateFileUrl = "/codeTemplate/file/add"
 const listTemplateFileUrl = "/codeTemplate/file/list"
 const getTemplateFileUrl = "/codeTemplate/file/get"
 const pagePublicProjectUrl = "/project/public/page"
+const updateTableUrl = "/table/update"
+const createTableUrl = "/table/create"
+const listTeamUrl = "/team/list"
+const createTeamUrl = "/team/add"
+const listTeamUserUrl = "/team/member/list"
+
 export function getProject(params) {
     return get(getProjectUrl, params)
 }
@@ -95,4 +102,29 @@ export function getTemplateFile(params) {
 
 export function pagePublicProject(params) {
     return get(pagePublicProjectUrl, params)
+}
+
+export function updateTable(params) {
+    return post(updateTableUrl, params)
+}
+
+export function getTable(params) {
+    return get(getTableUrl, params)
+}
+
+export function createTable(params) {
+    return post(createTableUrl, params)
+}
+
+export function listTeam(params) {
+    return get(listTeamUrl, params)
+}
+
+export function createTeam(params) {
+    return post(createTeamUrl, params)
+}
+
+
+export function listTeamUser(params) {
+    return get(listTeamUserUrl, params)
 }

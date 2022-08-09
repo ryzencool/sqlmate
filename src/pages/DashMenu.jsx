@@ -30,6 +30,21 @@ export default function DashMenu() {
                     <ListItemText primary="代码模版设置"/>
                 </ListItemButton>
             </ListItem>
+            <ListItem disablePadding>
+                <ListItemButton onClick={() => navigate("/header/dashboard/dmlSettings")}>
+                    <ListItemText primary="自定义DML模版"/>
+                </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+                <ListItemButton onClick={() => navigate("/header/dashboard/teams")}>
+                    <ListItemText primary="我的团队"/>
+                </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+                <ListItemButton onClick={() => navigate("/header/dashboard/fieldSettings")}>
+                    <ListItemText primary="自定义默认字段"/>
+                </ListItemButton>
+            </ListItem>
         </List>
     </div>
 }

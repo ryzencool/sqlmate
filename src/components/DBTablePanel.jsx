@@ -4,26 +4,41 @@ import {useActiveTable, useTableListState} from "../store/tableListStore";
 import {JSCustomNodeModel} from "./graph/JSCustomNodeModel";
 import Engine from "../store/nodeStore";
 import {useSqlState} from "../store/sqlStore";
-import {useQuery} from "@tanstack/react-query";
-import {listTables} from "../api/dbApi";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {createTable} from "../api/dbApi";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import {List, ListItem, ListItemButton, ListItemText} from "@mui/material";
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText,
+    TextField
+} from "@mui/material";
+import {useListTables} from "../store/rq/reactQueryStore";
 
 // 左侧的数据表栏目
 function DBTablePanel(props) {
 
+    const queryClient = useQueryClient()
+
+    const {projectId} = props
 
     const engine = Engine;
     const tableList = useTableListState(state => state.tableList);
     const db = useSqlState(state => state.db);
     const setTableList = useTableListState(state => state.setTableList);
     const setActiveTable = useActiveTable(state => state.setTable)
+    const [tableCreateOpen, setTableCreateOpen] = useState(false)
+    const [tableCreateData, setTableCreateData] = useState({})
 
-    const tables = useQuery(['tables'], () => {
-        return listTables({
-            projectId: 1
-        })
+
+    const tables = useListTables({
+        projectId: projectId
     })
 
 
@@ -35,6 +50,14 @@ function DBTablePanel(props) {
         tableName: "",
         columns: [],
     });
+
+    const tableCreate = useMutation(createTable, {
+        onSuccess: (data, variables, context) => {
+            console.log("请求成功", data, variables, context)
+            queryClient.invalidateQueries(['projectTables'])
+        }
+    })
+
     const [isTableEditing, setIsTableEditing] = useState(false);
 
     const addTable = () => {
@@ -135,22 +158,6 @@ function DBTablePanel(props) {
 
     const closeEditing = () => setIsTableEditing(false);
 
-    const addRow = () => {
-        let row = {
-            ...editingTable,
-            columns: [
-                ...editingTable.columns,
-                {
-                    columnId: editingTable.columns.length + 1,
-                    columnName: "",
-                    columnType: "",
-                },
-            ],
-        };
-        console.log("添加之后", row);
-        setEditingTable(row);
-    };
-
 
     return (
         <div className={"flex flex-col justify-center items-center gap-2 h-full"}>
@@ -158,89 +165,85 @@ function DBTablePanel(props) {
                 <div className={"w-11/12"}>
                     <input placeholder={"搜索"} className={"p-1 rounded-md w-full border-neutral-300 border-2"}/>
                 </div>
-                <Button className={"bg-black text-white w-11/12"} >创建表</Button>
+                <Button className={"bg-black text-white w-11/12"} onClick={() => {
+                    setTableCreateOpen(true)
+                }}>
+                    创建表
+                </Button>
+                <Dialog open={tableCreateOpen} onClose={() => setTableCreateOpen(false)}>
+                    <DialogTitle>创建表</DialogTitle>
+                    <DialogContent>
+
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="表名"
+                            fullWidth
+                            variant="standard"
+                            onChange={e => {
+                                setTableCreateData({
+                                    ...tableCreateData,
+                                    name: e.target.value
+                                })
+                            }}
+                        />
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="note"
+                            label="备注"
+                            fullWidth
+                            variant="standard"
+                            onChange={e => {
+                                setTableCreateData({
+                                    ...tableCreateData,
+                                    note: e.target.value
+                                })
+                            }}
+                        />
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="comment"
+                            label="注释"
+                            fullWidth
+                            variant="standard"
+                            onChange={e => {
+                                setTableCreateData({
+                                    ...tableCreateData,
+                                    comment: e.target.value
+                                })
+                            }}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setTableCreateOpen(false)}>取消</Button>
+                        <Button onClick={() => {
+                            tableCreate.mutate({
+                                projectId: projectId,
+                                ...tableCreateData
+                            })
+                            setTableCreateOpen(false)
+                        }}>确定</Button>
+                    </DialogActions>
+                </Dialog>
             </div>
-            <Box className={"w-full flex flex-col justify-center items-center text-sm overflow-auto h-5/6 pt-10"} >
+            <Box className={"w-full flex flex-col justify-center items-center text-sm overflow-auto h-5/6 pt-10"}>
                 <List>
 
                     {!tables.isLoading &&
                         tables.data.data.data.map(it => (
-                            <ListItem disablePadding onClick={() => setActiveTable(it)}>
+                            <ListItem key={it.id} disablePadding onClick={() => {
+                                console.log("点击了", it)
+                                setActiveTable(it)
+                            }}>
                                 <ListItemButton>
                                     <ListItemText primary={it.name}/>
                                 </ListItemButton>
                             </ListItem>))
 
                     }
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Cuu"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem><ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemText primary="Inbox"/>
-                    </ListItemButton>
-                </ListItem><ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemText primary="Inbox"/>
-                    </ListItemButton>
-                </ListItem><ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemText primary="Inbox"/>
-                    </ListItemButton>
-                </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary="Inbox"/>
-                        </ListItemButton>
-                    </ListItem>
-
-
                 </List>
 
             </Box>

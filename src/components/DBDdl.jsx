@@ -57,7 +57,7 @@ export default function DBDdl() {
                     {
                         !projectSqls.isLoading && projectSqls.data.data.data.map(it => {
                             return (
-                                <div>
+                                <div key={it.id}>
                                     <div>{it.name}</div>
                                     <CopyBlock
                                         text={it.sql}

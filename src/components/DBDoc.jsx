@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from 'react'
 import {useActiveTable} from "../store/tableListStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {addColumn, delColumn} from "../api/dbApi";
+import {addColumn, delColumn, updateTable} from "../api/dbApi";
 
 import {
     Button,
@@ -15,8 +15,8 @@ import {
     TextField
 } from "@mui/material";
 import ZTable from "./ZTable";
-import {useGetProject, useListColumn, useListIndex} from "../store/rq/reactQueryStore";
-
+import {useGetProject, useGetTable, useListColumn, useListIndex} from "../store/rq/reactQueryStore";
+import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 
 function IndeterminateCheckbox({
                                    indeterminate = false,
@@ -48,19 +48,32 @@ function DBDoc(props) {
 
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editColumn, setEditColumn] = useState({})
-
+    const [tableEditOpen, setTableEditOpen] = useState(false)
+    const [tableEditData, setTableEditData] = useState({})
 
     const project = useGetProject({projectId: 1})
+
+
+    const table = useGetTable({tableId: activeTableId}, {
+        enabled: !!activeTableId && activeTableId > 0
+    })
+
 
     const tableColumns = useListColumn({tableId: activeTable.id}, {
         enabled: !!activeTableId && activeTableId > 0
 
     })
 
+
     const tableIndexes = useListIndex({tableId: activeTable.id}, {
         enabled: !!activeTableId && activeTableId > 0
     })
 
+    const tableUpdate = useMutation(updateTable, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['table'])
+        }
+    })
 
     const indexes = useMemo(() => {
         return [
@@ -102,7 +115,7 @@ function DBDoc(props) {
                 header: () => <div>字段</div>,
                 cell: (info) => (
                     <div>
-                        {info.row.original.columns.map(it => <div>
+                        {info.row.original.columns.map(it => <div key={it}>
                             {it}
                         </div>)}
                     </div>
@@ -192,15 +205,68 @@ function DBDoc(props) {
     return (
         <div className={"flex flex-col gap-5  "}>
             <div className={"flex-col flex gap-2"}>
-                <div className={"text-base font-bold"}>
-                    {activeTable.name}
+                <div className={"flex flex-row gap-1"}>
+                    <div className={"text-base font-bold"}>
+                        {!table.isLoading && table.data.data.data.name}
+                    </div>
+                    <div onClick={() => {
+                        setTableEditOpen(true)
+                    }}>
+                        <DriveFileRenameOutlineOutlinedIcon/>
+                        <Dialog open={tableEditOpen} onClose={() => setTableEditOpen(false)}>
+                            <DialogTitle>修改表信息</DialogTitle>
+                            <DialogContent>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="name"
+                                    label="表名"
+                                    fullWidth
+                                    variant="standard"
+                                    onChange={e => setTableEditData(
+                                        {
+                                            ...tableEditData,
+                                            name: e.target.value
+                                        }
+                                    )}
+                                />
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="note"
+                                    label="备注"
+                                    fullWidth
+                                    variant="standard"
+                                    onChange={e => setTableEditData(
+                                        {
+                                            ...tableEditData,
+                                            note: e.target.value
+                                        }
+                                    )}
+                                />
+
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={() => setTableEditOpen(false)}>取消</Button>
+                                <Button onClick={() => {
+                                    tableUpdate.mutate(
+                                        {
+                                            id: activeTable.id,
+                                            ...tableEditData
+                                        }
+                                    )
+                                    setTableEditOpen(false)
+                                }}>确定</Button>
+                            </DialogActions>
+                        </Dialog>
+                    </div>
                 </div>
                 <div className={"flex flex-col gap-1"}>
                     <div className={"grid grid-cols-2 grid-rows-2 gap-2 text-sm w-1/6"}>
                         <div className={"text-gray-500 col-span-1 text-sm"}>创建人</div>
                         <div className={"col-span-1"}>zmy</div>
                         <div className={"text-gray-500"}>备注</div>
-                        <div>用户表</div>
+                        <div>{!table.isLoading && table.data.data.data.note}</div>
                     </div>
                 </div>
             </div>
@@ -224,8 +290,10 @@ function DBDoc(props) {
                             编辑
                         </button>
                     </div>
-                    {!tableColumns.isLoading && <ZTable data={tableColumns?.data?.data?.data} columns={columns}
-                                                        getSelectedRow={it => getSelectedRow(it)}/>}
+                    <div>
+                        {!tableColumns.isLoading && <ZTable data={tableColumns?.data?.data?.data} columns={columns}
+                                                            getSelectedRow={it => getSelectedRow(it)}/>}
+                    </div>
                 </div>
 
                 <div>

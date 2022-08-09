@@ -8,7 +8,7 @@ export default function Dashboard() {
         <div className="col-span-1  ">
             <DashMenu/>
         </div>
-        <div className="col-span-4 bg-yellow-200">
+        <div className="col-span-4 ">
             <Outlet/>
         </div>
     </div>)

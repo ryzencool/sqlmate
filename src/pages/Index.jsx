@@ -1,26 +1,22 @@
 import React from 'react'
 import {useNavigate} from 'react-router'
+import {Link} from "react-router-dom";
 
 export default function Index() {
 
     const navigate = useNavigate()
 
     return <div className={'w-screen h-screen bg-indigo-50'}>
-        <div className={'w-screen h-16  grid grid-cols-6 items-center'}>
-            <div className={"col-span-1 font-bold ml-12 text-xl"}>
+        <div className={'w-screen h-20  grid grid-cols-6 items-center'}>
+            <div className={"col-span-1 font-bold ml-12 text-2xl"}>
                 SQLMate
             </div>
             <div className={"col-span-4 flex flex-row gap-6 items-center text-indigo-700"}>
                 <div>特性</div>
-                <div onClick={() => {
-                    navigate("/header/home")
-                }
-                }>项目
+                <div>
+                    <Link to={"/header/home"}>项目</Link>
                 </div>
-                <div onClick={() => {
-                    navigate("/header/dashboard")
-                }
-                }>控制台</div>
+                <div><Link to={"/header/dashboard"}>控制台</Link></div>
                 <div>模版</div>
                 <div>更新</div>
             </div>
@@ -31,9 +27,9 @@ export default function Index() {
         </div>
 
         <div className={"w-screen flex flex-col items-center"}>
-            <div className={"font-bold text-5xl tracking-widest mt-24"}>SQL界的瑞士军刀</div>
+            <div className={"font-bold text-5xl tracking-widest mt-28"}>SQL界的瑞士军刀</div>
             <div
-                className={"tracking-widest  text-indigo-800 mt-4 text-lg w-1/2 text-center leading-9"}>
+                className={"tracking-widest  text-indigo-800 mt-8 text-lg w-1/2 text-center leading-9"}>
                 基于SQL创建文档，生成ER图和代码，管理SQL语句，调优SQL，与团队协作，一切尽在SQLMate。
             </div>
             <div className={"mt-16 flex flex-row gap-8"}>
