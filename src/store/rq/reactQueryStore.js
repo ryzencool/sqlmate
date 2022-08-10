@@ -1,5 +1,6 @@
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {
+    dbmlTable,
     getCodeTemplate,
     getProject, getTable, getTemplateFile, listCodeTemplate,
     listProjectSql,
@@ -11,12 +12,12 @@ import {
 export const useGetProject = (params) => useQuery(['project'], () => getProject(params))
 
 
-export const useListColumn = (params = {}, options = {}) => {
-    return useQuery(["tableColumns"], () => listTableColumns(params), options)
+export const useListColumn = (search, options = {}) => {
+    return useQuery(["tableColumns", search], () => listTableColumns(search), options)
 }
 
-export const useListIndex = (params = {}, options = {}) => {
-    return useQuery(['tableIndexes'], () => listTableIndexes(params), options)
+export const useListIndex = (search , options = {}) => {
+    return useQuery(['tableIndexes', search], () => listTableIndexes(search), options)
 }
 
 export const useGetCodeTemplate = (params = {}, options = {}) => {
@@ -27,8 +28,10 @@ export const useListProjectSql = (params = {}, options = {}) => {
     return useQuery(['projectSqls'], () => listProjectSql(params), options)
 }
 
-export const useListTables = (params = {}, options = {}) => {
-    return useQuery(["projectTables"], () => listTables(params), options)
+export const useListTables = (search, options = {}) => {
+    return useQuery(["projectTables", search], () => listTables(search), {
+        enabled: !!search
+    })
 }
 
 
@@ -54,8 +57,8 @@ export const usePagePublicProject = (params = {}, options= {}) => {
     return useQuery(["publicProjects"], () => pagePublicProject(params), options)
 }
 
-export const useGetTable = (params = {}, options = {}) => {
-    return useQuery(['table'], () => getTable(params), options)
+export const useGetTable = (search , options = {}) => {
+    return useQuery(['table', search], () => getTable(search), options)
 }
 
 
@@ -66,3 +69,9 @@ export const useListTeam = (params = {}, options= {}) => {
 export const useListTeamUser = (search, options= {}) => {
     return useQuery(['teamUsers', search], () => listTeamUser(search), options)
 }
+
+
+export const useGetDBML = (search, options={}) => {
+    return useQuery(['dbml', search], () => dbmlTable(search), options)
+}
+

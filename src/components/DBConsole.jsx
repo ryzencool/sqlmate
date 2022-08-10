@@ -2,19 +2,21 @@ import React, {useEffect, useState} from 'react'
 import {Button} from "@mui/material";
 import CodeMirror from "@uiw/react-codemirror";
 import {sql} from "@codemirror/lang-sql";
-import {useSqlState} from "../store/sqlStore";
+import {dbAtom, useSqlState} from "../store/sqlStore";
 import './style.css'
 import {createColumnHelper,} from '@tanstack/react-table'
-import {useActiveTable} from "../store/tableListStore";
+import {activeTableAtom, useActiveTable} from "../store/tableListStore";
 import ZTable from "./ZTable";
 import {useListColumn, useListTables} from "../store/rq/reactQueryStore";
+import {useAtom} from "jotai";
 
 export default function DBConsole() {
 
-    const db = useSqlState(s => s.db)
+    // const db = useSqlState(s => s.db)
+    const [db, setDb] = useAtom(dbAtom)
     const [selectedCode, setSelectedCode] = useState("")
-    const activeTable = useActiveTable(s => s.table)
-    const activeTableId = activeTable.id
+    // const activeTable = useActiveTable(s => s.table)
+    const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [resultHeader, setResultHeader] = useState([])
 
     const [sqlResult, setSqlResult] = useState("")
@@ -27,7 +29,7 @@ export default function DBConsole() {
     const tableColumns = useListColumn({
         tableId: activeTable.id
     }, {
-        enabled: !!activeTableId && activeTableId > 0
+        enabled: !!activeTable.id
     })
 
     const tables =useListTables({projectId: 1})

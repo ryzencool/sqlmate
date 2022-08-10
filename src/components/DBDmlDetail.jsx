@@ -1,20 +1,20 @@
 import React from 'react'
-import {useActiveTable} from "../store/tableListStore";
+import {activeTableAtom, useActiveTable} from "../store/tableListStore";
 import {useQuery} from "@tanstack/react-query";
 import {dbmlTable} from "../api/dbApi";
 import {exporter, Parser} from "@dbml/core";
 import {CopyBlock, nord} from "react-code-blocks";
+import {useAtom} from "jotai";
+import {useGetDBML} from "../store/rq/reactQueryStore";
 
 
 export default function DBDmlDetail(props) {
 
-    const activeTable = useActiveTable(s => s.table)
-    const activeTableId = activeTable.id
-    const dbml = useQuery(["dbml"], () => dbmlTable({
-        tableId: activeTableId
-    }), {
-        enabled: !!activeTableId && activeTableId > 0
-    })
+    // const activeTable = useActiveTable(s => s.table)
+    // const activeTableId = activeTable.id
+    const activeTable = useAtom(activeTableAtom)
+
+    const dbml = useGetDBML({tableId: activeTable.id}, {enabled: !!activeTable.id})
 
     if (dbml.isLoading) {
         return <div>isLoading</div>

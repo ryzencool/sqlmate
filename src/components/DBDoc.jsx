@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react'
-import {useActiveTable} from "../store/tableListStore";
+import {activeTableAtom, useActiveTable} from "../store/tableListStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addColumn, delColumn, updateTable} from "../api/dbApi";
 
@@ -17,6 +17,7 @@ import {
 import ZTable from "./ZTable";
 import {useGetProject, useGetTable, useListColumn, useListIndex} from "../store/rq/reactQueryStore";
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import {useAtom} from "jotai";
 
 function IndeterminateCheckbox({
                                    indeterminate = false,
@@ -43,8 +44,9 @@ function IndeterminateCheckbox({
 
 function DBDoc(props) {
     const queryClient = useQueryClient()
-    const activeTable = useActiveTable(s => s.table)
-    const activeTableId = activeTable.id;
+    // const activeTable = useActiveTable(s => s.table)
+    // const activeTableId = activeTable.id;
+    const activeTable = useAtom(activeTableAtom)
 
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editColumn, setEditColumn] = useState({})
@@ -54,19 +56,19 @@ function DBDoc(props) {
     const project = useGetProject({projectId: 1})
 
 
-    const table = useGetTable({tableId: activeTableId}, {
-        enabled: !!activeTableId && activeTableId > 0
+    const table = useGetTable({tableId: activeTable.id}, {
+        enabled: !!activeTable.id
     })
 
 
     const tableColumns = useListColumn({tableId: activeTable.id}, {
-        enabled: !!activeTableId && activeTableId > 0
+        enabled: !!activeTable.id
 
     })
 
 
     const tableIndexes = useListIndex({tableId: activeTable.id}, {
-        enabled: !!activeTableId && activeTableId > 0
+        enabled: !!activeTable.id
     })
 
     const tableUpdate = useMutation(updateTable, {

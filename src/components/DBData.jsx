@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from 'react'
-import {useActiveTable} from "../store/tableListStore";
+import {activeTableAtom, useActiveTable} from "../store/tableListStore";
 import {Button} from "@mui/material";
 import ZTable from "./ZTable";
-import {useSqlState} from "../store/sqlStore";
+import {dbAtom, useSqlState} from "../store/sqlStore";
 import {createColumnHelper} from "@tanstack/react-table";
+import {useAtom} from "jotai";
 
 // 展现相关联的表的数据
 export default function DBData() {
 
 
-    const activeTable = useActiveTable(s => s.table)
-    const db = useSqlState(s => s.db)
+    // const activeTable = useActiveTable(s => s.table)
+    const [activeTable, setActiveTable] = useAtom(activeTableAtom)
+    const [db, setDb] = useAtom(dbAtom)
     const [header, setHeader] = useState([])
 
     const [data, setData] = useState([])

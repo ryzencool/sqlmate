@@ -1,14 +1,15 @@
 import React from 'react'
 import {useQuery} from "@tanstack/react-query";
 import {dbmlTable} from "../api/dbApi";
-import {useActiveTable} from "../store/tableListStore";
+import {activeTableAtom, useActiveTable} from "../store/tableListStore";
 import {Parser} from '@dbml/core'
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {Tab, Tabs} from "@mui/material";
 import mustache from "mustache/mustache.mjs";
 import {CopyBlock, nord} from "react-code-blocks";
-import {useGetTemplateFile} from "../store/rq/reactQueryStore";
+import {useGetDBML, useGetTemplateFile} from "../store/rq/reactQueryStore";
+import {useAtom} from "jotai";
 
 function TabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -39,8 +40,8 @@ function a11yProps(index) {
 
 export default function DBCode() {
 
-    const activeTable = useActiveTable(s => s.table)
-    const activeTableId = activeTable.id
+    // const activeTable = useActiveTable(s => s.table)
+    const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -49,11 +50,9 @@ export default function DBCode() {
 
     const templateFiles = useGetTemplateFile({templateId: 1})
 
-    const dbml = useQuery(["dbml"], () => dbmlTable({
-        tableId: activeTableId
-    }), {
-        enabled: !!activeTableId && activeTableId > 0
-    })
+
+
+    const dbml = useGetDBML({tableId: activeTable.id}, {enabled: !!activeTable.id})
 
     if (dbml.isLoading) {
         return <div>isLoading</div>

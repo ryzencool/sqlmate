@@ -1,4 +1,5 @@
 import create from "zustand";
+import {atom, useAtom} from "jotai";
 
 export const useSqlState = create((set, get) => ({
   db: {},
@@ -6,3 +7,6 @@ export const useSqlState = create((set, get) => ({
     return set((state) => ({ db: db }));
   },
 }));
+
+
+export const dbAtom = atom({})

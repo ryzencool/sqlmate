@@ -9,13 +9,9 @@ export default function Home() {
     const {id} = useParams()
 
     return (
-        <div className="grid grid-cols-5 h-full">
-            <div className="col-span-1  ">
+        <div className="grid grid-cols-[300px_1fr] h-full">
                 <DBTablePanel projectId={id}/>
-            </div>
-            <div className="col-span-4 ">
                 <DBFeatTabs projectId={id}/>
-            </div>
         </div>
     )
 }

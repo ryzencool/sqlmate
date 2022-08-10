@@ -3,16 +3,15 @@ import ReactDOM from "react-dom/client";
 import {BrowserRouter} from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import {QueryClient} from "@tanstack/react-query";
-
-
-const queryClient = new QueryClient()
+import { Provider} from 'jotai'
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
-        <BrowserRouter>
-            <App/>
-        </BrowserRouter>
+        <Provider>
+            <BrowserRouter>
+                <App/>
+            </BrowserRouter>
+        </Provider>
     </React.StrictMode>
 );

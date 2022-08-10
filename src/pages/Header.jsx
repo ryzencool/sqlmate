@@ -4,11 +4,10 @@ import {Outlet} from "react-router";
 import Button from "@mui/material/Button";
 
 function Header() {
-    const db = useSqlState((s) => s.db);
 
     return (
         <div className="h-screen w-screen">
-            <div className="h-16  w-screen flex flex-row items-center justify-between">
+            <div className="h-20  w-screen flex flex-row items-center justify-between">
                 <div className={'text-2xl font-bold text-xl pl-10'}>
                     SQLMate
                 </div>

@@ -7,8 +7,8 @@ export default function Index() {
     const navigate = useNavigate()
 
     return <div className={'w-screen h-screen bg-indigo-50'}>
-        <div className={'w-screen h-20  grid grid-cols-6 items-center'}>
-            <div className={"col-span-1 font-bold ml-12 text-2xl"}>
+        <div className={'w-screen h-28  grid grid-cols-6 items-center'}>
+            <div className={"col-span-1 font-bold ml-20 text-3xl"}>
                 SQLMate
             </div>
             <div className={"col-span-4 flex flex-row gap-6 items-center text-indigo-700"}>
@@ -26,16 +26,16 @@ export default function Index() {
             </div>
         </div>
 
-        <div className={"w-screen flex flex-col items-center"}>
+        <div className={"w-screen flex flex-col items-center "}>
             <div className={"font-bold text-5xl tracking-widest mt-28"}>SQL界的瑞士军刀</div>
             <div
-                className={"tracking-widest  text-indigo-800 mt-8 text-lg w-1/2 text-center leading-9"}>
+                className={"tracking-widest  text-indigo-800 mt-16 text-xl  text-center leading-9 w-2/5"}>
                 基于SQL创建文档，生成ER图和代码，管理SQL语句，调优SQL，与团队协作，一切尽在SQLMate。
             </div>
-            <div className={"mt-16 flex flex-row gap-8"}>
-                <div className={"bg-white  rounded-md pl-4 pr-4 pt-2 pb-2 text-lg w-36 text-center"}>了解一下</div>
+            <div className={"mt-16 flex flex-row gap-20"}>
+                <div className={"bg-white  rounded-md pl-4 pr-4 pt-3 pb-3 text-lg w-52 text-center"}>了解一下</div>
                 <div
-                    className={"bg-indigo-800 text-white rounded-md pl-4 pr-4 pt-2 pb-2 text-lg w-36 text-center"}>开始吧
+                    className={"bg-indigo-800 text-white rounded-md pl-4 pr-4 pt-3 pb-3 text-lg w-52 text-center"}>开始吧
                 </div>
             </div>
         </div>

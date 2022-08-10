@@ -1,4 +1,5 @@
 import create from "zustand";
+import {atom} from "jotai";
 
 export const useTableListState = create((set, get) => ({
     tableList: [],
@@ -17,3 +18,6 @@ export const useActiveTable = create((set, get) => (
     }
 ))
 
+export const activeTableAtom  = atom({
+
+})

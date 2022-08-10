@@ -2,7 +2,7 @@ import React from 'react'
 
 
 export default function ZInput() {
-    return <div>
-        <input/>
+    return <div className={"relative "}>
+        <input />
     </div>
 }
