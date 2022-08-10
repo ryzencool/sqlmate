@@ -3,8 +3,6 @@ import CodeMirror from "@uiw/react-codemirror";
 import {javascript} from "@codemirror/lang-javascript";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {addTemplateFile, dbmlTable} from "../api/dbApi";
-import {Parser} from "@dbml/core";
-import {useSqlState} from "../store/sqlStore";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {

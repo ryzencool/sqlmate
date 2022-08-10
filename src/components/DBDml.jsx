@@ -1,8 +1,4 @@
 import React from 'react'
-import {useActiveTable} from "../store/tableListStore";
-import {useQuery} from "@tanstack/react-query";
-import {dbmlTable} from "../api/dbApi";
-import {exporter, Parser} from '@dbml/core'
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Tab, Tabs} from "@mui/material";

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {activeTableAtom, useActiveTable} from "../store/tableListStore";
+import {activeTableAtom} from "../store/tableListStore";
 import {Button} from "@mui/material";
 import ZTable from "./ZTable";
 import {dbAtom, useSqlState} from "../store/sqlStore";
@@ -10,7 +10,6 @@ import {useAtom} from "jotai";
 export default function DBData() {
 
 
-    // const activeTable = useActiveTable(s => s.table)
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [db, setDb] = useAtom(dbAtom)
     const [header, setHeader] = useState([])

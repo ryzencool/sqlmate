@@ -31,10 +31,8 @@ function DBTablePanel(props) {
 
     const engine = Engine;
     const tableList = useTableListState(state => state.tableList);
-    // const db = useSqlState(state => state.db);
     const [db, setDb] = useAtom(dbAtom)
     const setTableList = useTableListState(state => state.setTableList);
-    // const setActiveTable = useActiveTable(state => state.setTable)
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [tableCreateOpen, setTableCreateOpen] = useState(false)
     const [tableCreateData, setTableCreateData] = useState({})

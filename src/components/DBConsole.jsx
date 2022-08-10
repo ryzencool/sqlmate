@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {Button} from "@mui/material";
 import CodeMirror from "@uiw/react-codemirror";
 import {sql} from "@codemirror/lang-sql";
-import {dbAtom, useSqlState} from "../store/sqlStore";
+import {dbAtom} from "../store/sqlStore";
 import './style.css'
 import {createColumnHelper,} from '@tanstack/react-table'
 import {activeTableAtom, useActiveTable} from "../store/tableListStore";
@@ -12,10 +12,8 @@ import {useAtom} from "jotai";
 
 export default function DBConsole() {
 
-    // const db = useSqlState(s => s.db)
     const [db, setDb] = useAtom(dbAtom)
     const [selectedCode, setSelectedCode] = useState("")
-    // const activeTable = useActiveTable(s => s.table)
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [resultHeader, setResultHeader] = useState([])
 

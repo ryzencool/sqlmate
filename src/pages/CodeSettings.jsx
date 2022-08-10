@@ -5,7 +5,6 @@ import {useListCodeTemplate} from "../store/rq/reactQueryStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addCodeTemplate} from "../api/dbApi";
 import {useNavigate} from "react-router";
-import {createSearchParams} from "react-router-dom";
 
 
 export default function CodeSettings() {

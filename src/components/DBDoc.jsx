@@ -44,9 +44,8 @@ function IndeterminateCheckbox({
 
 function DBDoc(props) {
     const queryClient = useQueryClient()
-    // const activeTable = useActiveTable(s => s.table)
-    // const activeTableId = activeTable.id;
-    const activeTable = useAtom(activeTableAtom)
+
+    const [activeTable, setActiveTable] = useAtom(activeTableAtom)
 
     const [dialogOpen, setDialogOpen] = useState(false)
     const [editColumn, setEditColumn] = useState({})
@@ -54,7 +53,6 @@ function DBDoc(props) {
     const [tableEditData, setTableEditData] = useState({})
 
     const project = useGetProject({projectId: 1})
-
 
     const table = useGetTable({tableId: activeTable.id}, {
         enabled: !!activeTable.id
@@ -65,7 +63,6 @@ function DBDoc(props) {
         enabled: !!activeTable.id
 
     })
-
 
     const tableIndexes = useListIndex({tableId: activeTable.id}, {
         enabled: !!activeTable.id

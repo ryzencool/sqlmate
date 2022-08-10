@@ -1,7 +1,5 @@
 import React from 'react'
-import {useQuery} from "@tanstack/react-query";
-import {dbmlTable} from "../api/dbApi";
-import {activeTableAtom, useActiveTable} from "../store/tableListStore";
+import {activeTableAtom} from "../store/tableListStore";
 import {Parser} from '@dbml/core'
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -40,7 +38,6 @@ function a11yProps(index) {
 
 export default function DBCode() {
 
-    // const activeTable = useActiveTable(s => s.table)
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [value, setValue] = React.useState(0);
 
