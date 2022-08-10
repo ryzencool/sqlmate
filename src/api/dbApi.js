@@ -24,6 +24,8 @@ const createTableUrl = "/table/create"
 const listTeamUrl = "/team/list"
 const createTeamUrl = "/team/add"
 const listTeamUserUrl = "/team/member/list"
+const listFavoriteProjectUrl = "/favoriteProject/list"
+const listProjectUrl = "/project/list"
 
 export function getProject(params) {
     return get(getProjectUrl, params)
@@ -127,4 +129,14 @@ export function createTeam(params) {
 
 export function listTeamUser(params) {
     return get(listTeamUserUrl, params)
+}
+
+export function listFavoriteProject(params) {
+    return get(listFavoriteProjectUrl, params)
+}
+
+
+export function listProject(params) {
+    return get(listProjectUrl, params)
+
 }

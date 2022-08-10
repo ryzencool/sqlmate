@@ -21,9 +21,14 @@ export default function DBDmlDetail(props) {
 
     return <div className={"w-full"}>
         <div className={"w-full flex flex-col gap-5"}>
-            <CodeComponent title={"建表语句"} code={exporter.export(dbml.data.data.data, "mysql")}/>
-            <CodeComponent title={"建表语句"} code={exporter.export(dbml.data.data.data, "mysql")}/>
-            <CodeComponent title={"建表语句"} code={exporter.export(dbml.data.data.data, "mysql")}/>
+            <CodeComponent title={"创建表"} code={exporter.export(dbml.data.data.data, "mysql")}/>
+            <CodeComponent title={"删除表"} code={exporter.export(dbml.data.data.data, "mysql")}/>
+            <CodeComponent title={"修改表"} code={exporter.export(dbml.data.data.data, "mysql")}/>
+            <CodeComponent title={"添加索引"} code={exporter.export(dbml.data.data.data, "mysql")}/>
+            <CodeComponent title={"删除索引"} code={exporter.export(dbml.data.data.data, "mysql")}/>
+            <CodeComponent title={"添加字段"} code={exporter.export(dbml.data.data.data, "mysql")}/>
+            <CodeComponent title={"修改字段"} code={exporter.export(dbml.data.data.data, "mysql")}/>
+            <CodeComponent title={"删除字段"} code={exporter.export(dbml.data.data.data, "mysql")}/>
         </div>
 
     </div>

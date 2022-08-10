@@ -10,18 +10,18 @@ export default function DashMenu() {
     return <div className={"flex flex-col items-center p-2 overflow-auto h-[calc(100vh-5rem)]"}>
         <List>
             <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemText primary="我的收藏"/>
+                <ListItemButton onClick={() => navigate("/header/dashboard/favorite")}>
+                    <ListItemText primary="我的收藏" />
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={() => navigate("/header/dashboard/publicProject")}>
                     <ListItemText primary="公共模版"
-                    onClick={() => navigate("/header/dashboard/publicProject")}/>
+                    />
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={() => navigate("/header/dashboard/myProject")}>
                     <ListItemText primary="我的项目"/>
                 </ListItemButton>
             </ListItem>

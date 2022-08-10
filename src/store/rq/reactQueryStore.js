@@ -2,7 +2,7 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {
     dbmlTable,
     getCodeTemplate,
-    getProject, getTable, getTemplateFile, listCodeTemplate,
+    getProject, getTable, getTemplateFile, listCodeTemplate, listFavoriteProject, listProject,
     listProjectSql,
     listTableColumns,
     listTableIndexes,
@@ -54,6 +54,7 @@ export const useGetTemplateFile = (params = {}, options = {}) => {
 }
 
 export const usePagePublicProject = (params = {}, options= {}) => {
+    console.log("进入公共版")
     return useQuery(["publicProjects"], () => pagePublicProject(params), options)
 }
 
@@ -75,3 +76,11 @@ export const useGetDBML = (search, options={}) => {
     return useQuery(['dbml', search], () => dbmlTable(search), options)
 }
 
+
+export const useListFavoriteProject = (search , options = {}) => {
+    return useQuery(['favoriteProjects', search], () => listFavoriteProject(search), options)
+}
+
+export const useListProject = (search, options = {}) => {
+    return useQuery(['projects', search], () => listProject(search), options)
+}

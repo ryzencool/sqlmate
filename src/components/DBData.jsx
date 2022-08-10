@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {activeTableAtom} from "../store/tableListStore";
 import {Button} from "@mui/material";
 import ZTable from "./ZTable";
-import {dbAtom, useSqlState} from "../store/sqlStore";
+import {dbAtom} from "../store/sqlStore";
 import {createColumnHelper} from "@tanstack/react-table";
 import {useAtom} from "jotai";
 

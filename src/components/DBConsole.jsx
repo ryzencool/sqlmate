@@ -5,7 +5,7 @@ import {sql} from "@codemirror/lang-sql";
 import {dbAtom} from "../store/sqlStore";
 import './style.css'
 import {createColumnHelper,} from '@tanstack/react-table'
-import {activeTableAtom, useActiveTable} from "../store/tableListStore";
+import {activeTableAtom} from "../store/tableListStore";
 import ZTable from "./ZTable";
 import {useListColumn, useListTables} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";

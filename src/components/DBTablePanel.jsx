@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {DefaultPortModel,} from "@projectstorm/react-diagrams";
-import {activeTableAtom, useActiveTable, useTableListState} from "../store/tableListStore";
+import {activeTableAtom, tableListAtom} from "../store/tableListStore";
 import {JSCustomNodeModel} from "./graph/JSCustomNodeModel";
 import Engine from "../store/nodeStore";
-import {dbAtom, useSqlState} from "../store/sqlStore";
+import {dbAtom} from "../store/sqlStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createTable} from "../api/dbApi";
 import Button from "@mui/material/Button";
@@ -30,9 +30,10 @@ function DBTablePanel(props) {
     const {projectId} = props
 
     const engine = Engine;
-    const tableList = useTableListState(state => state.tableList);
+    // const tableList = useTableListState(state => state.tableList);
     const [db, setDb] = useAtom(dbAtom)
-    const setTableList = useTableListState(state => state.setTableList);
+    // const setTableList = useTableListState(state => state.setTableList);
+    const [tableList, setTableList] = useAtom(tableListAtom)
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [tableCreateOpen, setTableCreateOpen] = useState(false)
     const [tableCreateData, setTableCreateData] = useState({})
