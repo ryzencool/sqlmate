@@ -2,7 +2,7 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {
     dbmlTable,
     getCodeTemplate,
-    getProject, getTable, getTemplateFile, listCodeTemplate, listFavoriteProject, listProject,
+    getProject, getTable, getTemplateFile, getUserInfo, listCodeTemplate, listFavoriteProject, listProject,
     listProjectSql,
     listTableColumns,
     listTableIndexes,
@@ -77,10 +77,14 @@ export const useGetDBML = (search, options={}) => {
 }
 
 
-export const useListFavoriteProject = (search , options = {}) => {
-    return useQuery(['favoriteProjects', search], () => listFavoriteProject(search), options)
+export const useListFavoriteProject = (search, auth, options = {}) => {
+    return useQuery(['favoriteProjects', search], () => listFavoriteProject(search, auth), options)
 }
 
 export const useListProject = (search, options = {}) => {
     return useQuery(['projects', search], () => listProject(search), options)
+}
+
+export const useGetUserInfo = (search, options = {}, auth) => {
+    return useQuery(['userInfo', search], () => getUserInfo(search, auth), options)
 }

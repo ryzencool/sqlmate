@@ -26,6 +26,10 @@ const createTeamUrl = "/team/add"
 const listTeamUserUrl = "/team/member/list"
 const listFavoriteProjectUrl = "/favoriteProject/list"
 const listProjectUrl = "/project/list"
+const signUpUserUrl = "/auth/signUp"
+const signInUserUrl = "/auth/signIn"
+const getUserInfoUrl = "/auth/userInfo"
+
 
 export function getProject(params) {
     return get(getProjectUrl, params)
@@ -131,8 +135,9 @@ export function listTeamUser(params) {
     return get(listTeamUserUrl, params)
 }
 
-export function listFavoriteProject(params) {
-    return get(listFavoriteProjectUrl, params)
+export function listFavoriteProject(params, auth) {
+
+    return get(listFavoriteProjectUrl, params, auth)
 }
 
 
@@ -140,3 +145,16 @@ export function listProject(params) {
     return get(listProjectUrl, params)
 
 }
+
+export function signUpUser(params) {
+    return post(signUpUserUrl, params)
+}
+
+export function signInUser(params) {
+    return post(signInUserUrl, params)
+}
+
+export function getUserInfo(params, auth) {
+    return get(getUserInfoUrl, params, auth)
+}
+

@@ -2,20 +2,21 @@ import React, {useState} from 'react'
 import {Card, Chip} from "@mui/material";
 import {useListFavoriteProject} from "../store/rq/reactQueryStore";
 import {useNavigate} from "react-router";
+import {useAtom} from "jotai";
+import {tokenAtomWithPersistence} from "../store/persistStore";
 
 export default function FavoriteProject() {
 
     const navigate = useNavigate()
+    const [auth, setAuth] = useAtom(tokenAtomWithPersistence);
 
     const [favoriteProjectSearch, setFavoriteProjectSearch] = useState({
         userId: 1
     })
-    const favoriteProjects = useListFavoriteProject(favoriteProjectSearch)
+    const favoriteProjects = useListFavoriteProject(favoriteProjectSearch, JSON.parse(auth))
+
     console.log("喜欢的项目", favoriteProjects.data)
     return (<div>
-
-
-
         <div className={"flex flex-row gap-8"}>
             {
                 !favoriteProjects.isLoading && favoriteProjects.data.data.data.map(
