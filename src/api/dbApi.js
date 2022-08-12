@@ -1,6 +1,7 @@
 import {get, post} from '../utils/httpUtil'
 
 const getProjectUrl = "/project/get"
+const addProjectUrl = "/project/add"
 const listTablesUrl = "/table/list"
 const getTableUrl = "/table/get"
 const listTableColumnsUrl = "/tableColumn/list"
@@ -14,7 +15,8 @@ const addProjectSqlUrl = "/projectSql/add"
 const queryOptimizerUrl = "/queryOptimizer"
 const listCodeTemplateUrl = "/codeTemplate/list"
 const addCodeTemplateUrl = "/codeTemplate/add"
-const updateCodeTemplateFileUrl = "/codeTemplate/update"
+const updateCodeTemplateUrl = "/codeTemplate/update"
+const updateCodeTemplateFileUrl = "/codeTemplate/file/update"
 const addTemplateFileUrl = "/codeTemplate/file/add"
 const listTemplateFileUrl = "/codeTemplate/file/list"
 const getTemplateFileUrl = "/codeTemplate/file/get"
@@ -29,7 +31,7 @@ const listProjectUrl = "/project/list"
 const signUpUserUrl = "/auth/signUp"
 const signInUserUrl = "/auth/signIn"
 const getUserInfoUrl = "/auth/userInfo"
-
+const listMyProjectUrl = "/project/my/list"
 
 export function getProject(params) {
     return get(getProjectUrl, params)
@@ -135,9 +137,9 @@ export function listTeamUser(params) {
     return get(listTeamUserUrl, params)
 }
 
-export function listFavoriteProject(params, auth) {
+export function listFavoriteProject(params) {
 
-    return get(listFavoriteProjectUrl, params, auth)
+    return get(listFavoriteProjectUrl, params)
 }
 
 
@@ -154,7 +156,18 @@ export function signInUser(params) {
     return post(signInUserUrl, params)
 }
 
-export function getUserInfo(params, auth) {
-    return get(getUserInfoUrl, params, auth)
+export function getUserInfo(params) {
+    return get(getUserInfoUrl, params)
 }
 
+export function addProject(params) {
+    return post(addProjectUrl, params)
+}
+export function listMyProject(params) {
+    return get(listMyProjectUrl, params)
+}
+
+export function updateCodeTemplate(params) {
+    return post(updateCodeTemplateUrl, params)
+
+}

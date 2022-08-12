@@ -10,6 +10,7 @@
   "dependencies": {
     "@codemirror/autocomplete": "^6.1.0",
     "@codemirror/lang-javascript": "^6.0.2",
+    "@codemirror/lang-json": "^6.0.0",
     "@codemirror/lang-sql": "^6.0.0",
     "@dbml/core": "^2.4.2",
     "@emotion/react": "^11.9.3",
@@ -24,6 +25,7 @@
     "@uiw/react-textarea-code-editor": "^2.0.3",
     "axios": "^0.27.2",
     "butterfly-dag": "^4.3.6",
+    "change-case": "^4.1.2",
     "closest": "^0.0.1",
     "clsx": "^1.2.1",
     "dagre": "^0.8.5",

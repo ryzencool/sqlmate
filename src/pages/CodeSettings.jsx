@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
 import Button from "@mui/material/Button";
-import {Card, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
+import {Card, Chip, Dialog, DialogActions, DialogContent, SpeedDial, SpeedDialIcon, TextField} from "@mui/material";
 import {useListCodeTemplate} from "../store/rq/reactQueryStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addCodeTemplate} from "../api/dbApi";
 import {useNavigate} from "react-router";
+import Box from "@mui/material/Box";
 
 
 export default function CodeSettings() {
@@ -12,6 +13,7 @@ export default function CodeSettings() {
     const navigate = useNavigate()
 
     const [open, setOpen] = React.useState(false);
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -37,18 +39,28 @@ export default function CodeSettings() {
 
     const [templateSubmit, setTemplateSubmit] = useState({})
 
-    return <div className={"p-4"}>
-        <Button onClick={() => handleClickOpen()}>创建模版</Button>
-        <div className={"flex flex-col gap-3"}>
+    return <div>
+        <div className={"flex flex-row gap-10"}>
             {
-               !codeTemplates.isLoading && codeTemplates.data.data?.data.map(
+                !codeTemplates.isLoading && codeTemplates.data.data?.data.map(
                     it => (
-                        <Card className={"p-2"} onClick={() => navigate(`/header/dashboard/codeTemplateEdit/${it.id}`) }>
-                            <div>
-                                {it.name}
+                        <Card key={it.id} className={"w-60 h-96"}
+                              >
+                            <div className={'h-4/5 bg-purple-300'}>
+
                             </div>
-                            <div>
-                                {it.lang}
+                            <div className={'p-2 flex flex-col justify-between'}>
+                                <div className={"font-bold text-xl"}>
+                                    {it.name}
+                                </div>
+                                <div className={'flex flex-row justify-between items-center'}>
+                                    <div>
+                                        <Chip label={it.lang} size={"small"}/>
+                                    </div>
+                                    <div>
+                                        <Button onClick={() => navigate(`/header/dashboard/codeTemplateEdit/${it.id}`)}>点击进入</Button>
+                                    </div>
+                                </div>
                             </div>
                         </Card>
                     )
@@ -56,7 +68,6 @@ export default function CodeSettings() {
             }
         </div>
         <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>新增模版</DialogTitle>
             <DialogContent>
                 <TextField
                     autoFocus
@@ -101,7 +112,15 @@ export default function CodeSettings() {
                 }>确定</Button>
             </DialogActions>
         </Dialog>
+        <Box sx={{height: 320, transform: 'translateZ(0px)', flexGrow: 1}}>
+            <SpeedDial onClick={() => setOpen(true)}
+                       ariaLabel="SpeedDial basic example"
+                       sx={{position: 'absolute', bottom: 16, right: 32}}
+                       icon={<SpeedDialIcon/>}
+            >
 
+            </SpeedDial>
+        </Box>
 
     </div>
 }

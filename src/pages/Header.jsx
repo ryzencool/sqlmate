@@ -16,7 +16,7 @@ function Header() {
     return (
         <div className="h-screen w-screen">
             <div className="h-20  flex-col flex ">
-                <div className={"h-16  w-screen flex flex-row items-center  justify-between bg-violet-200"}>
+                <div className={"h-16  w-screen flex flex-row items-center border-b justify-between"}>
                 <div className={'text-2xl font-bold text-xl pl-10'}>
                     SQLMate
                 </div>

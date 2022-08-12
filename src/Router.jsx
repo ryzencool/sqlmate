@@ -20,6 +20,13 @@ import SignUpIn from "./pages/SignUpIn";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 
+// const routerMap = [
+//     {
+//         path: '/index',
+//         element: <Index/>,
+//     }
+// ]
+
 const CustomRouter = () => {
     return (
         <Routes>

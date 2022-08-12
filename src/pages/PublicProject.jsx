@@ -1,7 +1,8 @@
 import React from 'react'
-import {Card} from "@mui/material";
+import {Card, Chip} from "@mui/material";
 import {usePagePublicProject} from "../store/rq/reactQueryStore";
 import {useNavigate} from "react-router";
+import Button from "@mui/material/Button";
 
 
 export default function PublicProject() {
@@ -15,20 +16,34 @@ export default function PublicProject() {
     const navigate = useNavigate()
 
     return <div>
-        <div className={"p-4 flex flex-row gap-4"}>
+
+        <div>
+        </div>
+        <div className={" flex flex-row gap-10"}>
             {
                 !publicProjects.isLoading && publicProjects.data.data.data.dataList.map(
                     it => (
-                        <Card className={"w-56 h-80"} key={it.id} onClick={() => navigate(`/header/home/${it.id}`)}>
-                            <div className={"h-2/4 bg-purple-300"} >
+                        <Card className={"w-64 h-96"} key={it.id} >
+                            <div className={"h-1/2 bg-purple-300"} >
 
                             </div>
-                            <div className={"p-2"}>
-                                <div className={" font-bold text-lg"}>
+                            <div className={"p-3 flex-col flex justify-between h-1/2"}>
+                                <div className={" font-bold text-xl"}>
                                     {it.name}
                                 </div>
-                                <div>
+                                <div className={'mt-2'}>
                                     {it.note}
+                                </div>
+                                <div className={'mt-4 flex flex-row flex-wrap gap-1'}>
+                                    <Chip label={'Mysql'} size={'small'} />
+                                    <Chip label={'Mysql'} size={'small'} />
+                                    <Chip label={'Mysql'} size={'small'} />
+                                    <Chip label={'Mysql'} size={'small'} />
+                                    <Chip label={'Mysql'} size={'small'} />
+                                </div>
+                                <div className={'mt-2 w-full flex-row flex justify-end'}>
+                                    <Button>收藏</Button>
+                                    <Button onClick={() => navigate(`/header/home/${it.id}`)}>进入项目</Button>
                                 </div>
                             </div>
                         </Card>

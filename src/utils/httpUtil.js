@@ -14,7 +14,7 @@ const onError = error => {
 }
 
 
-export function get(url, params = {}, auth) {
+export  function  get(url, params = {}) {
 
     let value = "";
     let ps = Object.entries(params).map(it => {
@@ -23,9 +23,11 @@ export function get(url, params = {}, auth) {
     if (ps.length > 0) {
         value = "?" + ps.join("&")
     }
+    let auth = localStorage.getItem("authToken")
     console.log("get", auth)
     let headers = {}
     if (!!auth) {
+        let obj = JSON.parse(auth)
         let time = currentTime()
         // if (auth.expiredTime / 1000 < time ) {
         //     toast("当前登录凭证已到期，请重新登录", {
@@ -34,7 +36,7 @@ export function get(url, params = {}, auth) {
         //     })
         //     return;
         // }
-        headers = {"Authorization": "bearer " + auth.token};
+        headers = {"Authorization": "bearer " + obj.token};
     }
 
     return axios({
@@ -47,6 +49,26 @@ export function get(url, params = {}, auth) {
 
 
 export function post(url, params = {}, header = {}) {
+    let auth = localStorage.getItem("authToken")
+    console.log("get", auth)
+    let headers = {}
+    if (!!auth) {
+        let obj = JSON.parse(auth)
+        let time = currentTime()
+        // if (auth.expiredTime / 1000 < time ) {
+        //     toast("当前登录凭证已到期，请重新登录", {
+        //         position: 'top',
+        //         duration: 5000
+        //     })
+        //     return;
+        // }
+        headers = {"Authorization": "bearer " + obj.token};
+    }
 
-    return axios.post(`${host}${url}`, params).then(onSuccess).catch(onError)
+    return axios({
+        method: 'post',
+        url: `${host}${url}`,
+        headers: headers,
+        data: params
+    }).then(onSuccess).catch(onError)
 }

@@ -2,11 +2,23 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {
     dbmlTable,
     getCodeTemplate,
-    getProject, getTable, getTemplateFile, getUserInfo, listCodeTemplate, listFavoriteProject, listProject,
+    getProject,
+    getTable,
+    getTemplateFile,
+    getUserInfo,
+    listCodeTemplate,
+    listFavoriteProject,
+    listMyProject,
+    listProject,
     listProjectSql,
     listTableColumns,
     listTableIndexes,
-    listTables, listTeam, listTeamUser, listTemplateFile, pagePublicProject, queryOptimizer
+    listTables,
+    listTeam,
+    listTeamUser,
+    listTemplateFile,
+    pagePublicProject,
+    queryOptimizer
 } from "../../api/dbApi";
 
 export const useGetProject = (params) => useQuery(['project'], () => getProject(params))
@@ -21,7 +33,7 @@ export const useListIndex = (search , options = {}) => {
 }
 
 export const useGetCodeTemplate = (params = {}, options = {}) => {
-    return useQuery(['codeTemplate'], () => getCodeTemplate(params), options);
+    return useQuery(['codeTemplate', params], () => getCodeTemplate(params), options);
 }
 
 export const useListProjectSql = (params = {}, options = {}) => {
@@ -77,14 +89,18 @@ export const useGetDBML = (search, options={}) => {
 }
 
 
-export const useListFavoriteProject = (search, auth, options = {}) => {
-    return useQuery(['favoriteProjects', search], () => listFavoriteProject(search, auth), options)
+export const useListFavoriteProject = (search, options = {}) => {
+    return useQuery(['favoriteProjects', search], () => listFavoriteProject(search), options)
 }
 
 export const useListProject = (search, options = {}) => {
     return useQuery(['projects', search], () => listProject(search), options)
 }
 
+export const useListMyProject = (search, options= {}) => {
+    return useQuery(['myProjects', search], () => listMyProject(search), options)
+}
+
 export const useGetUserInfo = (search, options = {}, auth) => {
-    return useQuery(['userInfo', search], () => getUserInfo(search, auth), options)
+    return useQuery(['userInfo', search], () => getUserInfo(search), options)
 }
