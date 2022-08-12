@@ -1,5 +1,5 @@
 import React from "react";
-import {Outlet} from "react-router";
+import {Outlet, useNavigate} from "react-router";
 import Button from "@mui/material/Button";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import {useAtom} from "jotai";
@@ -13,11 +13,13 @@ function Header() {
         setDbType(e.target.value)
     }
 
+
+    const navigate = useNavigate()
     return (
         <div className="h-screen w-screen">
             <div className="h-20  flex-col flex ">
                 <div className={"h-16  w-screen flex flex-row items-center border-b justify-between"}>
-                <div className={'text-2xl font-bold text-xl pl-10'}>
+                <div className={'text-2xl font-bold text-xl pl-10'} onClick={() => navigate("/index")}>
                     SQLMate
                 </div>
                 <div>

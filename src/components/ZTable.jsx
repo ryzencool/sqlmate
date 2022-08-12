@@ -6,10 +6,14 @@ import {
     getPaginationRowModel,
     useReactTable
 } from "@tanstack/react-table";
+import Button from "@mui/material/Button";
 
 export default function ZTable(props) {
 
+
     const {data, columns, getSelectedRow} = props;
+
+    console.log("传入的表格数据", data)
 
     const [rowSelection, setRowSelection] = React.useState({});
 

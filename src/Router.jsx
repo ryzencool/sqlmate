@@ -19,6 +19,8 @@ import MyProject from "./pages/MyProject";
 import SignUpIn from "./pages/SignUpIn";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
+import TeamDetail from "./pages/TeamDetail";
+import DefaultColumnTemplate from "./pages/DefaultColumnTemplate";
 
 // const routerMap = [
 //     {
@@ -48,7 +50,11 @@ const CustomRouter = () => {
                     <Route path={"favorite"} element={<FavoriteProject/>}/>
                     <Route path={"myProject"} element={<MyProject/>}/>
                     <Route path={"teams"} element={<Team/>}/>
+                    <Route path={"teamDetail/:id"} element={<TeamDetail/>}/>
+                    <Route path={"defaultColumnTemplate"} element={<DefaultColumnTemplate/>}/>
+
                     <Route path={"fieldSettings"} element={<FieldSettings/>}/>
+
                 </Route>
             </Route>
             <Route path="/about" element={<About/>}/>

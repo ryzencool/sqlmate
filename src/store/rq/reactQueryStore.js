@@ -101,6 +101,5 @@ export const useListMyProject = (search, options= {}) => {
     return useQuery(['myProjects', search], () => listMyProject(search), options)
 }
 
-export const useGetUserInfo = (search, options = {}, auth) => {
-    return useQuery(['userInfo', search], () => getUserInfo(search), options)
-}
+
+

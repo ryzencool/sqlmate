@@ -67,7 +67,7 @@ export default function DashMenu() {
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
-                <ListItemButton onClick={() => navigate("/header/dashboard/fieldSettings")}>
+                <ListItemButton onClick={() => navigate("/header/dashboard/defaultColumnTemplate")}>
                     <ListItemIcon className={'ml-3'}>
                         <FavoriteBorderIcon />
                     </ListItemIcon>

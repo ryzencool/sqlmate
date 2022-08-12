@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {activeTableAtom} from "../store/tableListStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addColumn, delColumn, updateTable} from "../api/dbApi";
@@ -18,6 +18,7 @@ import ZTable from "./ZTable";
 import {useGetProject, useGetTable, useListColumn, useListIndex} from "../store/rq/reactQueryStore";
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import {useAtom} from "jotai";
+import TableViewOutlinedIcon from '@mui/icons-material/TableViewOutlined';
 
 function IndeterminateCheckbox({
                                    indeterminate = false,
@@ -63,6 +64,15 @@ function DBDoc(props) {
         enabled: !!activeTable.id
 
     })
+
+    const [tableColumnsState, setTableColumnsState] = useState([])
+    useEffect(() => {
+        if (tableColumns.status === "success") {
+            setTableColumnsState(tableColumns.data.data.data)
+        }
+    }, [
+        tableColumnsState, tableColumns
+    ])
 
     const tableIndexes = useListIndex({tableId: activeTable.id}, {
         enabled: !!activeTable.id
@@ -205,8 +215,11 @@ function DBDoc(props) {
         <div className={"flex flex-col gap-5  "}>
             <div className={"flex-col flex gap-2"}>
                 <div className={"flex flex-row gap-1"}>
-                    <div className={"text-base font-bold"}>
-                        {!table.isLoading && table.data.data.data.name}
+                    <div className={'flex flex-row gap-2'}>
+                        <TableViewOutlinedIcon/>
+                        <div className={"text-base font-bold"}>
+                            {!table.isLoading && table.data.data.data.name}
+                        </div>
                     </div>
                     <div onClick={() => {
                         setTableEditOpen(true)
@@ -262,6 +275,12 @@ function DBDoc(props) {
                 </div>
             </div>
             <div className={"flex flex-col gap-1"}>
+                <div className={"grid grid-rows-2"}>
+                    <div className={"grid grid-cols-2"}>
+
+                    </div>
+                </div>
+
                 <div className={"grid grid-cols-2 grid-rows-2 gap-2 text-sm w-1/6"}>
                     <div className={"text-gray-500 col-span-1 text-sm"}>创建人</div>
                     <div className={"col-span-1"}>zmy</div>
@@ -269,147 +288,151 @@ function DBDoc(props) {
                     <div>{!table.isLoading && table.data.data.data.note}</div>
                 </div>
             </div>
-    <div>
-        <div className={"text-base font-bold"}>字段</div>
-        <div className={"mt-3"}>
-            <div className={"flex flex-row items-center gap-2"}>
-                <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
-                    setDialogOpen(true)
-                }}>
-                    新增
-                </button>
-                <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
-                    setDialogOpen(true)
-                }}>
-                    删除
-                </button>
-                <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
-                    setDialogOpen(true)
-                }}>
-                    编辑
-                </button>
-            </div>
             <div>
-                {!tableColumns.isLoading && <ZTable data={tableColumns?.data?.data?.data} columns={columns}
-                                                    getSelectedRow={it => getSelectedRow(it)}/>}
+                <div className={"text-base font-bold"}>字段</div>
+                <div className={"mt-3"}>
+                    <div className={"flex flex-row items-center gap-2"}>
+                        <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
+                            setDialogOpen(true)
+                        }}>
+                            新增
+                        </button>
+                        <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
+                            setDialogOpen(true)
+                        }}>
+                            删除
+                        </button>
+                        <button className={"text-sm pt-1 pb-1 pl-2 pr-2 bg-blue-200 rounded-md"} onClick={() => {
+                            setDialogOpen(true)
+                        }}>
+                            编辑
+                        </button>
+                    </div>
+                    <div>
+                        { <ZTable data={tableColumnsState} columns={columns}
+                                                            getSelectedRow={it => getSelectedRow(it)}/>}
+                        <Button onClick={() => {
+                            setTableColumnsState([])
+
+                        }}>点击</Button>
+                    </div>
+                </div>
+
+                <div>
+                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                        <DialogTitle>新增</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="字段名称"
+                                fullWidth
+                                variant="standard"
+                                onChange={(evt) => {
+                                    setEditColumn({
+                                        ...editColumn,
+                                        name: evt.target.value
+                                    })
+                                }}
+                            />
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="type"
+                                label="类型"
+                                fullWidth
+                                variant="standard"
+                                onChange={(evt) => {
+                                    setEditColumn({
+                                        ...editColumn,
+                                        type: evt.target.value
+                                    })
+                                }}
+                            />
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="note"
+                                label="备注"
+                                fullWidth
+                                variant="standard"
+                                onChange={(evt) => {
+                                    setEditColumn({
+                                        ...editColumn,
+                                        note: evt.target.value
+                                    })
+                                }}
+                            />
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="note"
+                                label="默认值"
+                                fullWidth
+                                variant="standard"
+                                onChange={(evt) => {
+                                    setEditColumn({
+                                        ...editColumn,
+                                        note: evt.target.value
+                                    })
+                                }}
+                            />
+                            <FormControlLabel
+                                value="top"
+                                control={<Checkbox/>}
+                                label="主键"
+                                labelPlacement="end"
+                            />
+                            <FormControlLabel
+                                value="top"
+                                control={<Checkbox/>}
+                                label="可空"
+                                labelPlacement="end"
+                            />
+                            <FormControlLabel
+                                value="top"
+                                control={<Checkbox/>}
+                                label="自增"
+                                labelPlacement="end"
+                            />
+                            <FormControlLabel
+                                value="top"
+                                control={<Checkbox/>}
+                                label="唯一"
+                                labelPlacement="end"
+                            />
+
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setDialogOpen(false)}>取消</Button>
+                            <Button onClick={() => {
+                                addCol.mutate({
+                                    ...editColumn,
+                                    tableId: activeTable.id
+                                })
+                                setDialogOpen(false)
+                            }}>确定</Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
+
+            </div>
+
+            <div>
+                <div className={"text-base font-bold"}>索引</div>
+                <div>
+                    {!tableIndexes.isLoading && <ZTable data={tableIndexes?.data?.data?.data} columns={indexes}
+                                                        getSelectedRow={it => getSelectedRow(it)}/>}
+                </div>
+            </div>
+
+
+            <div>
+                <div className={"text-base font-bold"}>关系图</div>
             </div>
         </div>
-
-        <div>
-            <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                <DialogTitle>新增</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="字段名称"
-                        fullWidth
-                        variant="standard"
-                        onChange={(evt) => {
-                            setEditColumn({
-                                ...editColumn,
-                                name: evt.target.value
-                            })
-                        }}
-                    />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="type"
-                        label="类型"
-                        fullWidth
-                        variant="standard"
-                        onChange={(evt) => {
-                            setEditColumn({
-                                ...editColumn,
-                                type: evt.target.value
-                            })
-                        }}
-                    />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="note"
-                        label="备注"
-                        fullWidth
-                        variant="standard"
-                        onChange={(evt) => {
-                            setEditColumn({
-                                ...editColumn,
-                                note: evt.target.value
-                            })
-                        }}
-                    />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="note"
-                        label="默认值"
-                        fullWidth
-                        variant="standard"
-                        onChange={(evt) => {
-                            setEditColumn({
-                                ...editColumn,
-                                note: evt.target.value
-                            })
-                        }}
-                    />
-                    <FormControlLabel
-                        value="top"
-                        control={<Checkbox/>}
-                        label="主键"
-                        labelPlacement="end"
-                    />
-                    <FormControlLabel
-                        value="top"
-                        control={<Checkbox/>}
-                        label="可空"
-                        labelPlacement="end"
-                    />
-                    <FormControlLabel
-                        value="top"
-                        control={<Checkbox/>}
-                        label="自增"
-                        labelPlacement="end"
-                    />
-                    <FormControlLabel
-                        value="top"
-                        control={<Checkbox/>}
-                        label="唯一"
-                        labelPlacement="end"
-                    />
-
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setDialogOpen(false)}>取消</Button>
-                    <Button onClick={() => {
-                        addCol.mutate({
-                            ...editColumn,
-                            tableId: activeTable.id
-                        })
-                        setDialogOpen(false)
-                    }}>确定</Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-
-    </div>
-
-    <div>
-        <div className={"text-base font-bold"}>索引</div>
-        <div>
-            {!tableIndexes.isLoading && <ZTable data={tableIndexes?.data?.data?.data} columns={indexes}
-                                                getSelectedRow={it => getSelectedRow(it)}/>}
-        </div>
-    </div>
-
-
-    <div>
-        <div className={"text-base font-bold"}>关系图</div>
-    </div>
-</div>
-)
+    )
 }
 
 export default DBDoc
