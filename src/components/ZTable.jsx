@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {
     flexRender,
     getCoreRowModel,
@@ -11,30 +11,36 @@ import Button from "@mui/material/Button";
 export default function ZTable(props) {
 
 
-    const {data, columns, getSelectedRow} = props;
+    const {data, columns, getSelectedRows} = props;
 
     console.log("传入的表格数据", data)
 
     const [rowSelection, setRowSelection] = React.useState({});
 
-    const setSelectRow = (params)=> {
-        setRowSelection(params)
-        getSelectedRow(params)
-    }
+    useEffect(() => {
+        getSelectedRows(rowSelection)
+    }, [rowSelection])
 
+
+    const getRowId = (row, relativeIndex, parent) => {
+        return row.id;
+    };
 
     const table  = useReactTable({
         data: data,
         columns: columns,
+        getRowId,
         state: {
             rowSelection
         },
-        onRowSelectionChange: setSelectRow,
+        onRowSelectionChange: setRowSelection,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         debugTable: true
     })
+
+
 
     return (
         <div>
@@ -63,9 +69,34 @@ export default function ZTable(props) {
                         ))}
                     </tr>
                 })}
+
                 </tbody>
             </table>
         </div>
     )
 
+}
+
+
+export function IndeterminateCheckbox({
+                                   indeterminate = false,
+                                   className = "",
+                                   ...rest
+                               }) {
+    const ref = React.useRef(null);
+
+    React.useEffect(() => {
+        if (typeof indeterminate === "boolean") {
+            ref.current.indeterminate = !rest.checked && indeterminate;
+        }
+    }, [ref, indeterminate]);
+
+    return (
+        <input
+            type="checkbox"
+            ref={ref}
+            className={className + " cursor-pointer"}
+            {...rest}
+        />
+    );
 }

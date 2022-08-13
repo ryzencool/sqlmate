@@ -6,6 +6,7 @@ const listTablesUrl = "/table/list"
 const getTableUrl = "/table/get"
 const listTableColumnsUrl = "/tableColumn/list"
 const delTableColumnUrl = "/tableColumn/del"
+const deleteColumnsUrl = "/tableColumn/multi/del"
 const addTableColumnUrl = "/tableColumn/add"
 const dbmlTableUrl = "/dbml/table"
 const listTableIndexesUrl = "/tableIndex/list"
@@ -32,7 +33,10 @@ const signUpUserUrl = "/auth/signUp"
 const signInUserUrl = "/auth/signIn"
 const getUserInfoUrl = "/auth/userInfo"
 const listMyProjectUrl = "/project/my/list"
-
+const updateColumnUrl = "/tableColumn/update"
+const addIndexUrl = "/tableIndex/add"
+const updateIndexUrl = "/tableIndex/update"
+const deleteIndexUrl = "/tableIndex/delete"
 export function getProject(params) {
     return get(getProjectUrl, params)
 }
@@ -170,4 +174,25 @@ export function listMyProject(params) {
 export function updateCodeTemplate(params) {
     return post(updateCodeTemplateUrl, params)
 
+}
+
+
+export function deleteColumns(params) {
+    return post(deleteColumnsUrl, params)
+}
+
+export function updateColumn(params) {
+    return post(updateColumnUrl, params)
+}
+
+export function addIndex(params) {
+    return post(addIndexUrl, params)
+}
+
+export function updateIndex(params) {
+    return post(updateIndexUrl, params)
+}
+
+export function deleteIndex(params) {
+    return post(deleteIndexUrl, params)
 }
