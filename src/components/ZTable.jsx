@@ -6,27 +6,27 @@ import {
     getPaginationRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import Button from "@mui/material/Button";
 
-export default function ZTable(props) {
+export default function ZTable({data, columns, getSelectedRows, canSelect}) {
 
 
-    const {data, columns, getSelectedRows} = props;
 
-    console.log("传入的表格数据", data)
 
     const [rowSelection, setRowSelection] = React.useState({});
 
-    useEffect(() => {
-        getSelectedRows(rowSelection)
-    }, [rowSelection])
+    if (canSelect) {
+        useEffect(() => {
+            getSelectedRows(rowSelection)
+        }, [rowSelection])
 
+    }
 
     const getRowId = (row, relativeIndex, parent) => {
+        console.log("获取rowID", row)
         return row.id;
     };
 
-    const table  = useReactTable({
+    const table = useReactTable({
         data: data,
         columns: columns,
         getRowId,
@@ -39,7 +39,6 @@ export default function ZTable(props) {
         getPaginationRowModel: getPaginationRowModel(),
         debugTable: true
     })
-
 
 
     return (
@@ -79,10 +78,10 @@ export default function ZTable(props) {
 
 
 export function IndeterminateCheckbox({
-                                   indeterminate = false,
-                                   className = "",
-                                   ...rest
-                               }) {
+                                          indeterminate = false,
+                                          className = "",
+                                          ...rest
+                                      }) {
     const ref = React.useRef(null);
 
     React.useEffect(() => {

@@ -33,8 +33,10 @@ function DBDoc(props) {
 
     // dialog
     const [columnEditOpen, setColumnEditOpen] = useState(false)
+    const [columnAddOpen, setColumnAddOpen] = useState(false)
     const [tableEditOpen, setTableEditOpen] = useState(false)
     const [indexEditOpen, setIndexEditOpen] = useState(false)
+    const [indexAddOpen, setIndexAddOpen] = useState(false)
     const [indexDeleteOpen, setIndexDeleteOpen] = useState(false)
     const [deleteColumnOpen, setDeleteColumnOpen] = useState(false)
 
@@ -70,7 +72,6 @@ function DBDoc(props) {
             queryClient.invalidateQueries(['tableColumns'])
         }
     })
-
     const tableUpdateMutation = useMutation(updateTable, {
         onSuccess: () => {
             queryClient.invalidateQueries(['table'])
@@ -83,7 +84,7 @@ function DBDoc(props) {
     })
     const indexUpdateMutation = useMutation(updateIndex, {
         onSuccess: () => {
-            queryClient.invalidateQueries("tableIndexs")
+            queryClient.invalidateQueries("tableIndexes")
         }
     })
     const indexDeleteMutation = useMutation(deleteIndex, {
@@ -104,7 +105,7 @@ function DBDoc(props) {
 
     return (
         <div className={"flex flex-col gap-5  "}>
-            <div className={"flex-col flex gap-2"}>
+            <div className={"flex-col flex gap-20"}>
                 <div className={"flex flex-row gap-1"}>
                     <div className={'flex flex-row gap-2'}>
                         <TableViewOutlinedIcon/>
@@ -148,30 +149,20 @@ function DBDoc(props) {
                 <div className={"mt-3"}>
                     <div className={"flex flex-row items-center gap-2"}>
                         <Button size={"small"} variant={"contained"} onClick={() => {
-                            setColumnEditOpen(true)
+                            setColumnAddOpen(true)
                         }}>
                             新增
                         </Button>
-                        <EditColumnDialog closeDialog={() => setColumnEditOpen(false)}
-                                          columnAddOpen={columnEditOpen}
+                        <EditColumnDialog closeDialog={() => {
+                            setColumnAddOpen(false)
+                        }}
+                                          open={columnAddOpen}
                                           submitForm={data => {
                                               columnAddMutation.mutate({
                                                   ...data,
                                                   id: activeTableState.id
                                               })
                                           }}/>
-                        <Button size={"small"} variant={"contained"} onClick={() => {
-                            setDeleteColumnOpen(true)
-                        }}>
-                            删除
-                        </Button>
-                        <AlertDialog open={deleteColumnOpen} handleClose={() => setDeleteColumnOpen(false)}
-                                     title={"是否确认删除当前选中的行？"}
-                                     msg={""} confirm={() => {
-                            columnsDeleteMutation.mutate({
-                                columnIds: columnsSelectedState
-                            })
-                        }}/>
                         <Button size={"small"} variant={"contained"} onClick={() => {
                             setColumnEditOpen(true)
                         }}>
@@ -187,19 +178,26 @@ function DBDoc(props) {
                                                   ...data,
                                                   id: columnsSelectedState[0]
                                               })
-                                          }}
-                                          initValue={tableColumnsQuery.isLoading ? {} : tableColumnsQuery.data.data.data.filter(it => it.id === columnsSelectedState[0])[0]}/>
+                                          }}/>
+                        <Button size={"small"} variant={"contained"} onClick={() => {
+                            setDeleteColumnOpen(true)
+                        }}>
+                            删除
+                        </Button>
+                        <AlertDialog open={deleteColumnOpen} handleClose={() => setDeleteColumnOpen(false)}
+                                     title={"是否确认删除当前选中的行？"}
+                                     msg={""} confirm={() => {
+                            columnsDeleteMutation.mutate({
+                                columnIds: columnsSelectedState
+                            })
+                        }}/>
                     </div>
                     <div>
                         {!tableColumnsQuery.isLoading &&
-                            <ZTable data={tableColumnsQuery.data.data.data} columns={columnsMemo}
-                                    getSelectedRows={it => handleColumnSelected(it)}/>}
+                            <ZTable  data={tableColumnsQuery.data.data.data} columns={columnsMemo}
+                                    getSelectedRows={it => handleColumnSelected(it)} canSelect={true}/>}
 
                     </div>
-                </div>
-
-                <div>
-
                 </div>
 
             </div>
@@ -208,17 +206,25 @@ function DBDoc(props) {
                 <div className={"text-base font-bold"}>索引</div>
                 <div className={'mt-3'}>
 
-
                     <div className={'flex flex-row gap-2'}>
                         <Button size={"small"} variant={"contained"}
-                                onClick={() => setIndexEditOpen(true)}>新增</Button>
-                        <EditIndexDialog open={indexEditOpen}
-                                         closeDialog={() => setIndexEditOpen(false)}
+                                onClick={() => setIndexAddOpen(true)}>新增</Button>
+                        <EditIndexDialog open={indexAddOpen}
+                                         closeDialog={() => setIndexAddOpen(false)}
                                          submitForm={data => {
+                                             console.log("添加index", data)
                                              indexAddMutation.mutate({...data, tableId: activeTableState.id})
                                          }}/>
                         <Button size={"small"} variant={"contained"}
-                                onClick={() => setIndexEditOpen(true)}>编辑</Button>
+                                onClick={() => {
+                                    if (indexesSelectedState.length !== 1) {
+                                        toast("同时仅仅能编辑一条记录", {
+                                            position: "top-center"
+                                        })
+                                        return
+                                    }
+                                    setIndexEditOpen(true)
+                                }}>编辑</Button>
                         <EditIndexDialog open={indexEditOpen}
                                          closeDialog={() => setIndexEditOpen(false)}
                                          submitForm={data => {
@@ -229,8 +235,10 @@ function DBDoc(props) {
                                              })
                                          }}
                                          initValue={
-                                             !tableIndexesQuery.isLoading && tableIndexesQuery.data.data.data.filter(it => it.id = indexesSelectedState[0])[0]
-                                         }/>
+                                             !tableIndexesQuery.isLoading &&
+                                             tableIndexesQuery.data.data.data.filter(it => it.id.toString() === indexesSelectedState[0])[0]
+                                         }
+                        />
                         <Button size={"small"} variant={"contained"}
                                 onClick={() => setIndexDeleteOpen(true)}>删除</Button>
                         <AlertDialog open={indexDeleteOpen} handleClose={() => setIndexDeleteOpen(false)}
@@ -244,7 +252,7 @@ function DBDoc(props) {
                     <div>
                         {!tableIndexesQuery.isLoading &&
                             <ZTable data={tableIndexesQuery?.data?.data?.data} columns={indexesMemo}
-                                    getSelectedRows={it => handleIndexSelected(it)}/>}
+                                    getSelectedRows={it => handleIndexSelected(it)} canSelect={true}/>}
                     </div>
                 </div>
             </div>
@@ -259,14 +267,58 @@ function DBDoc(props) {
 
 
 const EditIndexDialog = ({
-                             initValue = {
-                                 name: "",
-                                 type: "",
-                                 note: "",
-                                 defaultValue: ""
-                             }, open, closeDialog, submitForm
+                             initValue = {name: "", type: ""}, open, closeDialog, submitForm
                          }) => {
     const {handleSubmit, control} = useForm()
+    console.log("索引初始数据")
+    return <Dialog open={open} onClose={closeDialog}>
+        <DialogTitle>新增</DialogTitle>
+        <form onSubmit={handleSubmit(data => {
+            console.log("内部提交index", data)
+            submitForm(data)
+        })}>
+            <DialogContent>
+                <Controller
+                    render={({field}) => <TextField
+                        {...field}
+                        autoFocus
+                        margin="dense"
+                        label="索引名称"
+                        fullWidth
+                        variant="standard"
+                        defaultValue={initValue.name}
+                    />}
+                    name={"name"}
+                    control={control}/>
+
+                <Controller
+                    render={({field}) => <TextField
+                        {...field}
+                        autoFocus
+                        margin="dense"
+                        label="类型"
+                        fullWidth
+                        variant="standard"
+                        defaultValue={initValue.type}
+                    />}
+                    name={"type"}
+                    control={control}/>
+
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={closeDialog}>取消</Button>
+                <Button type={"submit"} onClick={closeDialog}>确定</Button>
+            </DialogActions>
+        </form>
+    </Dialog>
+}
+
+
+const EditColumnDialog = ({
+                              initValue, open, closeDialog, submitForm
+                          }) => {
+
+    const {register, handleSubmit, control} = useForm()
 
     return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>新增</DialogTitle>
@@ -283,64 +335,7 @@ const EditIndexDialog = ({
                         label="字段名称"
                         fullWidth
                         variant="standard"
-                        value={initValue.name}
-                    />}
-                    name={"name"}
-                    control={control}/>
-
-                <Controller
-                    render={({field}) => <TextField
-                        {...field}
-                        autoFocus
-                        margin="dense"
-                        label="类型"
-                        fullWidth
-                        variant="standard"
-                        value={initValue.type}
-                    />}
-                    name={"type"}
-                    control={control}/>
-
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={closeDialog}>取消</Button>
-                <Button type={"submit"} onClick={closeDialog}>确定</Button>
-            </DialogActions>
-        </form>
-    </Dialog>
-}
-
-
-const EditColumnDialog = ({
-                              initValue = {
-                                  name: "",
-                                  type: "",
-                                  note: "",
-                                  defaultValue: ""
-                              }, columnAddOpen, closeDialog, submitForm
-                          }) => {
-
-
-    console.log("初始化数据是", initValue)
-
-    const {register, handleSubmit, control} = useForm()
-
-    return <Dialog open={columnAddOpen} onClose={closeDialog}>
-        <DialogTitle>新增</DialogTitle>
-        <form onSubmit={handleSubmit(data => {
-            submitForm(data)
-        })}>
-
-            <DialogContent>
-                <Controller
-                    render={({field}) => <TextField
-                        {...field}
-                        autoFocus
-                        margin="dense"
-                        label="字段名称"
-                        fullWidth
-                        variant="standard"
-                        value={initValue.name}
+                        defaultValue={initValue.name}
                     />}
                     name={"name"}
                     control={control}/>
@@ -467,7 +462,7 @@ const indexHeader = [
         header: ({table}) => (
             <IndeterminateCheckbox
                 {...{
-                    checked: false,
+                    checked: table.getIsAllRowsSelected(),
                     indeterminate: table.getIsSomeRowsSelected(),
                     onChange: table.getToggleAllRowsSelectedHandler()
                 }}

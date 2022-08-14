@@ -9,11 +9,14 @@ import {activeTableAtom} from "../store/tableListStore";
 import ZTable from "./ZTable";
 import {useListColumn, useListTables} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
+import {consoleSqlAtom} from "../store/consoleStore";
+import { format } from 'sql-formatter';
 
 export default function DBConsole() {
 
     const [db, setDb] = useAtom(dbAtom)
-    const [selectedCode, setSelectedCode] = useState("")
+    const [consoleSql, setConsoleSql] = useAtom(consoleSqlAtom)
+    const [selectedSql, setSelectedSql] = useState("")
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [resultHeader, setResultHeader] = useState([])
 
@@ -21,7 +24,7 @@ export default function DBConsole() {
     const [resultData, setResultData] = useState([]);
     const [sqlResData, setSqlResDate] = useState({
         columns: [],
-        values: [  ]
+        values: []
     })
 
     const tableColumns = useListColumn({
@@ -30,7 +33,7 @@ export default function DBConsole() {
         enabled: !!activeTable.id
     })
 
-    const tables =useListTables({projectId: 1})
+    const tables = useListTables({projectId: 1})
 
     // 创建当前表
     useEffect(() => {
@@ -50,9 +53,19 @@ export default function DBConsole() {
     }, [tables])
     const columnHelper = createColumnHelper()
 
+    const handleExplain = () => {
+        const sql = "explain " + selectedSql
+        db.exec(sql)
+    }
+
+    const formatSql = () => {
+        console.log("格式化", consoleSql)
+        setConsoleSql(format(consoleSql))
+    }
+
     const executeSql = () => {
         try {
-            const res = db.exec(selectedCode)
+            const res = db.exec(selectedSql)
             console.log(res)
             if (res != null && res.length > 0 && res[0].columns.length > 0) {
                 console.log("当前1的数据", res[0])
@@ -81,33 +94,37 @@ export default function DBConsole() {
     return (
         <div className={"w-full grid grid-cols-5 gap-2"}>
             <div className={"flex flex-col gap-1 col-span-5"}>
-                <div>
-                    <Button onClick={() => executeSql()}>运行</Button>
-                    <Button>格式化</Button>
-                    <Button>复制</Button>
-                    <Button>收藏</Button>
-                    <Button>模拟数据</Button>
+                <div className={'flex flex-row gap-2'}>
+                    <Button size={"small"} variant={"contained"} onClick={() => executeSql()}>运行</Button>
+                    <Button size={"small"} variant={"contained"} onClick={() => formatSql()}>格式化</Button>
+                    <Button size={"small"} variant={"contained"}>复制</Button>
+                    <Button size={"small"} variant={"contained"}>收藏</Button>
+                    <Button size={"small"} variant={"contained"} onClick={() => {
+                        handleExplain()
+                    }}>explain</Button>
                 </div>
-                <div>
+                <div className={'mt-4'}>
                     <CodeMirror
                         height={"300px"}
-                        theme={"light"}
-                        value={"select * from film"}
+                        theme={"dark"}
+                        value={consoleSql}
                         extensions={[sql()]}
-                        className={"rounded-2xl"}
                         onStatistics={data => {
                             console.log(data.selectionCode)
-                            setSelectedCode(data.selectionCode)
+                            setSelectedSql(data.selectionCode)
+                        }}
+                        onChange={data => {
+                            setConsoleSql(data)
                         }}
 
                     />
-                    <div className={"w-full mt-3"}>
-                        <div className={"font-bold"}>结果</div>
+                    <div className={"w-full mt-6"}>
+                        <div className={"font-bold"}>结果集</div>
                         <div>
                             {sqlResult}
                         </div>
                         <div>
-                            <ZTable data={resultData} columns={resultHeader}/>
+                            <ZTable data={resultData} columns={resultHeader} canSelect={false}/>
                         </div>
                     </div>
                 </div>

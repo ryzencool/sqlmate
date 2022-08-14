@@ -44,7 +44,6 @@ function DBTablePanel(props) {
 
     console.log(tables.isLoading)
 
-    console.log("data is:", tables.data)
 
     const [editingTable, setEditingTable] = useState({
         tableName: "",

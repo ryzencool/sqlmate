@@ -8,6 +8,7 @@ import mustache from "mustache/mustache.mjs";
 import {CopyBlock, nord} from "react-code-blocks";
 import {useGetDBML, useGetTemplateFile} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
+import toast from "react-hot-toast";
 
 function TabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -82,7 +83,13 @@ export default function DBCode() {
 
                         let tpl = file.content
                         let fileName = file.fileName
-                        let newObj = funcBody(database.schemas[0].tables[0])
+                        let newObj
+                        try {
+                            newObj= funcBody(database.schemas[0].tables[0])
+                        } catch (e)  {
+                            toast("编写的文件错误", {position: 'top-center'})
+                            return
+                        }
                         return (<div key={file.id}>
                                 <div>{mustache.render(fileName, newObj)}</div>
                             <CopyBlock

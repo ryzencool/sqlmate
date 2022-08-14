@@ -24,7 +24,6 @@ export  function  get(url, params = {}) {
         value = "?" + ps.join("&")
     }
     let auth = localStorage.getItem("authToken")
-    console.log("get", auth)
     let headers = {}
     if (!!auth) {
         let obj = JSON.parse(auth)
@@ -50,7 +49,6 @@ export  function  get(url, params = {}) {
 
 export function post(url, params = {}, header = {}) {
     let auth = localStorage.getItem("authToken")
-    console.log("get", auth)
     let headers = {}
     if (!!auth) {
         let obj = JSON.parse(auth)
