@@ -2,7 +2,7 @@ import React from 'react'
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Tab, Tabs} from "@mui/material";
-import DBDmlDetail from "./DBDmlDetail";
+import DBMysqlDetail from "./DBMysqlDetail";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -43,11 +43,6 @@ export default function DBDml() {
 
 
     return <div >
-        {/*<div className={"flex flex-col gap-1 overflow-auto"}>*/}
-        {/*    <div className={"font-bold "}>MYSQL</div>*/}
-        {/*   <div>{exporter.export(dbml.data.data.data, "mysql")}</div>*/}
-        {/*</div>*/}
-
 
         <Box
             sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex'}}
@@ -64,7 +59,7 @@ export default function DBDml() {
 
             </Tabs>
             <TabPanel value={value} index={0} className={"w-full"}>
-                <DBDmlDetail props={"mysql"} />
+                <DBMysqlDetail props={"mysql"} />
             </TabPanel>
 
         </Box>

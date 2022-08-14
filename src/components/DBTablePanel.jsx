@@ -1,7 +1,5 @@
 import React, {useState} from "react";
-import {DefaultPortModel,} from "@projectstorm/react-diagrams";
 import {activeTableAtom, tableListAtom} from "../store/tableListStore";
-import {JSCustomNodeModel} from "./graph/JSCustomNodeModel";
 import Engine from "../store/nodeStore";
 import {dbAtom} from "../store/sqlStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -12,15 +10,16 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
+    DialogTitle, FormControl, InputLabel,
     List,
     ListItem,
     ListItemButton,
-    ListItemText,
+    ListItemText, MenuItem, Select,
     TextField
 } from "@mui/material";
 import {useListTables} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
+import {databaseTypeAtom} from "../store/databaseStore";
 
 // 左侧的数据表栏目
 function DBTablePanel(props) {
@@ -38,7 +37,7 @@ function DBTablePanel(props) {
     const [tableCreateOpen, setTableCreateOpen] = useState(false)
     const [tableCreateData, setTableCreateData] = useState({})
     const [searchParam, setSearchParam] = useState({});
-
+    const [databaseType, setDatabaseType] = useAtom(databaseTypeAtom)
     const tables = useListTables(searchParam)
 
 
@@ -163,17 +162,37 @@ function DBTablePanel(props) {
         <div>
             <div className="flex flex-col items-center  w-full gap-2 ">
                 <div className={"relative flex flex-row items-center justify-between w-10/12"}>
-                    <input placeholder={"搜索"} className={"p-1 rounded-md w-full border-neutral-300 border-2" } onChange={(e) => {
-                        setSearchParam({
-                            tableName: e.target.value
-                        })
-                    }}/>
+                    <input placeholder={"搜索"} className={"p-1 rounded-md w-full border-neutral-300 border-2"}
+                           onChange={(e) => {
+                               setSearchParam({
+                                   tableName: e.target.value
+                               })
+                           }}/>
                 </div>
-                <Button className={"bg-black text-white w-10/12"} onClick={() => {
-                    setTableCreateOpen(true)
-                }}>
-                    创建表
-                </Button>
+                <div className={"flex flex-row gap-2 justify-between w-10/12 mt-2"}>
+                    <FormControl className={"w-1/2"} size="small">
+                        <InputLabel>DB</InputLabel>
+                        <Select
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            value={databaseType}
+                            label="Age"
+                            onChange={(evt) => {
+                                setDatabaseType(evt.target.value)
+                            }}
+                        >
+
+                            <MenuItem value={1}>Sqlite</MenuItem>
+                            <MenuItem value={2}>Mysql</MenuItem>
+                            <MenuItem value={3}>Postgresql</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Button className={"bg-black text-white w-1/2"} onClick={() => {
+                        setTableCreateOpen(true)
+                    }}>
+                        创建表
+                    </Button>
+                </div>
                 <Dialog open={tableCreateOpen} onClose={() => setTableCreateOpen(false)}>
                     <DialogTitle>创建表</DialogTitle>
                     <DialogContent>

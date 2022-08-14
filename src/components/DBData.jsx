@@ -17,45 +17,45 @@ export default function DBData() {
     const [data, setData] = useState([])
     const columnHelper = createColumnHelper()
     useEffect(() => {
-        const res = db.exec(`select * from ${activeTable.name}`)
-        console.log(res)
-        if (res != null && res.length > 0 && res[0].columns.length > 0) {
-            console.log("当前data数据", res[0])
-            setHeader(res[0].columns.map(it => {
-                return columnHelper.accessor(it, {
-                    header: () => it,
-                    cell: info => info.getValue()
-                })
-            }))
-            setData(res[0].values.map(it => {
-                return it.reduce((result, field, index) => {
-                    result[res[0].columns[index]] = field
-                    return result
-                }, {})
-            }))
-        }
+        // const res = db.exec(`select * from ${activeTable.name}`)
+        // console.log(res)
+        // if (res != null && res.length > 0 && res[0].columns.length > 0) {
+        //     console.log("当前data数据", res[0])
+        //     setHeader(res[0].columns.map(it => {
+        //         return columnHelper.accessor(it, {
+        //             header: () => it,
+        //             cell: info => info.getValue()
+        //         })
+        //     }))
+        //     setData(res[0].values.map(it => {
+        //         return it.reduce((result, field, index) => {
+        //             result[res[0].columns[index]] = field
+        //             return result
+        //         }, {})
+        //     }))
+        // }
 
     }, [])
 
 
     return <div className={"w-full flex flex-col gap-3"}>
-        <div className={"w-full flex flex-row gap-3"}>
-            <Button>生成数据</Button>
-            <Button>清除数据</Button>
-        </div>
+        {/*<div className={"w-full flex flex-row gap-3"}>*/}
+        {/*    <Button>生成数据</Button>*/}
+        {/*    <Button>清除数据</Button>*/}
+        {/*</div>*/}
 
-        <div className={"flex flex-col gap-3"}>
-            <div className={"flex flex-col gap-2"}>
-                <div className={"flex flex-row gap-3"}>
-                    <div>{activeTable.name}</div>
-                    <div>{activeTable.note}</div>
-                </div>
+        {/*<div className={"flex flex-col gap-3"}>*/}
+        {/*    <div className={"flex flex-col gap-2"}>*/}
+        {/*        <div className={"flex flex-row gap-3"}>*/}
+        {/*            <div>{activeTable.name}</div>*/}
+        {/*            <div>{activeTable.note}</div>*/}
+        {/*        </div>*/}
 
-                <ZTable data={data} columns={header}/>
+        {/*        <ZTable data={data} columns={header}/>*/}
 
-            </div>
+        {/*    </div>*/}
 
-        </div>
+        {/*</div>*/}
 
     </div>
 }
