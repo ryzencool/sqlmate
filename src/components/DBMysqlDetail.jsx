@@ -11,7 +11,20 @@ export default function DBMysqlDetail(props) {
 
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
 
-    const dbmlQuery = useGetDBML({tableId: activeTable.id}, {enabled: !!activeTable.id})
+    const dbmlQuery = useGetDBML({tableId: activeTable.id}, {enabled: !!activeTable.id,
+        onSuccess: (data) => {
+                let dbmlObjTemp = Parser.parse(data.data.data, 'dbml')
+                setDbMlObj(dbmlObjTemp)
+                let tableName = dbmlObjTemp.schemas[0].tables[0].name
+                setDropTableDML(`DROP TABLE ${tableName};`)
+                setAlterTableNameDML(`ALTER TABLE ${tableName} rename to new_table_name;`)
+                handleAddColumn(tableName)
+                handleAlterColumn(tableName)
+                handleDropColumn(tableName)
+                handleAddIndex(tableName)
+                handleAlterIndex(tableName)
+                handleDropIndex(tableName)
+        }})
     const [dbmlObj, setDbMlObj] = useState(null)
     const [dropTableDML, setDropTableDML] = useState("")
     const [alterTableNameDML, setAlterTableNameDML] = useState("")
@@ -66,21 +79,7 @@ ALTER table ${tableName} ADD UNIQUE [indexName] (column_name(length));
         setDropIndexDML(`ALTER TABLE ${tableName} DROP INDEX index_name;`)
     }
 
-    useEffect(() => {
-        if (dbmlQuery.status === "success") {
-            let dbmlObjTemp = Parser.parse(dbmlQuery.data.data.data, 'dbml')
-            setDbMlObj(dbmlObjTemp)
-            let tableName = dbmlObjTemp.schemas[0].tables[0].name
-            setDropTableDML(`DROP TABLE ${tableName};`)
-            setAlterTableNameDML(`ALTER TABLE ${tableName} rename to new_table_name;`)
-            handleAddColumn(tableName)
-            handleAlterColumn(tableName)
-            handleDropColumn(tableName)
-            handleAddIndex(tableName)
-            handleAlterIndex(tableName)
-            handleDropIndex(tableName)
-        }
-    }, [])
+
 
 
     return <div className={"w-full"}>

@@ -56,13 +56,13 @@ export const useListCodeTemplate = (params = {}, options = {}) => {
     return useQuery(['codeTemplates'], () => listCodeTemplate(params),options)
 }
 
-export const useListTemplateFile = (params = {}, options = {} ) => {
-    return useQuery(['templateFiles'], () => listTemplateFile(params), options)
+export const useListTemplateFile = (params , options = {} ) => {
+    return useQuery(['templateFiles', params], () => listTemplateFile(params), options)
 }
 
 
-export const useGetTemplateFile = (params = {}, options = {}) => {
-    return useQuery(['templateFile'], () => getTemplateFile(params), options)
+export const useGetTemplateFile = (params , options = {}) => {
+    return useQuery(['templateFile', params], () => getTemplateFile(params), options)
 }
 
 export const usePagePublicProject = (params = {}, options= {}) => {

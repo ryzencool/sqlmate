@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {activeTableAtom} from "../store/tableListStore";
 import {Parser} from '@dbml/core'
 import Box from "@mui/material/Box";
@@ -6,9 +6,10 @@ import Typography from "@mui/material/Typography";
 import {Tab, Tabs} from "@mui/material";
 import mustache from "mustache/mustache.mjs";
 import {CopyBlock, nord} from "react-code-blocks";
-import {useGetDBML, useGetTemplateFile} from "../store/rq/reactQueryStore";
+import {useGetDBML, useGetTemplateFile, useListCodeTemplate, useListTemplateFile} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
 import toast from "react-hot-toast";
+import {sentenceCase} from 'change-case'
 
 function TabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -41,23 +42,34 @@ export default function DBCode() {
 
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [value, setValue] = React.useState(0);
-
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    const templateFiles = useGetTemplateFile({templateId: 1})
 
+    const codeTemplatesQuery = useListCodeTemplate({})
 
+    const [selectedTemplateSearch, setSelectedTemplateSearch] = useState({})
 
-    const dbml = useGetDBML({tableId: activeTable.id}, {enabled: !!activeTable.id})
+    const templateFilesQuery = useListTemplateFile(selectedTemplateSearch)
 
-    if (dbml.isLoading) {
+    const [dbmlObj, setDbmlObj] = useState(null)
+
+    const dbmlQuery = useGetDBML({tableId: activeTable.id}, {enabled: !!activeTable.id})
+
+    useEffect(() => {
+        if (dbmlQuery.status === "success") {
+            const temp = Parser.parse(dbmlQuery.data.data.data, 'dbml')
+            setDbmlObj(temp)
+        }
+    }, [])
+
+    if (dbmlQuery.isLoading) {
         return <div>isLoading</div>
     }
 
-    const database = Parser.parse(dbml.data.data.data, 'dbml')
-    console.log("数据库", database.schemas[0].tables[0])
+
+
     return (<div className={"w-full"}>
         <Box
             sx={{flexGrow: 1, bgcolor: 'background.paper', display: 'flex'}}
@@ -70,55 +82,66 @@ export default function DBCode() {
                 aria-label="Vertical tabs example"
                 sx={{borderRight: 1, borderColor: 'divider'}}
             >
-                <Tab label="Mybatis" onClick={() => codeTemplate.refetch} {...a11yProps(0)} />
-                <Tab label="JPA" {...a11yProps(1)} />
-                <Tab label="Mybatisplus" {...a11yProps(2)} />
+                {
+                    !codeTemplatesQuery.isLoading && codeTemplatesQuery.data.data.data.map((tpl, index) => {
+                        return <Tab label={tpl.name} {...a11yProps(index)} onClick={() => {
+                            setSelectedTemplateSearch({
+                                templateId: tpl.id
+                            })
+                        }
+                        }/>
+                    })
+                }
 
             </Tabs>
-            <TabPanel value={value} index={0}>
-                {!templateFiles.isLoading && templateFiles.data.data?.data.map(
-                    file => {
-                        console.log("当前的文件是：", file)
-                        let funcBody = eval(file.transferFn)
-
-                        let tpl = file.content
-                        let fileName = file.fileName
-                        let newObj
-                        try {
-                            newObj= funcBody(database.schemas[0].tables[0])
-                        } catch (e)  {
-                            toast("编写的文件错误", {position: 'top-center'})
-                            return
-                        }
-                        return (<div key={file.id}>
-                                <div>{mustache.render(fileName, newObj)}</div>
-                            <CopyBlock
-                                text={mustache.render(tpl, newObj)}
-                                theme={nord}
-                                language={"java"} ka
-                                customStyle={
-                                    {
-                                        paddingRight: "40px",
-                                        paddingTop: "10px",
-                                        width: "100%",
-                                        borderRadius: "10px",
+            <div className={'flex flex-col gap-6 w-full'}>
+            {
+                !codeTemplatesQuery.isLoading && codeTemplatesQuery.data.data.data.map((tpl, index) => {
+                    return <TabPanel value={value} index={index} key={tpl.id} className={'w-full'}>
+                        {
+                            !templateFilesQuery.isLoading && templateFilesQuery.data.data.data.map(
+                                file => {
+                                    let transfer = eval(tpl.transferFn)
+                                    let content = file.content
+                                    console.log("可以可以：", tpl.transferFn,  content, dbmlObj)
+                                    let newObj
+                                    try {
+                                        console.log("大家是：", dbmlObj.schemas[0].tables[0])
+                                        newObj = transfer(dbmlObj.schemas[0].tables[0])
+                                    } catch (e) {
+                                        // toast("模版有误，请检查模版后重试", {position: "top-center"})
+                                        return
                                     }
+
+
+
+                                    return (<div key={file.id} className={'w-full'}>
+                                            <div className={'font-bold  border-b pb-1'}>{mustache.render(file.fileName, newObj)}</div>
+                                            <div className={'mt-4'} >
+                                            <CopyBlock
+                                                text={mustache.render(content, newObj)}
+                                                theme={nord}
+                                                language={"java"} ka
+                                                customStyle={
+                                                    {
+                                                        paddingRight: "40px",
+                                                        paddingTop: "10px",
+                                                        width: "100%",
+                                                    }
+                                                }
+                                            />
+                                            </div>
+                                        </div>
+                                    )
                                 }
-                            />
-                            </div>
-                        )
-                    }
-                )}
+                            )
+                        }
+                    </TabPanel>
+                })
+            }
+            </div>
 
 
-
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                JPA
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                Mybatisplus
-            </TabPanel>
         </Box>
 
     </div>)

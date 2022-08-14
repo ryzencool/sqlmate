@@ -270,7 +270,6 @@ const EditIndexDialog = ({
                              initValue = {name: "", type: ""}, open, closeDialog, submitForm
                          }) => {
     const {handleSubmit, control} = useForm()
-    console.log("索引初始数据")
     return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>新增</DialogTitle>
         <form onSubmit={handleSubmit(data => {

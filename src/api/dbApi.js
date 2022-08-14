@@ -38,6 +38,8 @@ const addIndexUrl = "/tableIndex/add"
 const updateIndexUrl = "/tableIndex/update"
 const deleteIndexUrl = "/tableIndex/delete"
 const executeSqlUrl = "/sql/execute"
+const deleteSqlUrl = "/sql/delete"
+const updateProjectSqlUrl = "/projectSql/update"
 export function getProject(params) {
     return get(getProjectUrl, params)
 }
@@ -200,4 +202,13 @@ export function deleteIndex(params) {
 
 export function executeSql(params) {
     return post(executeSqlUrl, params)
+}
+
+export function deleteProjectSql(params) {
+    return post(deleteSqlUrl, params)
+}
+
+
+export function updateProjectSql(params) {
+    return post(updateProjectSqlUrl, params)
 }

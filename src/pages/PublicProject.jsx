@@ -15,16 +15,13 @@ export default function PublicProject() {
 
     const navigate = useNavigate()
 
-    return <div>
-
-        <div>
-        </div>
-        <div className={" flex flex-row gap-10"}>
+    return <div className={'overflow-auto'}>
+        <div className={" flex flex-row flex-wrap gap-10"}>
             {
                 !publicProjects.isLoading && publicProjects.data.data.data.dataList.map(
                     it => (
-                        <Card className={"w-64 h-96"} key={it.id} >
-                            <div className={"h-1/2 bg-purple-300"} >
+                        <Card className={"w-64 h-96"} key={it.id}>
+                            <div className={"h-1/2 bg-purple-300"}>
 
                             </div>
                             <div className={"p-3 flex-col flex justify-between h-1/2"}>
@@ -35,11 +32,11 @@ export default function PublicProject() {
                                     {it.note}
                                 </div>
                                 <div className={'mt-4 flex flex-row flex-wrap gap-1'}>
-                                    <Chip label={'Mysql'} size={'small'} />
-                                    <Chip label={'Mysql'} size={'small'} />
-                                    <Chip label={'Mysql'} size={'small'} />
-                                    <Chip label={'Mysql'} size={'small'} />
-                                    <Chip label={'Mysql'} size={'small'} />
+                                    <Chip label={'Mysql'} size={'small'}/>
+                                    <Chip label={'Mysql'} size={'small'}/>
+                                    <Chip label={'Mysql'} size={'small'}/>
+                                    <Chip label={'Mysql'} size={'small'}/>
+                                    <Chip label={'Mysql'} size={'small'}/>
                                 </div>
                                 <div className={'mt-2 w-full flex-row flex justify-end'}>
                                     <Button>收藏</Button>

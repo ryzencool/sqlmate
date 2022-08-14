@@ -48,7 +48,7 @@ export default function ZTable({data, columns, getSelectedRows, canSelect}) {
                 {table.getHeaderGroups().map(group => (
                     <tr key={group.id} className={"border-b-2 border-neutral-100 "}>
                         {group.headers.map(header => (
-                            <th key={header.id} className={"text-left p-2 text-sm font-normal"}>
+                            <th key={header.id} className={"text-left p-2 text-sm font-normal font-bold"}>
                                 {header.isPlaceholder ? null : flexRender(
                                     header.column.columnDef.header,
                                     header.getContext()

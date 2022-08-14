@@ -31,7 +31,7 @@ export default function Dashboard() {
                     </Link>
                 </Breadcrumbs>
             </div>
-            <div className={'mt-6'}>
+            <div className={'mt-6 '}>
                 <Outlet/>
             </div>
         </div>
