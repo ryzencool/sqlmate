@@ -11,7 +11,6 @@ export default function ZTable({data, columns, getSelectedRows, canSelect}) {
 
 
 
-
     const [rowSelection, setRowSelection] = React.useState({});
 
     if (canSelect) {

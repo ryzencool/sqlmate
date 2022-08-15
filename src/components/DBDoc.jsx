@@ -56,6 +56,7 @@ function DBDoc(props) {
     const tableColumnsQuery = useListColumn({tableId: activeTableState.id}, {
         enabled: !!activeTableState.id,
     })
+
     // mutation
     const columnAddMutation = useMutation(addColumn, {
         onSuccess: () => {
@@ -124,7 +125,7 @@ function DBDoc(props) {
                         submitForm={(e) => {
                             tableUpdateMutation.mutate({
                                 ...e,
-                                id: activeTableState.id
+                                tableId: activeTableState.id
                             })
                         }}/>
 
@@ -153,32 +154,37 @@ function DBDoc(props) {
                         }}>
                             新增
                         </Button>
-                        <EditColumnDialog closeDialog={() => {
-                            setColumnAddOpen(false)
-                        }}
-                                          open={columnAddOpen}
-                                          submitForm={data => {
-                                              columnAddMutation.mutate({
-                                                  ...data,
-                                                  id: activeTableState.id
-                                              })
-                                          }}/>
+                        <EditColumnDialog
+                            closeDialog={() => {
+                                setColumnAddOpen(false)
+                            }}
+                            open={columnAddOpen}
+                            submitForm={data => {
+                                columnAddMutation.mutate({
+                                    ...data,
+                                    tableId: activeTableState.id
+                                })
+                            }}/>
                         <Button size={"small"} variant={"contained"} onClick={() => {
                             setColumnEditOpen(true)
                         }}>
                             编辑
                         </Button>
-                        <EditColumnDialog closeDialog={() => setColumnEditOpen(false)} columnAddOpen={columnEditOpen}
-                                          submitForm={data => {
-                                              if (columnsSelectedState.length !== 1) {
-                                                  toast("同时仅能编辑一条行", {position: 'top-center'})
-                                                  return
-                                              }
-                                              columnUpdateMutation.mutate({
-                                                  ...data,
-                                                  id: columnsSelectedState[0]
-                                              })
-                                          }}/>
+                        <EditColumnDialog
+                            mode={1}
+                            value={!tableColumnsQuery.isLoading && tableColumnsQuery.data.data.data.filter(it => it.id.toString() === columnsSelectedState[0])[0]}
+                            closeDialog={() => setColumnEditOpen(false)}
+                            open={columnEditOpen}
+                            submitForm={data => {
+                                if (columnsSelectedState.length !== 1) {
+                                    toast("同时仅能编辑一条行", {position: 'top-center'})
+                                    return
+                                }
+                                columnUpdateMutation.mutate({
+                                    ...data,
+                                    id: columnsSelectedState[0]
+                                })
+                            }}/>
                         <Button size={"small"} variant={"contained"} onClick={() => {
                             setDeleteColumnOpen(true)
                         }}>
@@ -194,7 +200,7 @@ function DBDoc(props) {
                     </div>
                     <div>
                         {!tableColumnsQuery.isLoading &&
-                            <ZTable  data={tableColumnsQuery.data.data.data} columns={columnsMemo}
+                            <ZTable data={tableColumnsQuery.data.data.data} columns={columnsMemo}
                                     getSelectedRows={it => handleColumnSelected(it)} canSelect={true}/>}
 
                     </div>
@@ -209,12 +215,14 @@ function DBDoc(props) {
                     <div className={'flex flex-row gap-2'}>
                         <Button size={"small"} variant={"contained"}
                                 onClick={() => setIndexAddOpen(true)}>新增</Button>
-                        <EditIndexDialog open={indexAddOpen}
-                                         closeDialog={() => setIndexAddOpen(false)}
-                                         submitForm={data => {
-                                             console.log("添加index", data)
-                                             indexAddMutation.mutate({...data, tableId: activeTableState.id})
-                                         }}/>
+                        <EditIndexDialog
+                            mode={0}
+                            open={indexAddOpen}
+                            closeDialog={() => setIndexAddOpen(false)}
+                            submitForm={data => {
+                                console.log("添加index", data)
+                                indexAddMutation.mutate({...data, tableId: activeTableState.id})
+                            }}/>
                         <Button size={"small"} variant={"contained"}
                                 onClick={() => {
                                     if (indexesSelectedState.length !== 1) {
@@ -225,19 +233,20 @@ function DBDoc(props) {
                                     }
                                     setIndexEditOpen(true)
                                 }}>编辑</Button>
-                        <EditIndexDialog open={indexEditOpen}
-                                         closeDialog={() => setIndexEditOpen(false)}
-                                         submitForm={data => {
-                                             indexUpdateMutation.mutate({
-                                                 ...data,
-                                                 tableId: activeTableState.id,
-                                                 id: indexesSelectedState[0]
-                                             })
-                                         }}
-                                         initValue={
-                                             !tableIndexesQuery.isLoading &&
-                                             tableIndexesQuery.data.data.data.filter(it => it.id.toString() === indexesSelectedState[0])[0]
-                                         }
+                        <EditIndexDialog
+                            mode={1}
+                            value={!tableIndexesQuery.isLoading &&
+                                tableIndexesQuery.data.data.data.filter(it => it.id.toString() === indexesSelectedState[0])[0]}
+                            open={indexEditOpen}
+                            closeDialog={() => setIndexEditOpen(false)}
+                            submitForm={data => {
+                                indexUpdateMutation.mutate({
+                                    ...data,
+                                    tableId: activeTableState.id,
+                                    id: indexesSelectedState[0]
+                                })
+                            }}
+
                         />
                         <Button size={"small"} variant={"contained"}
                                 onClick={() => setIndexDeleteOpen(true)}>删除</Button>
@@ -267,9 +276,11 @@ function DBDoc(props) {
 
 
 const EditIndexDialog = ({
-                             initValue = {name: "", type: ""}, open, closeDialog, submitForm
+                             mode, value, open, closeDialog, submitForm
                          }) => {
     const {handleSubmit, control} = useForm()
+    console.log("mode", mode)
+    console.log("改变", value)
     return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>新增</DialogTitle>
         <form onSubmit={handleSubmit(data => {
@@ -285,10 +296,10 @@ const EditIndexDialog = ({
                         label="索引名称"
                         fullWidth
                         variant="standard"
-                        defaultValue={initValue.name}
                     />}
                     name={"name"}
-                    control={control}/>
+                    control={control}
+                    defaultValue={mode === 1 && value != null ? value.name : ""}/>
 
                 <Controller
                     render={({field}) => <TextField
@@ -298,10 +309,10 @@ const EditIndexDialog = ({
                         label="类型"
                         fullWidth
                         variant="standard"
-                        defaultValue={initValue.type}
                     />}
                     name={"type"}
-                    control={control}/>
+                    control={control}
+                    defaultValue={mode === 1 && value != null ? value.type : ""}/>
 
             </DialogContent>
             <DialogActions>
@@ -314,10 +325,10 @@ const EditIndexDialog = ({
 
 
 const EditColumnDialog = ({
-                              initValue, open, closeDialog, submitForm
+                              mode, value, open, closeDialog, submitForm
                           }) => {
 
-    const {register, handleSubmit, control} = useForm()
+    const {handleSubmit, control} = useForm()
 
     return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>新增</DialogTitle>
@@ -334,10 +345,11 @@ const EditColumnDialog = ({
                         label="字段名称"
                         fullWidth
                         variant="standard"
-                        defaultValue={initValue.name}
                     />}
                     name={"name"}
-                    control={control}/>
+                    control={control}
+                    defaultValue={mode === 1 && value != null ? value.name : ""}
+                />
 
                 <Controller
                     render={({field}) => <TextField
@@ -347,10 +359,12 @@ const EditColumnDialog = ({
                         label="类型"
                         fullWidth
                         variant="standard"
-                        value={initValue.type}
                     />}
                     name={"type"}
-                    control={control}/>
+                    control={control}
+                    defaultValue={mode === 1 && value != null ? value.type : ""}
+
+                />
                 <Controller
                     render={({field}) => <TextField
                         {...field}
@@ -359,10 +373,12 @@ const EditColumnDialog = ({
                         label="备注"
                         fullWidth
                         variant="standard"
-                        value={initValue.note}
                     />}
                     name={"note"}
-                    control={control}/>
+                    control={control}
+                    defaultValue={mode === 1 && value != null ? value.note : ""}
+
+                />
                 <Controller
                     render={({field}) => <TextField
                         {...field}
@@ -370,11 +386,13 @@ const EditColumnDialog = ({
                         margin="dense"
                         label="默认值"
                         fullWidth
-                        value={initValue.defaultValue}
                         variant="standard"
                     />}
                     name={"defaultValue"}
-                    control={control}/>
+                    control={control}
+                    defaultValue={mode === 1 && value != null ? value.defaultValue : ""}
+
+                />
 
                 <FormControlLabel
                     value="top"
