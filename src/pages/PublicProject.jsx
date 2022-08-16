@@ -3,6 +3,8 @@ import {Card, Chip} from "@mui/material";
 import {usePagePublicProject} from "../store/rq/reactQueryStore";
 import {useNavigate} from "react-router";
 import Button from "@mui/material/Button";
+import {useAtom} from "jotai";
+import {activeProjectAtom} from "../store/projectStore";
 
 
 export default function PublicProject() {
@@ -12,7 +14,7 @@ export default function PublicProject() {
     if (!publicProjects.isLoading) {
         console.log("公开的项目:", publicProjects.data.data.data.dataList)
     }
-
+    const [project, setProject] = useAtom(activeProjectAtom)
     const navigate = useNavigate()
 
     return <div className={'overflow-auto'}>
@@ -40,7 +42,10 @@ export default function PublicProject() {
                                 </div>
                                 <div className={'mt-2 w-full flex-row flex justify-end'}>
                                     <Button>收藏</Button>
-                                    <Button onClick={() => navigate(`/header/home/${it.id}`)}>进入项目</Button>
+                                    <Button onClick={() => {
+                                        setProject(it)
+                                        navigate(`/header/home/${it.id}`)
+                                    }}>进入项目</Button>
                                 </div>
                             </div>
                         </Card>

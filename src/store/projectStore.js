@@ -1,3 +1,3 @@
 import {atom} from "jotai";
 
-export const projectAtom = atom(1)
+export const activeProjectAtom = atom({})

@@ -20,13 +20,14 @@ import {
 import {useListTables} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
 import {databaseTypeAtom} from "../store/databaseStore";
+import {activeProjectAtom} from "../store/projectStore";
 
 // 左侧的数据表栏目
 function DBTablePanel(props) {
 
     const queryClient = useQueryClient()
 
-    const {projectId} = props
+    const [project, setProject] = useAtom(activeProjectAtom)
 
     const engine = Engine;
     // const tableList = useTableListState(state => state.tableList);
@@ -36,7 +37,7 @@ function DBTablePanel(props) {
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [tableCreateOpen, setTableCreateOpen] = useState(false)
     const [tableCreateData, setTableCreateData] = useState({})
-    const [searchParam, setSearchParam] = useState({});
+    const [searchParam, setSearchParam] = useState({projectId: project.id});
     const [databaseType, setDatabaseType] = useAtom(databaseTypeAtom)
     const tables = useListTables(searchParam)
 
@@ -244,7 +245,7 @@ function DBTablePanel(props) {
                         <Button onClick={() => setTableCreateOpen(false)}>取消</Button>
                         <Button onClick={() => {
                             tableCreate.mutate({
-                                projectId: projectId,
+                                projectId: project.id,
                                 ...tableCreateData
                             })
                             setTableCreateOpen(false)

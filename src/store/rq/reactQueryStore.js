@@ -21,7 +21,7 @@ import {
     queryOptimizer
 } from "../../api/dbApi";
 
-export const useGetProject = (params) => useQuery(['project'], () => getProject(params))
+export const useGetProject = (params, options) => useQuery(['project', params], () => getProject(params), options)
 
 
 export const useListColumn = (search, options = {}) => {

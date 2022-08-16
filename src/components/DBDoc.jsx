@@ -1,27 +1,22 @@
-import React, {useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {activeTableAtom} from "../store/tableListStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addColumn, addIndex, deleteColumns, deleteIndex, updateColumn, updateIndex, updateTable} from "../api/dbApi";
 import * as _ from 'lodash'
-import {
-    Button,
-    Checkbox,
-    Chip,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControlLabel,
-    TextField
-} from "@mui/material";
+import {Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import ZTable, {IndeterminateCheckbox} from "./ZTable";
 import {useGetProject, useGetTable, useListColumn, useListIndex} from "../store/rq/reactQueryStore";
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import {useAtom} from "jotai";
 import TableViewOutlinedIcon from '@mui/icons-material/TableViewOutlined';
 import AlertDialog from "./AlertDialog";
-import {Controller, useForm} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import toast from "react-hot-toast";
+import FormInputText from "./FormInputText";
+import FormCheckBox from "./FormCheckBox";
+import FormSelect from "./FormSelect";
+import Box from "@mui/material/Box";
+import FormTableAndColumnSelectBox from "./FormTableAndColumnSelectBox";
 
 function DBDoc(props) {
     const queryClient = useQueryClient()
@@ -111,7 +106,7 @@ function DBDoc(props) {
                     <div className={'flex flex-row gap-2'}>
                         <TableViewOutlinedIcon/>
                         <div className={"text-base font-bold"}>
-                            {!tableQuery.isLoading && tableQuery.data.data.data.name}
+                            {!tableQuery.isLoading && tableQuery.data?.data.data.name}
                         </div>
                     </div>
                     <div onClick={() => {
@@ -120,7 +115,8 @@ function DBDoc(props) {
                         <DriveFileRenameOutlineOutlinedIcon/>
                     </div>
                     <EditTableDialog
-                        tableEditOpen={tableEditOpen}
+                        value={!tableQuery.isLoading && tableQuery.data?.data.data}
+                        open={tableEditOpen}
                         closeDialog={() => setTableEditOpen(false)}
                         submitForm={(e) => {
                             tableUpdateMutation.mutate({
@@ -166,20 +162,23 @@ function DBDoc(props) {
                                 })
                             }}/>
                         <Button size={"small"} variant={"contained"} onClick={() => {
+                            if (columnsSelectedState.length === 0) {
+                                toast.error("请至少选择一条记录", {position: 'top-center'})
+                                return;
+                            } else if (columnsSelectedState.length > 1) {
+                                toast.error("同时只能编辑一条记录", {position: 'top-center'})
+                                return;
+                            }
                             setColumnEditOpen(true)
+
                         }}>
                             编辑
                         </Button>
                         <EditColumnDialog
-                            mode={1}
                             value={!tableColumnsQuery.isLoading && tableColumnsQuery.data.data.data.filter(it => it.id.toString() === columnsSelectedState[0])[0]}
                             closeDialog={() => setColumnEditOpen(false)}
                             open={columnEditOpen}
                             submitForm={data => {
-                                if (columnsSelectedState.length !== 1) {
-                                    toast("同时仅能编辑一条行", {position: 'top-center'})
-                                    return
-                                }
                                 columnUpdateMutation.mutate({
                                     ...data,
                                     id: columnsSelectedState[0]
@@ -192,11 +191,12 @@ function DBDoc(props) {
                         </Button>
                         <AlertDialog open={deleteColumnOpen} handleClose={() => setDeleteColumnOpen(false)}
                                      title={"是否确认删除当前选中的行？"}
-                                     msg={""} confirm={() => {
-                            columnsDeleteMutation.mutate({
-                                columnIds: columnsSelectedState
-                            })
-                        }}/>
+                                     msg={""}
+                                     confirm={() => {
+                                         columnsDeleteMutation.mutate({
+                                             columnIds: columnsSelectedState
+                                         })
+                                     }}/>
                     </div>
                     <div>
                         {!tableColumnsQuery.isLoading &&
@@ -278,42 +278,33 @@ function DBDoc(props) {
 const EditIndexDialog = ({
                              mode, value, open, closeDialog, submitForm
                          }) => {
-    const {handleSubmit, control} = useForm()
-    console.log("mode", mode)
-    console.log("改变", value)
+    const {handleSubmit, control, reset} = useForm({
+        defaultValues: value
+    })
+
+    useEffect(() => {
+        if (value != null) {
+            reset(value)
+        }
+    }, [value])
+
     return <Dialog open={open} onClose={closeDialog}>
-        <DialogTitle>新增</DialogTitle>
+        <DialogTitle>{mode === 0 ? "新增" : "编辑"}</DialogTitle>
         <form onSubmit={handleSubmit(data => {
-            console.log("内部提交index", data)
             submitForm(data)
         })}>
             <DialogContent>
-                <Controller
-                    render={({field}) => <TextField
-                        {...field}
-                        autoFocus
-                        margin="dense"
-                        label="索引名称"
-                        fullWidth
-                        variant="standard"
-                    />}
-                    name={"name"}
-                    control={control}
-                    defaultValue={mode === 1 && value != null ? value.name : ""}/>
-
-                <Controller
-                    render={({field}) => <TextField
-                        {...field}
-                        autoFocus
-                        margin="dense"
-                        label="类型"
-                        fullWidth
-                        variant="standard"
-                    />}
+                <FormInputText name={"name"} control={control} label={"索引名称"}/>
+                <FormSelect
                     name={"type"}
                     control={control}
-                    defaultValue={mode === 1 && value != null ? value.type : ""}/>
-
+                    label={"索引类型"}
+                    value={"unique_key"}
+                    choices={[{
+                        key: "unique_key",
+                        value: "UNIQUE KEY"
+                    }]}/>
+                <FormInputText name={"columns"} control={control} label={"字段"}/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDialog}>取消</Button>
@@ -325,100 +316,67 @@ const EditIndexDialog = ({
 
 
 const EditColumnDialog = ({
-                              mode, value, open, closeDialog, submitForm
+                              value, open, closeDialog, submitForm, resetValue
                           }) => {
 
-    const {handleSubmit, control} = useForm()
+    const {handleSubmit, control, watch, reset, getValues} = useForm({
+        defaultValues: value
+    })
+
+    const {fields, append} = useFieldArray({
+        control,
+        name: "relationShip"
+    });
+
+    useEffect(() => {
+        if (value != null) {
+            reset(value)
+        }
+    }, [value])
 
     return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>新增</DialogTitle>
         <form onSubmit={handleSubmit(data => {
             submitForm(data)
         })}>
-
             <DialogContent>
-                <Controller
-                    render={({field}) => <TextField
-                        {...field}
-                        autoFocus
-                        margin="dense"
-                        label="字段名称"
-                        fullWidth
-                        variant="standard"
-                    />}
-                    name={"name"}
-                    control={control}
-                    defaultValue={mode === 1 && value != null ? value.name : ""}
-                />
+                <FormInputText name={"name"} control={control} label={"字段名称"}/>
+                <FormInputText name={"type"} control={control} label={"类型"}/>
+                <FormInputText name={"note"} control={control} label={"备注"}/>
+                <FormInputText name={"defaultValue"} control={control} label={"默认值"}/>
+                <FormCheckBox name={"isPrimaryKey"} control={control} label={"主键"}/>
+                <FormCheckBox name={"isNull"} control={control} label={"可空"}/>
+                <FormCheckBox name={"isAutoIncrement"} control={control} label={"自增"}/>
+                <FormCheckBox name={"isUniqueKey"} control={control} label={"唯一"}/>
+                <Box sx={{display: "flex", flexDirection: "row", gap: "2", alignItems: "center"}}>
+                    <Button size={"small"} variant={"contained"}
+                            onClick={() => append({type: "", tableId: "", columnId: ""})}>添加关系</Button>
+                </Box>
+                <Box sx={{display: "flex", flexDirection: "column", gap: 1}}>
+                    {
+                        fields.map(
+                            (item, index) =>
+                                <Box key={index}
+                                     sx={{display: "flex", flexDirection: "row", gap: 2, width: '100%'}}>
+                                    <FormSelect name={`relationShip.${index}.type`}
+                                                label={"关系类型"}
+                                                control={control}
+                                                choices={[
+                                                    {key: 1, value: "一对一"},
+                                                    {key: 2, value: "一对多"},
+                                                    {key: 3, value: "多对多"},
+                                                ]}/>
+                                    <FormTableAndColumnSelectBox nameTable={`relationShip.${index}.tableId`}
+                                                                 nameColumn={`relationShip.${index}.columnId`}
+                                                                 control={control}
+                                                                 watch={watch}
+                                                                 index={index}
+                                    />
+                                </Box>
+                        )
+                    }
 
-                <Controller
-                    render={({field}) => <TextField
-                        {...field}
-                        autoFocus
-                        margin="dense"
-                        label="类型"
-                        fullWidth
-                        variant="standard"
-                    />}
-                    name={"type"}
-                    control={control}
-                    defaultValue={mode === 1 && value != null ? value.type : ""}
-
-                />
-                <Controller
-                    render={({field}) => <TextField
-                        {...field}
-                        autoFocus
-                        margin="dense"
-                        label="备注"
-                        fullWidth
-                        variant="standard"
-                    />}
-                    name={"note"}
-                    control={control}
-                    defaultValue={mode === 1 && value != null ? value.note : ""}
-
-                />
-                <Controller
-                    render={({field}) => <TextField
-                        {...field}
-                        autoFocus
-                        margin="dense"
-                        label="默认值"
-                        fullWidth
-                        variant="standard"
-                    />}
-                    name={"defaultValue"}
-                    control={control}
-                    defaultValue={mode === 1 && value != null ? value.defaultValue : ""}
-
-                />
-
-                <FormControlLabel
-                    value="top"
-                    control={<Checkbox/>}
-                    label="主键"
-                    labelPlacement="end"
-                />
-                <FormControlLabel
-                    value="top"
-                    control={<Checkbox/>}
-                    label="可空"
-                    labelPlacement="end"
-                />
-                <FormControlLabel
-                    value="top"
-                    control={<Checkbox/>}
-                    label="自增"
-                    labelPlacement="end"
-                />
-                <FormControlLabel
-                    value="top"
-                    control={<Checkbox/>}
-                    label="唯一"
-                    labelPlacement="end"
-                />
-
+                </Box>
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDialog}>取消</Button>
@@ -429,48 +387,29 @@ const EditColumnDialog = ({
 }
 
 
-const EditTableDialog = ({tableEditOpen, closeDialog, submitForm}) => {
+const EditTableDialog = ({value, open, closeDialog, submitForm}) => {
 
 
-    const {handleSubmit, control, register} = useForm()
+    const {handleSubmit, control} = useForm({
+        defaultValues: value
+    })
 
-    return <Dialog open={tableEditOpen} onClose={closeDialog}>
+    return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>修改表信息</DialogTitle>
         <form onSubmit={handleSubmit(data => {
             console.log("内部提交", data)
             submitForm(data)
         })}>
             <DialogContent>
-
-                <Controller control={control} name={"name"} render={({field}) => <TextField
-                    {...field}
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="表名"
-                    fullWidth
-                    variant="standard"
-
-                />}/>
-
-                <Controller control={control} name={"note"} render={({field}) => <TextField
-                    {...field}
-                    autoFocus
-                    margin="dense"
-                    id="note"
-                    label="备注"
-                    fullWidth
-                    variant="standard"
-
-                />}/>
-
+                <FormInputText name={"name"} control={control} label={"表名"}/>
+                <FormInputText name={"note"} control={control} label={"备注"}/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeDialog}>取消</Button>
                 <Button type={"submit"} onClick={closeDialog}>确定</Button>
             </DialogActions>
         </form>
-    </Dialog>
+    </Dialog>;
 }
 
 const indexHeader = [
@@ -508,15 +447,13 @@ const indexHeader = [
         cell: (info) => info.getValue(),
     },
     {
-        accessorKey: "note",
+        accessorKey: "columns",
         header: () => <div>字段</div>,
-        cell: (info) => (
-            <div>
-                {info.row.original.columns.map(it => <div key={it}>
-                    {it}
-                </div>)}
-            </div>
-        ),
+        cell: (info) => info.getValue(),
+    }, {
+        accessorKey: "note",
+        header: () => <div>备注</div>,
+        cell: (info) => info.getValue(),
     },
 ]
 
@@ -565,9 +502,9 @@ const columnHeader = [
         cell: (info) => {
             return (<div className={"flex flex-row gap-1"}>
                 {info.row.original.isPrimaryKey && <Chip label={"pk"} size={"small"}/>}
-                {info.row.original.isAutoIncrement && <Chip label={"auto inc"}/>}
+                {info.row.original.isAutoIncrement && <Chip size={"small"} label={"auto inc"}/>}
                 {info.row.original.isNull && <Chip size={"small"} label={"not null"}/>}
-                {info.row.original.isUniqueKey && <Chip label={"unique"}/>}
+                {info.row.original.isUniqueKey && <Chip size={"small"} label={"unique"}/>}
             </div>)
         },
 

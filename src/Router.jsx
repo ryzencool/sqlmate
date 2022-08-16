@@ -52,9 +52,7 @@ const CustomRouter = () => {
                     <Route path={"teams"} element={<Team/>}/>
                     <Route path={"teamDetail/:id"} element={<TeamDetail/>}/>
                     <Route path={"defaultColumnTemplate"} element={<DefaultColumnTemplate/>}/>
-
                     <Route path={"fieldSettings"} element={<FieldSettings/>}/>
-
                 </Route>
             </Route>
             <Route path="/about" element={<About/>}/>
