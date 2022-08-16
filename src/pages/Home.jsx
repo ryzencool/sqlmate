@@ -5,6 +5,7 @@ import {useParams} from "react-router-dom";
 import {useAtom} from "jotai";
 import {activeProjectAtom} from "../store/projectStore";
 import {useGetProject} from "../store/rq/reactQueryStore";
+import {Outlet} from "react-router";
 
 
 export default function Home() {
@@ -19,7 +20,7 @@ export default function Home() {
     return (
         <div className="grid grid-cols-[300px_1fr] h-full">
             <DBTablePanel projectId={id}/>
-            <DBFeatTabs projectId={id}/>
+            <Outlet/>
         </div>
     )
 }

@@ -26,12 +26,13 @@ import {databaseTypeAtom} from "../store/databaseStore";
 import {activeProjectAtom} from "../store/projectStore";
 import FormInputText from "./FormInputText";
 import {useForm} from "react-hook-form";
+import {useNavigate} from "react-router";
 
 // 左侧的数据表栏目
 function DBTablePanel({projectId}) {
 
     const queryClient = useQueryClient()
-
+    const navigate = useNavigate()
 
     const engine = Engine;
     // const tableList = useTableListState(state => state.tableList);
@@ -216,6 +217,7 @@ function DBTablePanel({projectId}) {
                             <ListItem key={it.id} disablePadding onClick={() => {
                                 console.log("点击了", it)
                                 setActiveTable(it)
+                                navigate(`/header/home/${projectId}/table/${it.id}`)
                             }}>
                                 <ListItemButton>
                                     <ListItemText primary={it.name}/>

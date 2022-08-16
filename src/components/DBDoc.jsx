@@ -17,9 +17,14 @@ import FormCheckBox from "./FormCheckBox";
 import FormSelect from "./FormSelect";
 import Box from "@mui/material/Box";
 import FormTableAndColumnSelectBox from "./FormTableAndColumnSelectBox";
+import {useNavigate} from "react-router";
+import {activeProjectAtom} from "../store/projectStore";
+import {useParams} from "react-router-dom";
 
 function DBDoc() {
     const queryClient = useQueryClient()
+
+    const {id} = useParams()
 
     // state
     const [activeTableState, setActiveTableState] = useAtom(activeTableAtom)
@@ -402,7 +407,7 @@ const EditTableDialog = ({value, open, closeDialog, submitForm}) => {
 
     useEffect(() => {
         reset(value)
-    },[value])
+    }, [value])
 
     return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>修改表信息</DialogTitle>
@@ -521,9 +526,32 @@ const columnHeader = [
     },
     {
         accessorKey: "columnRelationShip",
-        header: ()=> <div>关联关系</div>,
+        header: () => <div>关联关系</div>,
         cell: info => {
-            return <div>{info.getValue().leftColumns.map(it => <div>-> {it.rightTableName}.{it.rightColumnName}</div>)}</div>
+
+            const navigate = useNavigate()
+            const [project, setProject] = useAtom(activeProjectAtom)
+            const [activeTable, setActiveTable] = useAtom(activeTableAtom)
+
+            return <div>
+                {!!info.getValue().leftColumns && info.getValue().leftColumns.map(it =>
+                    (<div onClick={() => {
+                        console.log("当前点击左边", `/header/home/${project.id}/table/${it.rightTableId}`)
+                        setActiveTable({
+                            ...activeTable,
+                            id: it.rightTableId
+                        })
+                        navigate(`/header/home/${project.id}/table/${it.rightTableId}`)
+                    }}>
+                        -- {it.rightTableName}.{it.rightColumnName}
+                    </div>))}
+                {!!info.getValue().rightColumns && info.getValue().rightColumns.map(it => (
+                    <div onClick={() => {
+                        console.log("当前点击", `/header/home/${project.id}/table/${it.rightTableId}`)
+                        navigate(`/header/home/${project.id}/table/${it.leftTableId}`)
+                    }}>
+                        -- {it.leftTableName}.{it.leftColumnName}</div>))}
+            </div>
         }
     },
     {

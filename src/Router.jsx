@@ -21,6 +21,7 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import TeamDetail from "./pages/TeamDetail";
 import DefaultColumnTemplate from "./pages/DefaultColumnTemplate";
+import DBFeatTabs from "./components/DBFeatTabs";
 
 // const routerMap = [
 //     {
@@ -38,7 +39,9 @@ const CustomRouter = () => {
                 <Route path="signIn" element={<SignIn/>}/>
             </Route>
             <Route path="/header" element={<Header/>}>
-                <Route path={"home/:id"} element={<Home/>}/>
+                <Route path={"home/:id"} element={<Home/>}>
+                    <Route path={"table/:id"} element={<DBFeatTabs/>}/>
+                </Route>
                 <Route path={"dashboard"} element={<Dashboard/>}>
                     <Route path={"favorite"} element={<FavoriteProject/>}/>
                     <Route path={"pubTemplate"} element={<Template/>}/>
