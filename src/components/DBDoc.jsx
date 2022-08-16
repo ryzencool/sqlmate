@@ -18,7 +18,7 @@ import FormSelect from "./FormSelect";
 import Box from "@mui/material/Box";
 import FormTableAndColumnSelectBox from "./FormTableAndColumnSelectBox";
 
-function DBDoc(props) {
+function DBDoc() {
     const queryClient = useQueryClient()
 
     // state
@@ -55,7 +55,7 @@ function DBDoc(props) {
     // mutation
     const columnAddMutation = useMutation(addColumn, {
         onSuccess: () => {
-            queryClient.invalidateQueries(["activeTableColumn"])
+            queryClient.invalidateQueries(["tableColumns"])
         }
     })
     const columnsDeleteMutation = useMutation(deleteColumns, {
@@ -71,6 +71,7 @@ function DBDoc(props) {
     const tableUpdateMutation = useMutation(updateTable, {
         onSuccess: () => {
             queryClient.invalidateQueries(['table'])
+            queryClient.invalidateQueries(['projectTables'])
         }
     })
     const indexAddMutation = useMutation(addIndex, {
@@ -162,6 +163,8 @@ function DBDoc(props) {
                                 })
                             }}/>
                         <Button size={"small"} variant={"contained"} onClick={() => {
+                            console.log("选择的记录", columnsSelectedState)
+
                             if (columnsSelectedState.length === 0) {
                                 toast.error("请至少选择一条记录", {position: 'top-center'})
                                 return;
@@ -196,6 +199,7 @@ function DBDoc(props) {
                                          columnsDeleteMutation.mutate({
                                              columnIds: columnsSelectedState
                                          })
+                                         setDeleteColumnOpen(false)
                                      }}/>
                     </div>
                     <div>
@@ -255,6 +259,7 @@ function DBDoc(props) {
                             indexDeleteMutation.mutate({
                                 indexesId: indexesSelectedState
                             })
+                            setIndexDeleteOpen(false)
                         }}/>
                     </div>
 
@@ -352,7 +357,7 @@ const EditColumnDialog = ({
                     <Button size={"small"} variant={"contained"}
                             onClick={() => append({type: "", tableId: "", columnId: ""})}>添加关系</Button>
                 </Box>
-                <Box sx={{display: "flex", flexDirection: "column", gap: 1}}>
+                <Box sx={{display: "flex", flexDirection: "column", gap: 1, marginTop: '4px'}}>
                     {
                         fields.map(
                             (item, index) =>
@@ -390,9 +395,14 @@ const EditColumnDialog = ({
 const EditTableDialog = ({value, open, closeDialog, submitForm}) => {
 
 
-    const {handleSubmit, control} = useForm({
+    const {handleSubmit, control, reset} = useForm({
         defaultValues: value
     })
+
+
+    useEffect(() => {
+        reset(value)
+    },[value])
 
     return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>修改表信息</DialogTitle>
@@ -508,6 +518,13 @@ const columnHeader = [
             </div>)
         },
 
+    },
+    {
+        accessorKey: "columnRelationShip",
+        header: ()=> <div>关联关系</div>,
+        cell: info => {
+            return <div>{info.getValue().leftColumns.map(it => <div>-> {it.rightTableName}.{it.rightColumnName}</div>)}</div>
+        }
     },
     {
         accessorKey: "comment",

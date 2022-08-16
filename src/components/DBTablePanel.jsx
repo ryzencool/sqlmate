@@ -10,24 +10,28 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle, FormControl, InputLabel,
+    DialogTitle,
+    FormControl,
+    InputLabel,
     List,
     ListItem,
     ListItemButton,
-    ListItemText, MenuItem, Select,
-    TextField
+    ListItemText,
+    MenuItem,
+    Select
 } from "@mui/material";
 import {useListTables} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
 import {databaseTypeAtom} from "../store/databaseStore";
 import {activeProjectAtom} from "../store/projectStore";
+import FormInputText from "./FormInputText";
+import {useForm} from "react-hook-form";
 
 // 左侧的数据表栏目
-function DBTablePanel(props) {
+function DBTablePanel({projectId}) {
 
     const queryClient = useQueryClient()
 
-    const [project, setProject] = useAtom(activeProjectAtom)
 
     const engine = Engine;
     // const tableList = useTableListState(state => state.tableList);
@@ -37,7 +41,7 @@ function DBTablePanel(props) {
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [tableCreateOpen, setTableCreateOpen] = useState(false)
     const [tableCreateData, setTableCreateData] = useState({})
-    const [searchParam, setSearchParam] = useState({projectId: project.id});
+    const [searchParam, setSearchParam] = useState({projectId: projectId});
     const [databaseType, setDatabaseType] = useAtom(databaseTypeAtom)
     const tables = useListTables(searchParam)
 
@@ -50,7 +54,7 @@ function DBTablePanel(props) {
         columns: [],
     });
 
-    const tableCreate = useMutation(createTable, {
+    const tableCreateMutation = useMutation(createTable, {
         onSuccess: (data, variables, context) => {
             console.log("请求成功", data, variables, context)
             queryClient.invalidateQueries(['projectTables'])
@@ -193,65 +197,16 @@ function DBTablePanel(props) {
                     }}>
                         创建表
                     </Button>
+                    <TableCreateDialog closeDialog={() => setTableCreateOpen(false)} open={tableCreateOpen}
+                                       submitForm={data => {
+                                           console.log("获取当前项目",projectId)
+                                           tableCreateMutation.mutate({
+                                               ...data,
+                                               projectId: projectId
+                                           })
+                                       }}/>
                 </div>
-                <Dialog open={tableCreateOpen} onClose={() => setTableCreateOpen(false)}>
-                    <DialogTitle>创建表</DialogTitle>
-                    <DialogContent>
 
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="name"
-                            label="表名"
-                            fullWidth
-                            variant="standard"
-                            onChange={e => {
-                                setTableCreateData({
-                                    ...tableCreateData,
-                                    name: e.target.value
-                                })
-                            }}
-                        />
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="note"
-                            label="备注"
-                            fullWidth
-                            variant="standard"
-                            onChange={e => {
-                                setTableCreateData({
-                                    ...tableCreateData,
-                                    note: e.target.value
-                                })
-                            }}
-                        />
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="comment"
-                            label="注释"
-                            fullWidth
-                            variant="standard"
-                            onChange={e => {
-                                setTableCreateData({
-                                    ...tableCreateData,
-                                    comment: e.target.value
-                                })
-                            }}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setTableCreateOpen(false)}>取消</Button>
-                        <Button onClick={() => {
-                            tableCreate.mutate({
-                                projectId: project.id,
-                                ...tableCreateData
-                            })
-                            setTableCreateOpen(false)
-                        }}>确定</Button>
-                    </DialogActions>
-                </Dialog>
             </div>
             <Box className={"w-full flex flex-col  items-center text-sm "}>
                 <List className={"w-10/12 overflow-auto mt-2 h-[calc(100vh-144px)]"}>
@@ -277,3 +232,44 @@ function DBTablePanel(props) {
 }
 
 export default DBTablePanel;
+
+
+function TableCreateDialog({open, closeDialog, submitForm}) {
+
+    const {control, handleSubmit} = useForm()
+
+    return <Dialog open={open} onClose={closeDialog}>
+        <DialogTitle>创建表</DialogTitle>
+        <form onSubmit={handleSubmit(data => {
+            submitForm(data)
+        })}>
+            <DialogContent>
+
+                <FormInputText
+                    control={control}
+                    name={"name"}
+                    label={"表名称"}
+                />
+
+                <FormInputText
+                    control={control}
+                    name={"note"}
+                    label={"备注"}
+                />
+
+                <FormInputText
+                    control={control}
+                    name={"comment"}
+                    label={"注释"}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={closeDialog}>取消</Button>
+                <Button type={"submit"} onClick={() => {
+                    closeDialog()
+                }}>确定</Button>
+            </DialogActions>
+        </form>
+
+    </Dialog>
+}

@@ -37,7 +37,7 @@ function a11yProps(index) {
     };
 }
 
-function DBFeatTabs() {
+function DBFeatTabs(props) {
     const [value, setValue] = useState(0)
 
     const handleChange = (event, newValue) => {
@@ -61,7 +61,7 @@ function DBFeatTabs() {
             </Box>
             <Box  className={"h-[calc(100vh-5rem)] overflow-auto"}>
             <FeatPanel value={value} index={0}  >
-                <DBDoc/>
+                <DBDoc />
             </FeatPanel>
             <FeatPanel value={value} index={1}>
                 <DBGraph/>

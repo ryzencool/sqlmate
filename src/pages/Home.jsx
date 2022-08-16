@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import DBTablePanel from "../components/DBTablePanel";
 import DBFeatTabs from "../components/DBFeatTabs";
 import {useParams} from "react-router-dom";
@@ -11,12 +11,15 @@ export default function Home() {
 
     const {id} = useParams()
 
+    const [project, setProject] = useAtom(activeProjectAtom)
 
-
+    useEffect(() => {
+        setProject({id: id})
+    }, [])
     return (
         <div className="grid grid-cols-[300px_1fr] h-full">
-            <DBTablePanel />
-            <DBFeatTabs />
+            <DBTablePanel projectId={id}/>
+            <DBFeatTabs projectId={id}/>
         </div>
     )
 }
