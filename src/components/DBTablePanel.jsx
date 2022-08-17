@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {activeTableAtom, tableListAtom} from "../store/tableListStore";
-import Engine from "../store/nodeStore";
 import {dbAtom} from "../store/sqlStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createTable} from "../api/dbApi";
@@ -34,26 +33,16 @@ function DBTablePanel({projectId}) {
     const queryClient = useQueryClient()
     const navigate = useNavigate()
 
-    const engine = Engine;
-    // const tableList = useTableListState(state => state.tableList);
-    const [db, setDb] = useAtom(dbAtom)
-    // const setTableList = useTableListState(state => state.setTableList);
-    const [tableList, setTableList] = useAtom(tableListAtom)
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [tableCreateOpen, setTableCreateOpen] = useState(false)
-    const [tableCreateData, setTableCreateData] = useState({})
     const [searchParam, setSearchParam] = useState({projectId: projectId});
     const [databaseType, setDatabaseType] = useAtom(databaseTypeAtom)
     const tables = useListTables(searchParam)
 
 
+
+
     console.log(tables.isLoading)
-
-
-    const [editingTable, setEditingTable] = useState({
-        tableName: "",
-        columns: [],
-    });
 
     const tableCreateMutation = useMutation(createTable, {
         onSuccess: (data, variables, context) => {
@@ -63,7 +52,6 @@ function DBTablePanel({projectId}) {
     })
 
 
-    const [isTableEditing, setIsTableEditing] = useState(false);
 
     // const addTable = () => {
     //     let tableName = "table_" + (tableList.length + 1);
@@ -216,8 +204,10 @@ function DBTablePanel({projectId}) {
                         tables.data.data.data.map(it => (
                             <ListItem key={it.id} disablePadding onClick={() => {
                                 console.log("点击了", it)
-                                setActiveTable(it)
-                                navigate(`/header/home/${projectId}/table/${it.id}`)
+                                setActiveTable({
+                                    ...activeTable,
+                                    id: it.id
+                                })
                             }}>
                                 <ListItemButton>
                                     <ListItemText primary={it.name}/>

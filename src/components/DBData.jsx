@@ -94,7 +94,7 @@ export default function DBData() {
             <Button size={"small"} variant={"contained"}>生成关联表数据</Button>
 
             <Button size={"small"} variant={"contained"} onClick={() => setData([])}>清除本地数据</Button>
-            <Button size={"small"} variant={"contained"}>同步到远程</Button>
+            <Button size={"small"} variant={"contained"}>同步到数据库</Button>
             <Button size={"small"} variant={"contained"}>清空远程数据</Button>
 
 

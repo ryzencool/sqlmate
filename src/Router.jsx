@@ -39,9 +39,7 @@ const CustomRouter = () => {
                 <Route path="signIn" element={<SignIn/>}/>
             </Route>
             <Route path="/header" element={<Header/>}>
-                <Route path={"home/:id"} element={<Home/>}>
-                    <Route path={"table/:id"} element={<DBFeatTabs/>}/>
-                </Route>
+                <Route path={"home/:id"} element={<Home/>}/>
                 <Route path={"dashboard"} element={<Dashboard/>}>
                     <Route path={"favorite"} element={<FavoriteProject/>}/>
                     <Route path={"pubTemplate"} element={<Template/>}/>

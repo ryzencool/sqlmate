@@ -13,7 +13,7 @@ import {
     listProjectSql,
     listTableColumns,
     listTableIndexes,
-    listTables,
+    listTables, listTablesDetail,
     listTeam,
     listTeamUser,
     listTemplateFile,
@@ -44,6 +44,10 @@ export const useListTables = (search, options = {}) => {
     return useQuery(["projectTables", search], () => listTables(search), {
         enabled: !!search
     })
+}
+
+export const useListTableDetail = (search, options= {}) => {
+    return useQuery(['projectTablesDetail', search], () => listTablesDetail(search))
 }
 
 

@@ -24,8 +24,6 @@ import {useParams} from "react-router-dom";
 function DBDoc() {
     const queryClient = useQueryClient()
 
-    const {id} = useParams()
-
     // state
     const [activeTableState, setActiveTableState] = useAtom(activeTableAtom)
     const [columnsSelectedState, setColumnsSelectedState] = useState([])
@@ -536,19 +534,19 @@ const columnHeader = [
             return <div>
                 {!!info.getValue().leftColumns && info.getValue().leftColumns.map(it =>
                     (<div onClick={() => {
-                        console.log("当前点击左边", `/header/home/${project.id}/table/${it.rightTableId}`)
                         setActiveTable({
                             ...activeTable,
                             id: it.rightTableId
                         })
-                        navigate(`/header/home/${project.id}/table/${it.rightTableId}`)
                     }}>
                         -- {it.rightTableName}.{it.rightColumnName}
                     </div>))}
                 {!!info.getValue().rightColumns && info.getValue().rightColumns.map(it => (
                     <div onClick={() => {
-                        console.log("当前点击", `/header/home/${project.id}/table/${it.rightTableId}`)
-                        navigate(`/header/home/${project.id}/table/${it.leftTableId}`)
+                        setActiveTable({
+                            ...activeTable,
+                            id: it.leftTableId
+                        })
                     }}>
                         -- {it.leftTableName}.{it.leftColumnName}</div>))}
             </div>
@@ -560,5 +558,8 @@ const columnHeader = [
         cell: (info) => info.getValue(),
     },
 ]
+
+
+
 
 export default DBDoc

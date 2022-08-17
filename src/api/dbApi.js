@@ -3,6 +3,7 @@ import {get, post} from '../utils/httpUtil'
 const getProjectUrl = "/project/get"
 const addProjectUrl = "/project/add"
 const listTablesUrl = "/table/list"
+const listTablesDetailUrl = "/table/listAll"
 const getTableUrl = "/table/get"
 const listTableColumnsUrl = "/tableColumn/list"
 const delTableColumnUrl = "/tableColumn/del"
@@ -40,12 +41,22 @@ const deleteIndexUrl = "/tableIndex/delete"
 const executeSqlUrl = "/sql/execute"
 const deleteSqlUrl = "/sql/delete"
 const updateProjectSqlUrl = "/projectSql/update"
+const listTableRelUrl = "/tableRel/list"
+
 export function getProject(params) {
     return get(getProjectUrl, params)
 }
 
 export function listTables(params) {
     return get(listTablesUrl, params)
+}
+
+export function listTablesDetail(params) {
+    return get(listTablesDetailUrl, params)
+}
+
+export function listTableRel(params) {
+    return get(listTableRelUrl, params)
 }
 
 export function listTableColumns(params) {
@@ -170,6 +181,7 @@ export function getUserInfo(params) {
 export function addProject(params) {
     return post(addProjectUrl, params)
 }
+
 export function listMyProject(params) {
     return get(listMyProjectUrl, params)
 }
