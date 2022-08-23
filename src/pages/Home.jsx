@@ -4,8 +4,6 @@ import DBFeatTabs from "../components/DBFeatTabs";
 import {useParams} from "react-router-dom";
 import {useAtom} from "jotai";
 import {activeProjectAtom} from "../store/projectStore";
-import {useGetProject} from "../store/rq/reactQueryStore";
-import {Outlet} from "react-router";
 import {listTableRel, listTablesDetail} from "../api/dbApi";
 import {tableListDetailAtom, tableRelsAtom} from "../store/tableListStore";
 
@@ -30,7 +28,6 @@ export default function Home() {
             setTableRels(r.data.data)
             }
         )
-
 
     }, [])
     return (

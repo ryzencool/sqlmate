@@ -39,13 +39,12 @@ function DBTablePanel({projectId}) {
     const tables = useListTables(searchParam)
 
 
-
     const tableCreateMutation = useMutation(createTable, {
-        onSuccess: (data, variables, context) => {
-            console.log("请求成功", data, variables, context)
-            queryClient.invalidateQueries(['projectTables'])
-        }
-    })
+            onSuccess: (data, variables, context) => {
+                console.log("请求成功", data, variables, context)
+                queryClient.invalidateQueries(['projectTables'])
+            }
+        })
     if (tables.isLoading) {
         return <div>加载中</div>
     }
@@ -104,18 +103,16 @@ function DBTablePanel({projectId}) {
                             })
                         }}>
                             {
-                                <ListItemButton className={`rounded-lg ${it.id === activeTable.id ? "bg-slate-200": "bg-white" }`}>
+                                <ListItemButton
+                                    className={`rounded-lg ${it.id === activeTable.id ? "bg-slate-200" : "bg-white"}`}>
                                     <ListItemText primary={it.name}/>
                                 </ListItemButton>
-                               }
+                            }
 
                         </ListItem>))
-
                     }
                 </List>
-
             </Box>
-
         </div>
     );
 }

@@ -12,7 +12,7 @@ import {
     listProject, listProjectSnapshots,
     listProjectSql,
     listTableColumns,
-    listTableIndexes,
+    listTableIndexes, listTableRel,
     listTables, listTablesDetail,
     listTeam,
     listTeamUser,
@@ -115,3 +115,7 @@ export const useProjectDBML = (search, options = {}) => {
     return useQuery(['projectDBML',  search], () => queryProjectDBML(search),options )
 }
 
+
+export const useListTableRel = (search, options = {}) => {
+    return useQuery(['tableRels', search], () => listTableRel(search), options)
+}
