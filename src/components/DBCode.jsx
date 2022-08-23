@@ -1,51 +1,31 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {activeTableAtom} from "../store/tableListStore";
 import {Parser} from '@dbml/core'
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import {Tab, Tabs} from "@mui/material";
 import mustache from "mustache/mustache.mjs";
 import {CopyBlock, nord} from "react-code-blocks";
-import {useGetDBML, useGetTemplateFile, useListCodeTemplate, useListTemplateFile} from "../store/rq/reactQueryStore";
+import {useGetDBML, useListCodeTemplate, useListTemplateFile} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
-import toast from "react-hot-toast";
-import {sentenceCase} from 'change-case'
+import {a11yProps, ZTabPanel} from "./ZTabPanel";
 
-function TabPanel(props) {
-    const {children, value, index, ...other} = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{p: 3}}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
-
-function a11yProps(index) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
 
 export default function DBCode() {
 
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [value, setValue] = React.useState(0);
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
 
+    const snake2Camel = (str) => {
+        return str.replace(/_([a-z])/g, (m, p1) => p1.toUpperCase())
+    }
+
+    const camel2Snake = (str) => {
+        return str.replace(/[A-Z]/g, (m) => '_' + m.toLowerCase())
+    }
+
+    const firstUpperCase = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
     const codeTemplatesQuery = useListCodeTemplate({})
 
@@ -53,21 +33,21 @@ export default function DBCode() {
 
     const templateFilesQuery = useListTemplateFile(selectedTemplateSearch)
 
-    const [dbmlObj, setDbmlObj] = useState(null)
+    // const [dbmlObj, setDbmlObj] = useState(null)
 
-    const dbmlQuery = useGetDBML({tableId: activeTable.id}, {enabled: !!activeTable.id})
+    const dbmlQuery = useGetDBML({tableId: activeTable.id},
+        {enabled: !!activeTable.id})
 
-    useEffect(() => {
-        if (dbmlQuery.status === "success") {
-            const temp = Parser.parse(dbmlQuery.data.data.data, 'dbml')
-            setDbmlObj(temp)
-        }
-    }, [])
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
-    if (dbmlQuery.isLoading) {
+
+    if (dbmlQuery.isLoading || codeTemplatesQuery.isLoading || templateFilesQuery.isLoading) {
         return <div>isLoading</div>
     }
 
+    let dbmlObj = Parser.parse(dbmlQuery.data.data.data, 'dbml')
 
 
     return (<div className={"w-full"}>
@@ -83,7 +63,7 @@ export default function DBCode() {
                 sx={{borderRight: 1, borderColor: 'divider'}}
             >
                 {
-                    !codeTemplatesQuery.isLoading && codeTemplatesQuery.data.data.data.map((tpl, index) => {
+                    codeTemplatesQuery.data.data.data.map((tpl, index) => {
                         return <Tab label={tpl.name} {...a11yProps(index)} onClick={() => {
                             setSelectedTemplateSearch({
                                 templateId: tpl.id
@@ -95,50 +75,51 @@ export default function DBCode() {
 
             </Tabs>
             <div className={'flex flex-col gap-6 w-full'}>
-            {
-                !codeTemplatesQuery.isLoading && codeTemplatesQuery.data.data.data.map((tpl, index) => {
-                    return <TabPanel value={value} index={index} key={tpl.id} className={'w-full'}>
-                        {
-                            !templateFilesQuery.isLoading && templateFilesQuery.data.data.data.map(
-                                file => {
-                                    let transfer = eval(tpl.transferFn)
-                                    let content = file.content
-                                    console.log("可以可以：", tpl.transferFn,  content, dbmlObj)
-                                    let newObj
-                                    try {
-                                        console.log("大家是：", dbmlObj.schemas[0].tables[0])
-                                        newObj = transfer(dbmlObj.schemas[0].tables[0])
-                                    } catch (e) {
-                                        // toast("模版有误，请检查模版后重试", {position: "top-center"})
-                                        return
-                                    }
+                {
+                    codeTemplatesQuery.data.data.data.map((tpl, index) => {
+                        return <ZTabPanel value={value} index={index} key={tpl.id} className={'w-full '}>
+                            <div className={'flex flex-col gap-6'}>
+                                {
+                                    templateFilesQuery.data.data.data.map(
+                                        file => {
+                                            let transfer = eval(tpl.transferFn)
+                                            let content = file.content
+                                            console.log("可以可以：", tpl.transferFn, content, dbmlObj)
+                                            let newObj
+                                            try {
+                                                console.log("大家是：", dbmlObj.schemas[0].tables[0])
+                                                newObj = transfer(dbmlObj.schemas[0].tables[0])
+                                            } catch (e) {
+                                                console.log("错误是", e)
+                                                return
+                                            }
 
 
-
-                                    return (<div key={file.id} className={'w-full'}>
-                                            <div className={'font-bold  border-b pb-1'}>{mustache.render(file.fileName, newObj)}</div>
-                                            <div className={'mt-4'} >
-                                            <CopyBlock
-                                                text={mustache.render(content, newObj)}
-                                                theme={nord}
-                                                language={"java"} ka
-                                                customStyle={
-                                                    {
-                                                        paddingRight: "40px",
-                                                        paddingTop: "10px",
-                                                        width: "100%",
-                                                    }
-                                                }
-                                            />
-                                            </div>
-                                        </div>
+                                            return (<div key={file.id} className={'w-full'}>
+                                                    <div
+                                                        className={'font-bold  border-b pb-1'}>{mustache.render(file.fileName, newObj)}</div>
+                                                    <div className={'mt-4'}>
+                                                        <CopyBlock
+                                                            text={mustache.render(content, newObj)}
+                                                            theme={nord}
+                                                            language={"java"}
+                                                            customStyle={
+                                                                {
+                                                                    padding: "20px",
+                                                                    width: "100%",
+                                                                }
+                                                            }
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
                                     )
                                 }
-                            )
-                        }
-                    </TabPanel>
-                })
-            }
+                            </div>
+                        </ZTabPanel>
+                    })
+                }
             </div>
 
 

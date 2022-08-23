@@ -1,20 +1,18 @@
 import React, {useEffect, useState} from 'react'
 import {activeTableAtom} from "../store/tableListStore";
-import {Button, Drawer} from "@mui/material";
-import ZTable from "./ZTable";
+import {Button} from "@mui/material";
 import {dbAtom} from "../store/sqlStore";
 import {useAtom} from "jotai";
 import {useGetDBML} from "../store/rq/reactQueryStore";
 import {Parser} from "@dbml/core";
 import {createColumnHelper} from "@tanstack/react-table";
 import {faker} from "@faker-js/faker";
-import {CopyBlock, nord} from "react-code-blocks";
-import Box from "@mui/material/Box";
 import * as _ from 'lodash'
 import {databaseTypeAtom} from "../store/databaseStore";
-import {format} from 'sql-formatter';
 import {CodeResult, TemporaryDrawer} from "./TemporaryDrawer";
 import beautify from 'json-beautify'
+import {format} from "sql-formatter";
+import ZTable from "./ZTable";
 
 // 展现相关联的表的数据
 export default function DBData({tableId}) {
@@ -26,7 +24,8 @@ export default function DBData({tableId}) {
     const [insertDrawerOpen, setInsertDrawerOpen] = useState(false)
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [databaseType, setDatabase] = useAtom(databaseTypeAtom)
-
+    const [insertSql, setInsertSql] = useState("");
+    const [jsonData, setJsonData] = useState("");
     useGetDBML({tableId: activeTable.id}, {
         enabled: !!activeTable.id,
         onSuccess: (data) => {
@@ -55,8 +54,6 @@ export default function DBData({tableId}) {
     const handleGenerateLinkTableData = () => {
         let push = []
         // 找出和当前表关联的所有表
-
-
     }
 
     const handleGenerateData = () => {
@@ -82,18 +79,6 @@ export default function DBData({tableId}) {
 
         console.log("数据是", push)
         setData(push)
-
-
-        const sql = `insert into ${dbmlObj.name} values()`
-
-        // 1. 生成大批量的文件
-        // let arr = []
-        // let name = "insert into user values(1)\n"
-        //
-        // let blob = new Blob(arr, {
-        //     type: "text/plain;charset=utf-8"
-        // })
-        // saveAs(blob, "data.sql")
     }
 
     const generateInsert = () => {
@@ -112,7 +97,19 @@ export default function DBData({tableId}) {
         return res
     }
 
-    const syncDatabase = () => {
+    const handleClickGenerateSql = () => {
+        let res = generateInsert();
+        setInsertSql(format(res));
+        setInsertDrawerOpen(true)
+    }
+
+    const handleClickGenerateJson = () => {
+        let res = beautify(data, null, 2, 100)
+        setJsonData(res)
+        setJsonDrawerOpen(true)
+    }
+
+    const handleClickSyncDatabase = () => {
         let res = generateInsert();
         if (databaseType === 1) {
             // 本地sqlite执行
@@ -121,7 +118,7 @@ export default function DBData({tableId}) {
         }
     }
 
-    const clearDatabase = () => {
+    const handleClickClearDatabase = () => {
 
     }
 
@@ -136,25 +133,17 @@ export default function DBData({tableId}) {
             {/*>生成关联表数据</Button>*/}
             <Button size={"small"} variant={"contained"} onClick={() => setData([])}>清除本地数据</Button>
             <Button size={"small"} variant={"contained"}
-                    onClick={() => setJsonDrawerOpen(true)}>导出Json</Button>
+                    onClick={handleClickGenerateJson}>导出Json</Button>
             <TemporaryDrawer open={jsonDrawerOpen}
                              handleClose={() => setJsonDrawerOpen(false)}
-                             element={<CodeResult content={beautify(data, null, 2, 100)} format={'sql'}/>}/>
-            <Button size={"small"} variant={"contained"} onClick={() => setInsertDrawerOpen(true)}>导出Insert语句</Button>
+                             element={<CodeResult content={jsonData} format={'sql'}/>}/>
+            <Button size={"small"} variant={"contained"} onClick={handleClickGenerateSql}>导出Insert语句</Button>
             <TemporaryDrawer open={insertDrawerOpen}
                              handleClose={() => setInsertDrawerOpen(false)}
-                             element={<CodeResult content={format(generateInsert())} format={'sql'}/>}/>
+                             element={<CodeResult content={insertSql} format={'sql'}/>}/>
 
-            <Button size={"small"} variant={"contained"} onClick={() => {
-                syncDatabase()
-            }
-            }>同步到数据库</Button>
-            <Button size={"small"} variant={"contained"}
-                    onClick={() => {
-                        clearDatabase()
-                    }
-                    }
-            >清空数据库</Button>
+            <Button size={"small"} variant={"contained"} onClick={handleClickSyncDatabase}>同步到数据库</Button>
+            <Button size={"small"} variant={"contained"} onClick={handleClickClearDatabase}>清空数据库</Button>
 
 
         </div>

@@ -14,7 +14,6 @@ import {format} from 'sql-formatter';
 import {databaseTypeAtom} from "../store/databaseStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {executeSql} from "../api/dbApi";
-import toast from "react-hot-toast";
 import * as _ from "lodash"
 
 export default function DBConsole() {
@@ -68,22 +67,8 @@ export default function DBConsole() {
     })
 
 
-    // 创建当前表
-    useEffect(() => {
-        console.log("找到所有的表了",)
-        console.log(tableColumns.data.data.data)
-        let colSql = tableColumns. data.data.data.map(col => {
-            return col.name + " " + col.type
-        }).join(",\n")
 
-        const sql = `create table if not exists ${activeTable.name} (
-                        ${colSql}
-                     )`
-        console.log(sql)
 
-        db.exec(sql)
-
-    }, [tables])
     const columnHelper = createColumnHelper()
 
     const handleExplain = () => {

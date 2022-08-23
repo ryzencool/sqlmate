@@ -1,6 +1,5 @@
 import React, {useState} from "react";
-import {activeTableAtom, tableListAtom} from "../store/tableListStore";
-import {dbAtom} from "../store/sqlStore";
+import {activeTableAtom} from "../store/tableListStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createTable} from "../api/dbApi";
 import Button from "@mui/material/Button";
@@ -17,12 +16,12 @@ import {
     ListItemButton,
     ListItemText,
     MenuItem,
-    Select, TextField
+    Select,
+    TextField
 } from "@mui/material";
 import {useListTables} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
 import {databaseTypeAtom} from "../store/databaseStore";
-import {activeProjectAtom} from "../store/projectStore";
 import FormInputText from "./FormInputText";
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router";
@@ -41,123 +40,21 @@ function DBTablePanel({projectId}) {
 
 
 
-
-    console.log(tables.isLoading)
-
     const tableCreateMutation = useMutation(createTable, {
         onSuccess: (data, variables, context) => {
             console.log("请求成功", data, variables, context)
             queryClient.invalidateQueries(['projectTables'])
         }
     })
-
-
-
-    // const addTable = () => {
-    //     let tableName = "table_" + (tableList.length + 1);
-    //     const node = new JSCustomNodeModel({color: "rgb(192,255,0)"});
-    //
-    //     setTableList([
-    //         ...tableList,
-    //         {
-    //             tableName,
-    //             columns: [
-    //                 {
-    //                     columnId: 1,
-    //                     columnName: "id",
-    //                     columnType: "int",
-    //                 },
-    //             ],
-    //             node: node,
-    //         },
-    //     ]);
-    //
-    //     node.setPosition(100, 100);
-    //     engine.getModel().addNode(node);
-    //     engine.repaintCanvas();
-    // };
-    //
-    // const changeColumnName = (evt, columnId) => {
-    //     let tb = editingTable;
-    //     let col = tb.columns[columnId - 1];
-    //     tb.columns[columnId - 1] = {
-    //         ...col,
-    //         columnName: evt.target.value,
-    //     };
-    //     setEditingTable({...tb});
-    // };
-    //
-    // const changeColumnType = (evt, columnId) => {
-    //     let tb = editingTable;
-    //     let col = tb.columns[columnId - 1];
-    //     tb.columns[columnId - 1] = {
-    //         ...col,
-    //         columnType: evt.target.value,
-    //     };
-    //     setEditingTable({...tb});
-    // };
-    //
-    // const syncEditingTable = () => {
-    //     let temp = tableList;
-    //     let index = temp.findIndex(
-    //         (tab) => tab.tableName == editingTable.tableName
-    //     );
-    //     temp[index] = editingTable;
-    //     console.log("index is:", temp);
-    //     setTableList([...temp]);
-    //     closeEditing();
-    // };
-    // const addColumn = (tableName) => {
-    //     setIsTableEditing(true);
-    //
-    //     let tempList = tableList;
-    //     let activeIndex = tempList.findIndex((it) => it.tableName == tableName);
-    //     let activeTable = tempList[activeIndex];
-    //     let columnName = activeTable.columns.length;
-    //
-    //     activeTable.columns = [
-    //         ...activeTable.columns,
-    //         {
-    //             columnId: 1,
-    //             columnName: "column_" + columnName,
-    //             columnType: "int",
-    //         },
-    //     ];
-    //     db.run(`
-    // ALTER TABLE ${tableName}
-    // ADD ${columnName} int;
-    // `);
-    //     setTableList([...tempList]);
-    //     console.log(activeTable.node);
-    //     activeTable.node.addPort(
-    //         new DefaultPortModel({
-    //             in: false,
-    //             name: columnName,
-    //         })
-    //     );
-    //     activeTable.node.addPort(
-    //         new DefaultPortModel({
-    //             in: true,
-    //             name: "int" + (activeIndex + 1),
-    //         })
-    //     );
-    //     engine.repaintCanvas();
-    // };
-    //
-    // const openEditing = (table) => {
-    //     setIsTableEditing(true);
-    //     setEditingTable(table);
-    // };
-    //
-    // const closeEditing = () => setIsTableEditing(false);
-
-
+    if (tables.isLoading) {
+        return <div>加载中</div>
+    }
     return (
         <div>
             <div className="flex flex-col items-center h-20 w-full gap-2 ">
                 <div className={"relative flex flex-row items-center justify-between w-10/12"}>
                     <div className={'w-full flex flex-row justify-between'}>
-                        <TextField size={"small"} className={"w-full"} label={"搜索"}  onChange={(e) => {
+                        <TextField size={"small"} className={"w-full"} label={"搜索"} onChange={(e) => {
                             setSearchParam({
                                 tableName: e.target.value
                             })
@@ -189,7 +86,6 @@ function DBTablePanel({projectId}) {
                     </Button>
                     <TableCreateDialog closeDialog={() => setTableCreateOpen(false)} open={tableCreateOpen}
                                        submitForm={data => {
-                                           console.log("获取当前项目",projectId)
                                            tableCreateMutation.mutate({
                                                ...data,
                                                projectId: projectId
@@ -199,20 +95,21 @@ function DBTablePanel({projectId}) {
 
             </div>
             <Box className={"w-full flex flex-col  items-center text-sm "}>
-                <List className={"w-10/12 overflow-auto mt-2 h-[calc(100vh-11rem)]"}>
+                <List className={"w-10/12 overflow-auto mt-4 h-[calc(100vh-11rem)]"}>
 
-                    {!tables.isLoading &&
-                        tables.data.data.data.map(it => (
-                            <ListItem key={it.id} disablePadding onClick={() => {
-                                console.log("点击了", it)
-                                setActiveTable({
-                                    id: it.id
-                                })
-                            }}>
-                                <ListItemButton>
+                    {tables.data.data.data.map(it => (
+                        <ListItem key={it.id} disablePadding onClick={() => {
+                            setActiveTable({
+                                id: it.id
+                            })
+                        }}>
+                            {
+                                <ListItemButton className={`rounded-lg ${it.id === activeTable.id ? "bg-slate-200": "bg-white" }`}>
                                     <ListItemText primary={it.name}/>
                                 </ListItemButton>
-                            </ListItem>))
+                               }
+
+                        </ListItem>))
 
                     }
                 </List>

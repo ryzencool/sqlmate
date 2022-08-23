@@ -53,6 +53,11 @@ export default function ZMenu() {
         }
     })
 
+    const handleSyncDatabase = () => {
+        // 获取所有的表
+
+    }
+
     return (
         <div>
             <Button
@@ -81,7 +86,7 @@ export default function ZMenu() {
                 <input type={'file'} style={{display: "none"}} ref={fileInput} onChange={showFile}/>
 
                 <MenuItem onClick={handleClose}>导出SQL</MenuItem>
-                <MenuItem onClick={handleClose}>同步数据库</MenuItem>
+                <MenuItem onClick={() => handleSyncDatabase()}>同步数据库</MenuItem>
             </Menu>
         </div>
     );

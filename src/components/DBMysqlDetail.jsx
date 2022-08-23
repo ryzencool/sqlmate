@@ -1,31 +1,32 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {activeTableAtom} from "../store/tableListStore";
 import {exporter, Parser} from "@dbml/core";
 import {CopyBlock, nord} from "react-code-blocks";
 import {useAtom} from "jotai";
 import {useGetDBML} from "../store/rq/reactQueryStore";
-import {Card} from "@mui/material";
-import {format} from 'sql-formatter';
 
 
 export default function DBMysqlDetail(props) {
 
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
 
-    const dbmlQuery = useGetDBML({tableId: activeTable.id}, {enabled: !!activeTable.id,
+    const dbmlQuery = useGetDBML({tableId: activeTable.id}, {
+        enabled: !!activeTable.id,
         onSuccess: (data) => {
-                let dbmlObjTemp = Parser.parse(data.data.data, 'dbml')
-                setDbMlObj(dbmlObjTemp)
-                let tableName = dbmlObjTemp.schemas[0].tables[0].name
-                setDropTableDML(`DROP TABLE ${tableName};`)
-                setAlterTableNameDML(`ALTER TABLE ${tableName} rename to new_table_name;`)
-                handleAddColumn(tableName)
-                handleAlterColumn(tableName)
-                handleDropColumn(tableName)
-                handleAddIndex(tableName)
-                handleAlterIndex(tableName)
-                handleDropIndex(tableName)
-        }})
+            let dbmlObjTemp = Parser.parse(data.data.data, 'dbml')
+            setDbMlObj(dbmlObjTemp)
+            let tableName = dbmlObjTemp.schemas[0].tables[0].name
+            setDropTableDML(`DROP TABLE ${tableName};`)
+            setAlterTableNameDML(`ALTER TABLE ${tableName} rename to new_table_name;`)
+            handleAddColumn(tableName)
+            handleAlterColumn(tableName)
+            handleDropColumn(tableName)
+            handleAddIndex(tableName)
+            handleAlterIndex(tableName)
+            handleDropIndex(tableName)
+        }
+    })
+
     const [dbmlObj, setDbMlObj] = useState(null)
     const [dropTableDML, setDropTableDML] = useState("")
     const [alterTableNameDML, setAlterTableNameDML] = useState("")
@@ -35,11 +36,6 @@ export default function DBMysqlDetail(props) {
     const [addIndexDML, setAddIndexDML] = useState("")
     const [alterIndexDML, setAlterIndexDML] = useState("")
     const [dropIndexDML, setDropIndexDML] = useState("")
-    if (dbmlQuery.isLoading) {
-        return <div>isLoading</div>
-    }
-
-    console.log("dbml:", Parser.parse(dbmlQuery.data.data.data, 'dbml'))
 
 
     const handleAddColumn = (tableName) => {
@@ -67,7 +63,7 @@ CREATE UNIQUE INDEX indexName ON ${tableName}(column_name(length));
 `)
     }
 
-    const handleAlterIndex= (tableName) => {
+    const handleAlterIndex = (tableName) => {
         setAlterIndexDML(`ALTER table ${tableName} ADD INDEX indexName(columnName);
 ALTER table ${tableName} ADD UNIQUE [indexName] (column_name(length));
 `)
@@ -78,6 +74,9 @@ ALTER table ${tableName} ADD UNIQUE [indexName] (column_name(length));
     }
 
 
+    if (dbmlQuery.isLoading) {
+        return <div>加载中</div>
+    }
 
 
     return <div className={"w-full"}>
@@ -85,12 +84,12 @@ ALTER table ${tableName} ADD UNIQUE [indexName] (column_name(length));
             <div>
                 <div className={'font-bold text-lg border-b pb-3'}>表操作</div>
                 <div className={'mt-4 flex flex-col gap-4'}>
-                    <CodeComponent title={"创建表"} code={exporter.export(dbmlQuery.data.data.data, "mysql")}/>
+                    <CodeComponent title={"创建表"} code={exporter.export(dbmlQuery.data.data.data, "postgres")}/>
                     <CodeComponent title={"删除表"} code={dropTableDML}/>
                     <CodeComponent title={"修改表"} code={alterTableNameDML}/>
                 </div>
             </div>
-            <div >
+            <div>
                 <div className={'font-bold text-lg border-b pb-3'}>字段操作</div>
                 <div className={'mt-4 flex flex-col gap-4'}>
                     <CodeComponent title={"添加字段"} code={addColumnDML}/>

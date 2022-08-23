@@ -16,7 +16,7 @@ export default function Index() {
                 <div>
                     <Link to={"/header/home"}>项目</Link>
                 </div>
-                <div><Link to={"/header/dashboard"}>控制台</Link></div>
+                <div><Link to={"/header/dashboard/myProject"}>控制台</Link></div>
                 <div>模版</div>
                 <div>更新</div>
             </div>

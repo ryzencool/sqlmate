@@ -2,8 +2,12 @@ import React from 'react'
 import DashMenu from "./DashMenu";
 import {Outlet} from 'react-router'
 import {Breadcrumbs, Link} from "@mui/material";
+import {useLocation} from "react-router-dom";
 
 export default function Dashboard() {
+
+    const {pathname} = useLocation()
+
     return (<div className="grid grid-cols-[300px_1fr] h-full ">
         <div>
             <DashMenu/>

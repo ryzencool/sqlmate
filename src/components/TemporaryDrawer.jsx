@@ -7,7 +7,7 @@ export  function TemporaryDrawer({open, handleClose, element}) {
 
 
     return (
-        <div>
+        <div className={'rounded-lg'}>
             <React.Fragment key={"bottom"}>
                 <Drawer
                     anchor={"bottom"}

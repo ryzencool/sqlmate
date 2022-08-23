@@ -5,7 +5,8 @@ import {useListCodeTemplate} from "../store/rq/reactQueryStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addCodeTemplate} from "../api/dbApi";
 import {useNavigate} from "react-router";
-import Box from "@mui/material/Box";
+import {useAtom} from "jotai";
+import {activeProjectAtom} from "../store/projectStore";
 
 
 export default function CodeSettings() {
@@ -14,6 +15,7 @@ export default function CodeSettings() {
 
     const [open, setOpen] = React.useState(false);
 
+    const [project, setProject] = useAtom(activeProjectAtom)
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -26,8 +28,6 @@ export default function CodeSettings() {
     const codeTemplates = useListCodeTemplate({
         projectId: 1
     })
-
-    // console.log("模版列表", codeTemplates.data.data?.data)
 
 
     const queryClient = useQueryClient()
@@ -45,7 +45,7 @@ export default function CodeSettings() {
                 !codeTemplates.isLoading && codeTemplates.data.data?.data.map(
                     it => (
                         <Card key={it.id} className={"w-60 h-96"}
-                              >
+                        >
                             <div className={'h-4/5 bg-purple-300'}>
 
                             </div>
@@ -58,7 +58,8 @@ export default function CodeSettings() {
                                         <Chip label={it.lang} size={"small"}/>
                                     </div>
                                     <div>
-                                        <Button onClick={() => navigate(`/header/dashboard/codeTemplateEdit/${it.id}`)}>点击进入</Button>
+                                        <Button
+                                            onClick={() => navigate(`/header/dashboard/codeTemplateEdit/${it.id}`)}>点击进入</Button>
                                     </div>
                                 </div>
                             </div>
@@ -112,15 +113,13 @@ export default function CodeSettings() {
                 }>确定</Button>
             </DialogActions>
         </Dialog>
-        <Box sx={{height: 320, transform: 'translateZ(0px)', flexGrow: 1}}>
-            <SpeedDial onClick={() => setOpen(true)}
-                       ariaLabel="SpeedDial basic example"
-                       sx={{position: 'absolute', bottom: 16, right: 32}}
-                       icon={<SpeedDialIcon/>}
-            >
+        <SpeedDial onClick={() => setOpen(true)}
+                   ariaLabel="SpeedDial basic example"
+                   sx={{position: 'absolute', bottom: 50, right: 50}}
+                   icon={<SpeedDialIcon/>}
+        >
 
-            </SpeedDial>
-        </Box>
+        </SpeedDial>
 
     </div>
 }

@@ -19,7 +19,6 @@ import Box from "@mui/material/Box";
 import FormTableAndColumnSelectBox from "./FormTableAndColumnSelectBox";
 import {useNavigate} from "react-router";
 import {activeProjectAtom} from "../store/projectStore";
-import {useParams} from "react-router-dom";
 
 function DBDoc() {
     const queryClient = useQueryClient()
@@ -54,6 +53,8 @@ function DBDoc() {
     const tableColumnsQuery = useListColumn({tableId: activeTableState.id}, {
         enabled: !!activeTableState.id,
     })
+
+
 
     // mutation
     const columnAddMutation = useMutation(addColumn, {
@@ -102,7 +103,9 @@ function DBDoc() {
         setIndexesSelectedState(_.keys(params))
     }
 
-
+    if (tableQuery.isLoading || tableIndexesQuery.isLoading || projectQuery.isLoading || tableColumnsQuery.isLoading) {
+        return <div>加载中</div>
+    }
     return (
         <div className={"flex flex-col gap-5  "}>
             <div className={"flex-col flex gap-20"}>
@@ -110,7 +113,7 @@ function DBDoc() {
                     <div className={'flex flex-row gap-2'}>
                         <TableViewOutlinedIcon/>
                         <div className={"text-base font-bold"}>
-                            {!tableQuery.isLoading && tableQuery.data?.data.data.name}
+                            {tableQuery.data?.data.data.name}
                         </div>
                     </div>
                     <div onClick={() => {
@@ -119,7 +122,7 @@ function DBDoc() {
                         <DriveFileRenameOutlineOutlinedIcon/>
                     </div>
                     <EditTableDialog
-                        value={!tableQuery.isLoading && tableQuery.data?.data.data}
+                        value={tableQuery.data?.data.data}
                         open={tableEditOpen}
                         closeDialog={() => setTableEditOpen(false)}
                         submitForm={(e) => {
@@ -132,17 +135,12 @@ function DBDoc() {
                 </div>
             </div>
             <div className={"flex flex-col gap-1"}>
-                <div className={"grid grid-rows-2"}>
-                    <div className={"grid grid-cols-2"}>
 
-                    </div>
-                </div>
-
-                <div className={"grid grid-cols-2 grid-rows-2 gap-2 text-sm w-1/6"}>
+                <div className={"grid grid-cols-2 grid-rows-2 gap-1 text-sm w-1/6"}>
                     <div className={"text-gray-500 col-span-1 text-sm"}>创建人</div>
                     <div className={"col-span-1"}>zmy</div>
                     <div className={"text-gray-500"}>备注</div>
-                    <div>{!tableQuery.isLoading && tableQuery.data.data.data.note}</div>
+                    <div>{tableQuery.data.data.data.note}</div>
                 </div>
             </div>
             <div>
@@ -181,7 +179,7 @@ function DBDoc() {
                             编辑
                         </Button>
                         <EditColumnDialog
-                            value={!tableColumnsQuery.isLoading && tableColumnsQuery.data.data.data.filter(it => it.id.toString() === columnsSelectedState[0])[0]}
+                            value={tableColumnsQuery.data.data.data.filter(it => it.id.toString() === columnsSelectedState[0])[0]}
                             closeDialog={() => setColumnEditOpen(false)}
                             open={columnEditOpen}
                             submitForm={data => {
@@ -206,9 +204,8 @@ function DBDoc() {
                                      }}/>
                     </div>
                     <div>
-                        {!tableColumnsQuery.isLoading &&
-                            <ZTable data={tableColumnsQuery.data.data.data} columns={columnsMemo}
-                                    getSelectedRows={it => handleColumnSelected(it)} canSelect={true}/>}
+                        <ZTable data={tableColumnsQuery.data.data.data} columns={columnsMemo}
+                                getSelectedRows={it => handleColumnSelected(it)} canSelect={true}/>
 
                     </div>
                 </div>
@@ -242,7 +239,7 @@ function DBDoc() {
                                 }}>编辑</Button>
                         <EditIndexDialog
                             mode={1}
-                            value={!tableIndexesQuery.isLoading &&
+                            value={
                                 tableIndexesQuery.data.data.data.filter(it => it.id.toString() === indexesSelectedState[0])[0]}
                             open={indexEditOpen}
                             closeDialog={() => setIndexEditOpen(false)}
@@ -267,9 +264,9 @@ function DBDoc() {
                     </div>
 
                     <div>
-                        {!tableIndexesQuery.isLoading &&
-                            <ZTable data={tableIndexesQuery?.data?.data?.data} columns={indexesMemo}
-                                    getSelectedRows={it => handleIndexSelected(it)} canSelect={true}/>}
+
+                        <ZTable data={tableIndexesQuery?.data?.data?.data} columns={indexesMemo}
+                                getSelectedRows={it => handleIndexSelected(it)} canSelect={true}/>
                     </div>
                 </div>
             </div>
@@ -558,8 +555,6 @@ const columnHeader = [
         cell: (info) => info.getValue(),
     },
 ]
-
-
 
 
 export default DBDoc
