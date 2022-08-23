@@ -42,6 +42,27 @@ const executeSqlUrl = "/sql/execute"
 const deleteSqlUrl = "/sql/delete"
 const updateProjectSqlUrl = "/projectSql/update"
 const listTableRelUrl = "/tableRel/list"
+const listProjectSnapshotsUrl = "/snapshot/list"
+const createSnapshotUrl = "/snapshot/create"
+const queryProjectDBMLUrl = "/dbml/project"
+const importProjectDbmlUrl = "/dbml/import"
+
+export function importProjectDbml(params) {
+    return post(importProjectDbmlUrl, params)
+}
+
+export function queryProjectDBML(params) {
+    return get(queryProjectDBMLUrl, params)
+}
+
+export function createSnapshot(params) {
+    return post(createSnapshotUrl, params)
+}
+
+
+export function listProjectSnapshots(params) {
+    return get(listProjectSnapshotsUrl, params)
+}
 
 export function getProject(params) {
     return get(getProjectUrl, params)

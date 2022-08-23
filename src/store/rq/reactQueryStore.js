@@ -9,7 +9,7 @@ import {
     listCodeTemplate,
     listFavoriteProject,
     listMyProject,
-    listProject,
+    listProject, listProjectSnapshots,
     listProjectSql,
     listTableColumns,
     listTableIndexes,
@@ -18,8 +18,9 @@ import {
     listTeamUser,
     listTemplateFile,
     pagePublicProject,
-    queryOptimizer
+    queryOptimizer, queryProjectDBML
 } from "../../api/dbApi";
+import {createFilterOptions} from "@mui/material";
 
 export const useGetProject = (params, options) => useQuery(['project', params], () => getProject(params), options)
 
@@ -106,4 +107,11 @@ export const useListMyProject = (search, options= {}) => {
 }
 
 
+export const useListSnapshot = (search, options = {}) => {
+    return useQuery(['projectSnapshots', search], () => listProjectSnapshots(search), options)
+}
+
+export const useProjectDBML = (search, options = {}) => {
+    return useQuery(['projectDBML',  search], () => queryProjectDBML(search),options )
+}
 

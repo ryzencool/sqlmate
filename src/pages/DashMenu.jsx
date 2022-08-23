@@ -13,7 +13,7 @@ export default function DashMenu() {
 
     const navigate = useNavigate()
 
-    return <div className={"flex flex-col items-center  overflow-auto h-[calc(100vh-5rem)]"}>
+    return <div className={"flex flex-col items-center  h-[calc(100vh-5rem)]"}>
         <List className={'w-full'}>
             <ListItem disablePadding >
                 <ListItemButton onClick={() => navigate("/header/dashboard/favorite")} >

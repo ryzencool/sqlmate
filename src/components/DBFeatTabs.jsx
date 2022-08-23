@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Tab, Tabs} from "@mui/material";
@@ -9,10 +9,13 @@ import DBData from "./DBData";
 import DBDml from "./DBDml";
 import DBDdl from "./DBDdl";
 import DBCode from "./DBCode";
+import {activeTableAtom} from "../store/tableListStore";
+import DBSnapshot from "./DBSnapshot";
 
 
 const FeatPanel = (props) => {
     const {children, value, index, ...other} = props;
+
     return (
         <div
             role="tabpanel"
@@ -39,6 +42,9 @@ function a11yProps(index) {
 
 function DBFeatTabs(props) {
     const [value, setValue] = useState(0)
+    const [activeTable, setActiveTable] = useState(activeTableAtom)
+
+
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -53,13 +59,13 @@ function DBFeatTabs(props) {
                     <Tab label="数据" {...a11yProps(3)} />
                     <Tab label="DML" {...a11yProps(4)} />
                     <Tab label="代码" {...a11yProps(5)} />
-                    <Tab label="版本" {...a11yProps(6)} />
+                    <Tab label="快照" {...a11yProps(6)} />
                     <Tab label="SQL库" {...a11yProps(7)} />
                     <Tab label="优化" {...a11yProps(8)} />
 
                 </Tabs>
             </Box>
-            <Box  className={"h-[calc(100vh-5rem)] overflow-auto"}>
+            <Box  className={"h-[calc(100vh-9rem)] overflow-auto"}>
             <FeatPanel value={value} index={0}  >
                 <DBDoc />
             </FeatPanel>
@@ -70,7 +76,7 @@ function DBFeatTabs(props) {
                 <DBConsole/>
             </FeatPanel>
             <FeatPanel value={value} index={3}>
-                <DBData/>
+                <DBData tableId={activeTable.id}/>
             </FeatPanel>
             <FeatPanel value={value} index={4}>
                 <DBDml/>
@@ -79,7 +85,7 @@ function DBFeatTabs(props) {
                 <DBCode/>
             </FeatPanel>
             <FeatPanel value={value} index={6}>
-                假数据
+                <DBSnapshot/>
             </FeatPanel>
             <FeatPanel value={value} index={7}>
                 <DBDdl/>

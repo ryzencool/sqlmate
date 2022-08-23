@@ -7,7 +7,7 @@ export function DiagramWidget(props) {
 
   return (
     <CanvasWidget
-        className="rounded-md h-[calc(100vh-14rem)] w-full bg-slate-200 flex flex-row flex-wrap"
+        className="rounded-md h-[calc(100vh-12rem)] w-full bg-slate-200 flex flex-row flex-wrap"
         engine={engine} />
   );
 }

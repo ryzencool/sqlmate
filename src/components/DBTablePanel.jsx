@@ -17,7 +17,7 @@ import {
     ListItemButton,
     ListItemText,
     MenuItem,
-    Select
+    Select, TextField
 } from "@mui/material";
 import {useListTables} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
@@ -154,14 +154,15 @@ function DBTablePanel({projectId}) {
 
     return (
         <div>
-            <div className="flex flex-col items-center  w-full gap-2 ">
+            <div className="flex flex-col items-center h-20 w-full gap-2 ">
                 <div className={"relative flex flex-row items-center justify-between w-10/12"}>
-                    <input placeholder={"搜索"} className={"p-1 rounded-md w-full border-neutral-300 border-2"}
-                           onChange={(e) => {
-                               setSearchParam({
-                                   tableName: e.target.value
-                               })
-                           }}/>
+                    <div className={'w-full flex flex-row justify-between'}>
+                        <TextField size={"small"} className={"w-full"} label={"搜索"}  onChange={(e) => {
+                            setSearchParam({
+                                tableName: e.target.value
+                            })
+                        }}/>
+                    </div>
                 </div>
                 <div className={"flex flex-row gap-2 justify-between w-10/12 mt-2"}>
                     <FormControl className={"w-1/2"} size="small">
@@ -198,14 +199,13 @@ function DBTablePanel({projectId}) {
 
             </div>
             <Box className={"w-full flex flex-col  items-center text-sm "}>
-                <List className={"w-10/12 overflow-auto mt-2 h-[calc(100vh-144px)]"}>
+                <List className={"w-10/12 overflow-auto mt-2 h-[calc(100vh-11rem)]"}>
 
                     {!tables.isLoading &&
                         tables.data.data.data.map(it => (
                             <ListItem key={it.id} disablePadding onClick={() => {
                                 console.log("点击了", it)
                                 setActiveTable({
-                                    ...activeTable,
                                     id: it.id
                                 })
                             }}>

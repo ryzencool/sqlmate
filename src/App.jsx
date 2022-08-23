@@ -6,6 +6,8 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
 import {useAtom} from "jotai";
 import {dbAtom} from "./store/sqlStore";
 import { Toaster} from "react-hot-toast";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
 const queryClient = new QueryClient()
 
 function App() {
@@ -32,6 +34,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
             <Toaster/>
             <CustomRouter/>
+            <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );
 }

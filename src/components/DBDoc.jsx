@@ -532,7 +532,7 @@ const columnHeader = [
             const [activeTable, setActiveTable] = useAtom(activeTableAtom)
 
             return <div>
-                {!!info.getValue().leftColumns && info.getValue().leftColumns.map(it =>
+                {!!info.getValue() && !!info.getValue().leftColumns && info.getValue().leftColumns.map(it =>
                     (<div onClick={() => {
                         setActiveTable({
                             ...activeTable,
@@ -541,7 +541,7 @@ const columnHeader = [
                     }}>
                         -- {it.rightTableName}.{it.rightColumnName}
                     </div>))}
-                {!!info.getValue().rightColumns && info.getValue().rightColumns.map(it => (
+                {!!info.getValue() && !!info.getValue().rightColumns && info.getValue().rightColumns.map(it => (
                     <div onClick={() => {
                         setActiveTable({
                             ...activeTable,

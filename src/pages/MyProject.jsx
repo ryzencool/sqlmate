@@ -55,7 +55,7 @@ export default function MyProject() {
     console.log(myProjects.data)
 
     return (<Box>
-        <div className={"flex flex-row gap-8 flex-wrap"}>
+        <div className={"flex flex-row gap-8 flex-wrap mb-10"}>
             {
                 !myProjects.isLoading && myProjects.data.data.data.map(
                     it => <Card className={"w-64 h-96"} key={it.id}>
@@ -86,15 +86,13 @@ export default function MyProject() {
 
         </div>
         <div>
-            <Box sx={{height: 320, transform: 'translateZ(0px)', flexGrow: 1}}>
                 <SpeedDial onClick={() => setProjectCreateOpen(true)}
                            ariaLabel="SpeedDial basic example"
-                           sx={{position: 'absolute', bottom: 16, right: 32}}
+                           sx={{position: 'absolute', bottom: 80, right: 80}}
                            icon={<SpeedDialIcon/>}
                 >
 
                 </SpeedDial>
-            </Box>
         </div>
 
         <Dialog open={projectCreateOpen} onClose={() => setProjectCreateOpen(false)}>

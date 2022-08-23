@@ -59,7 +59,6 @@ export class NodeWidget extends React.Component {
     }
 
     render() {
-        console.log("it", this.props);
         return (
             <div className="custom-node">
                 <div

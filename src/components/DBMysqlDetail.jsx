@@ -5,6 +5,7 @@ import {CopyBlock, nord} from "react-code-blocks";
 import {useAtom} from "jotai";
 import {useGetDBML} from "../store/rq/reactQueryStore";
 import {Card} from "@mui/material";
+import {format} from 'sql-formatter';
 
 
 export default function DBMysqlDetail(props) {
@@ -43,9 +44,8 @@ export default function DBMysqlDetail(props) {
 
     const handleAddColumn = (tableName) => {
         setAddColumnDML(`ALTER TABLE ${tableName} ADD [COLUMN] column_name column_definition [FIRST|AFTER existing_column];
-// 例如
 ALTER TABLE ${tableName} ADD COLUMN phone VARCHAR(15) AFTER name;
-// 批量操作
+
 ALTER TABLE table
 ADD [COLUMN] column_name_1 column_1_definition [FIRST|AFTER existing_column],
 ADD [COLUMN] column_name_2 column_2_definition [FIRST|AFTER existing_column],
@@ -63,14 +63,12 @@ ADD [COLUMN] column_name_2 column_2_definition [FIRST|AFTER existing_column],
 
     const handleAddIndex = (tableName) => {
         setAddIndexDML(`CREATE INDEX indexName ON ${tableName} (column_name);
-// 添加唯一索引
 CREATE UNIQUE INDEX indexName ON ${tableName}(column_name(length)); 
 `)
     }
 
     const handleAlterIndex= (tableName) => {
         setAlterIndexDML(`ALTER table ${tableName} ADD INDEX indexName(columnName);
-// 修改成唯一索引
 ALTER table ${tableName} ADD UNIQUE [indexName] (column_name(length));
 `)
     }
@@ -126,8 +124,7 @@ const CodeComponent = (props) => {
             customStyle={
                 {
                     fontsize: "10px",
-                    paddingRight: "40px",
-                    paddingTop: "10px",
+                    padding: "10px",
                     width: "100%",
                 }
             }

@@ -72,7 +72,7 @@ export default function DBConsole() {
     useEffect(() => {
         console.log("找到所有的表了",)
         console.log(tableColumns.data.data.data)
-        let colSql = tableColumns.data.data.data.map(col => {
+        let colSql = tableColumns. data.data.data.map(col => {
             return col.name + " " + col.type
         }).join(",\n")
 
