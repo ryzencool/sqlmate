@@ -3,7 +3,6 @@ import {List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/m
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import {useNavigate} from "react-router";
@@ -30,7 +29,7 @@ export default function DashMenu() {
             </ListItem>
             <ListItem disablePadding>
                 <ListItemButton onClick={() => navigate("/header/dashboard/favorite")}
-                className={`rounded-lg ${pathname.includes("favorite") ? "bg-slate-100": "bg-white"}`}>
+                                className={`rounded-lg ${pathname.includes("favorite") ? "bg-slate-100" : "bg-white"}`}>
                     <ListItemIcon className={'ml-3'}>
                         <FavoriteBorderIcon/>
                     </ListItemIcon>
@@ -39,7 +38,7 @@ export default function DashMenu() {
             </ListItem>
             <ListItem disablePadding>
                 <ListItemButton onClick={() => navigate("/header/dashboard/publicProject")}
-                                className={`rounded-lg ${pathname.includes("publicProject") ? "bg-slate-100": "bg-white"}`}>
+                                className={`rounded-lg ${pathname.includes("publicProject") ? "bg-slate-100" : "bg-white"}`}>
                     <ListItemIcon className={'ml-3'}>
                         <AccountTreeIcon/>
                     </ListItemIcon>
@@ -50,7 +49,7 @@ export default function DashMenu() {
 
             <ListItem disablePadding>
                 <ListItemButton onClick={() => navigate("/header/dashboard/codeSettings")}
-                                className={`rounded-lg ${pathname.includes("codeSettings") ? "bg-slate-100": "bg-white"}`}>
+                                className={`rounded-lg ${pathname.includes("codeSettings") ? "bg-slate-100" : "bg-white"}`}>
                     <ListItemIcon className={'ml-3'}>
                         <SchoolOutlinedIcon/>
                     </ListItemIcon>
@@ -62,7 +61,7 @@ export default function DashMenu() {
 
 
                 <ListItemButton onClick={() => navigate("/header/dashboard/teams")}
-                                className={`rounded-lg ${pathname.includes("teams") ? "bg-slate-100": "bg-white"}`}>
+                                className={`rounded-lg ${pathname.includes("teams") ? "bg-slate-100" : "bg-white"}`}>
                     <ListItemIcon className={'ml-3'}>
                         <GroupsOutlinedIcon/>
                     </ListItemIcon>
@@ -71,7 +70,7 @@ export default function DashMenu() {
             </ListItem>
             <ListItem disablePadding>
                 <ListItemButton onClick={() => navigate("/header/dashboard/defaultColumnTemplate")}
-                                className={`rounded-lg ${pathname.includes("defaultColumnTemplate") ? "bg-slate-100": "bg-white"}`}>
+                                className={`rounded-lg ${pathname.includes("defaultColumnTemplate") ? "bg-slate-100" : "bg-white"}`}>
                     <ListItemIcon className={'ml-3'}>
                         <FavoriteBorderIcon/>
                     </ListItemIcon>

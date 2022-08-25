@@ -15,7 +15,6 @@ export default function CodeSettings() {
 
     const [open, setOpen] = React.useState(false);
 
-    const [project, setProject] = useAtom(activeProjectAtom)
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -25,9 +24,7 @@ export default function CodeSettings() {
         setOpen(false);
     };
 
-    const codeTemplates = useListCodeTemplate({
-        projectId: 1
-    })
+    const codeTemplates = useListCodeTemplate()
 
 
     const queryClient = useQueryClient()
@@ -39,18 +36,22 @@ export default function CodeSettings() {
 
     const [templateSubmit, setTemplateSubmit] = useState({})
 
+    if (codeTemplates.isLoading) {
+        return <div>加载中</div>
+    }
+
     return <div>
         <div className={"flex flex-row gap-10"}>
             {
                 !codeTemplates.isLoading && codeTemplates.data.data?.data.map(
                     it => (
-                        <Card key={it.id} className={"w-60 h-96"}
+                        <Card key={it.id} className={"w-52 h-80"}
                         >
-                            <div className={'h-4/5 bg-purple-300'}>
+                            <div className={'h-4/6 bg-purple-300 '}>
 
                             </div>
-                            <div className={'p-2 flex flex-col justify-between'}>
-                                <div className={"font-bold text-xl"}>
+                            <div className={'h-2/6 p-2 flex flex-col justify-between'}>
+                                <div className={"font-bold"}>
                                     {it.name}
                                 </div>
                                 <div className={'flex flex-row justify-between items-center'}>

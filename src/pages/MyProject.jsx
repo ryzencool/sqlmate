@@ -1,16 +1,6 @@
 import React, {useEffect, useState} from 'react'
-import {useListDefaultColumnTemplate, useListMyProject} from "../store/rq/reactQueryStore";
-import {
-    Card,
-    Chip,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    SpeedDial,
-    SpeedDialIcon,
-    styled
-} from "@mui/material";
+import {useListDefaultColumnTemplate, useListMyProject, useListTeam} from "../store/rq/reactQueryStore";
+import {Card, Chip, Dialog, DialogActions, DialogContent, DialogTitle, SpeedDial, SpeedDialIcon} from "@mui/material";
 import {useNavigate} from "react-router";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -19,6 +9,7 @@ import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addProject, updateProject} from "../api/dbApi";
 import FormInputText from "../components/FormInputText";
 import FormSelect from "../components/FormSelect";
+import FormMultiSelect from "../components/FormMultiSelect";
 
 
 export default function MyProject() {
@@ -67,7 +58,7 @@ export default function MyProject() {
         setProjectUpdateOpen(false)
     }
 
-    if (myProjects.isLoading){
+    if (myProjects.isLoading) {
         return <div>加载中</div>
     }
 
@@ -76,32 +67,35 @@ export default function MyProject() {
         <div className={"flex flex-row gap-8 flex-wrap mb-10"}>
             {
                 myProjects.data.data.data.map(
-                    it => <Card className={"w-64 h-96"} key={it.id}>
+                    it => <Card className={"w-52 h-80 flex  flex-col justify-between"} key={it.id}   >
                         <div className={"h-1/2 bg-purple-300"}>
 
                         </div>
-                        <div className={"p-3 flex-col flex justify-between h-1/2"}>
-                            <div className={" font-bold text-xl"}>
+                        <div className={"pl-2 pt-2 pb-1 flex-col flex "}>
+                            <div className={" font-bold "}>
                                 {it.name}
                             </div>
-                            <div className={'mt-2'}>
+                            <div className={'text-sm text-slate-400'}>
                                 {it.note}
                             </div>
-                            <div className={'mt-4 flex flex-row flex-wrap gap-1'}>
-                                <Chip label={'Mysql'} size={'small'}/>
-                                <Chip label={'Mysql'} size={'small'}/>
-                                <Chip label={'Mysql'} size={'small'}/>
-                                <Chip label={'Mysql'} size={'small'}/>
-                                <Chip label={'Mysql'} size={'small'}/>
+                            <div className={'mt-2 flex flex-row flex-wrap gap-1 '}>
+                                {
+                                    !!it.tags && it.tags.map(tag => (
+                                        <Chip label={tag} size={'small'}/>
+                                    ))
+                                }
+
+
                             </div>
-                            <div className={'mt-2 w-full flex-row flex justify-end gap-1'}>
-                                <Button size={"small"} onClick={handleClickSetProject}>设置</Button>
-                                <EditProjectDialog value={it} mode={2}
-                                                   closeDialog={handleCloseProjectSetting}
-                                                   open={projectUpdateOpen}
-                                                   submitForm={(data) => submitUpdateProjectForm(data, it.id)}/>
-                                <Button size={"small"} onClick={() => handleClickProjectDetail(it)}>详情</Button>
-                            </div>
+
+                        </div>
+                        <div className={'mt-2 w-full flex-row flex justify-end gap-1 mb-2'}>
+                            <Button size={"small"} onClick={handleClickSetProject}>设置</Button>
+                            <EditProjectDialog value={it} mode={2}
+                                               closeDialog={handleCloseProjectSetting}
+                                               open={projectUpdateOpen}
+                                               submitForm={(data) => submitUpdateProjectForm(data, it.id)}/>
+                            <Button size={"small"} onClick={() => handleClickProjectDetail(it)}>详情</Button>
                         </div>
                     </Card>
                 )
@@ -129,7 +123,7 @@ export default function MyProject() {
 function EditProjectDialog({mode, value, open, closeDialog, submitForm}) {
     // 获取所有的默认模版才行
     const defaultColumnTemplateQuery = useListDefaultColumnTemplate({})
-
+    const teamsQuery = useListTeam()
     const {handleSubmit, control, reset} = useForm({
         defaultValues: value
     })
@@ -140,7 +134,7 @@ function EditProjectDialog({mode, value, open, closeDialog, submitForm}) {
         }
     }, [value])
 
-    if (defaultColumnTemplateQuery.isLoading) {
+    if (defaultColumnTemplateQuery.isLoading || teamsQuery.isLoading) {
         return <div>加载中</div>
     }
 
@@ -149,11 +143,24 @@ function EditProjectDialog({mode, value, open, closeDialog, submitForm}) {
         value: it.name
     }))
 
+    const teamSelections = teamsQuery.data.data.data.map(it => ({
+        key: it.id,
+        value: it.name
+    }))
+
+    const tagSelections = ["mysql", "postgresql", "mssql", "sqlite", "java", "springboot", "mybatis"].map(it => ({
+        key: it,
+        value: it
+    }))
+
     return (
-        <Dialog open={open} onClose={closeDialog}>
+        <Dialog open={open} onClose={() => {
+            closeDialog()
+        }}>
             <DialogTitle>{mode === 1 ? "新增项目" : "修改项目"}</DialogTitle>
             <form onSubmit={handleSubmit((data) => {
                 submitForm(data)
+                reset({})
             })}>
                 <DialogContent>
                     <FormInputText name={"name"} control={control} label={"项目名称"}/>
@@ -165,10 +172,14 @@ function EditProjectDialog({mode, value, open, closeDialog, submitForm}) {
                         choices={templateSelections}
                         hasDefaultNull={true}
                     />
-
+                    <FormMultiSelect name={"teamIds"} label={'团队'} control={control} choices={teamSelections}/>
+                    <FormMultiSelect name={"tags"} label={'标签'} control={control} choices={tagSelections}/>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={closeDialog}>取消</Button>
+                    <Button onClick={() => {
+                        closeDialog()
+                        reset({})
+                    }}>取消</Button>
                     <Button type={"submit"}>确定</Button>
                 </DialogActions>
             </form>

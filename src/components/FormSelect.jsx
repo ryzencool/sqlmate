@@ -12,7 +12,7 @@ export default function FormSelect({control, name,  label, choices, hasDefaultNu
 
     return <Controller render={
         ({field:{onChange, value}}) => {
-            return  <FormControl size={'small'} variant="standard" sx={{width: "100%" }}>
+            return  <FormControl size={'small'} variant="standard" sx={{width: "100%" , marginTop: "10px"}}>
                 <InputLabel id="demo-simple-select-standard-label">{label}</InputLabel>
                 <Select
                     fullWidth

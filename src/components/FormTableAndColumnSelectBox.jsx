@@ -7,8 +7,7 @@ import {activeProjectAtom} from "../store/projectStore";
 
 export default function FormTableAndColumnSelectBox({nameTable, nameColumn, control, watch, index}) {
 
-
-    const [project, setProject] = useAtom(activeProjectAtom)
+    const [project] = useAtom(activeProjectAtom)
 
     console.log("当前的项目", project)
 

@@ -21,7 +21,7 @@ export default function PublicProject() {
     return <div className={'overflow-auto'}>
         <div className={" flex flex-row flex-wrap gap-10 mb-10"}>
             {
-                !publicProjects.isLoading && publicProjects.data.data.data.dataList.map(
+                publicProjects.data.data.data.dataList.map(
                     it => (
                         <Card className={"w-64 h-96"} key={it.id}>
                             <div className={"h-1/2 bg-purple-300"}>
