@@ -15,7 +15,7 @@ import {format} from "sql-formatter";
 import ZTable from "./ZTable";
 
 // 展现相关联的表的数据
-export default function DBData({tableId}) {
+export default function DBData() {
 
     const [db, setDb] = useAtom(dbAtom)
     const [dbmlObj, setDbmlObj] = useState({})
@@ -26,8 +26,8 @@ export default function DBData({tableId}) {
     const [databaseType, setDatabase] = useAtom(databaseTypeAtom)
     const [insertSql, setInsertSql] = useState("");
     const [jsonData, setJsonData] = useState("");
-    useGetDBML({tableId: activeTable.id}, {
-        enabled: !!activeTable.id,
+    useGetDBML({tableId: activeTable}, {
+        enabled: !!activeTable,
         onSuccess: (data) => {
             let obj = Parser.parse(data.data.data, 'dbml')
 

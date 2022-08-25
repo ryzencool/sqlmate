@@ -6,7 +6,7 @@ import {
     getTable,
     getTemplateFile,
     getUserInfo,
-    listCodeTemplate,
+    listCodeTemplate, listDefaultColumns, listDefaultColumnTemplate,
     listFavoriteProject,
     listMyProject,
     listProject, listProjectSnapshots,
@@ -118,4 +118,13 @@ export const useProjectDBML = (search, options = {}) => {
 
 export const useListTableRel = (search, options = {}) => {
     return useQuery(['tableRels', search], () => listTableRel(search), options)
+}
+
+export const useListDefaultColumnTemplate = (search, options = {}) => {
+    return useQuery(['defaultColumnTemplates', search], () => listDefaultColumnTemplate(search), options)
+}
+
+
+export const useListDefaultColumn = (search, options={}) => {
+    return useQuery(['defaultColumns', search], () => listDefaultColumns(search), options)
 }

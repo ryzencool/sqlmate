@@ -2,7 +2,14 @@ import React from 'react'
 import {Controller} from 'react-hook-form'
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 
-export default function FormSelect({control, name,  label, choices}) {
+export default function FormSelect({control, name,  label, choices, hasDefaultNull=false}) {
+    let tempChoice
+    if(hasDefaultNull) {
+        tempChoice = [{key: 0, value: "空"}, ...choices]
+    } else {
+        tempChoice = choices
+    }
+
     return <Controller render={
         ({field:{onChange, value}}) => {
             return  <FormControl size={'small'} variant="standard" sx={{width: "100%" }}>
@@ -11,11 +18,11 @@ export default function FormSelect({control, name,  label, choices}) {
                     fullWidth
                     labelId="demo-simple-select-standard-label"
                     id="demo-simple-select-standard"
-                    value={value}
+                    value={value === null ? {key:0, value: ""}: value  }
                     onChange={onChange}
                     label={label}
                 >
-                    {choices.map(choice => <MenuItem key={choice.key} value={choice.key}>{choice.value}</MenuItem>)}
+                    {tempChoice.map(choice => <MenuItem key={choice.key} value={choice.key}>{choice.value}</MenuItem>)}
                 </Select>
             </FormControl>
         }

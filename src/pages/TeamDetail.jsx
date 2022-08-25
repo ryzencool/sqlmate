@@ -16,14 +16,14 @@ export default function TeamDetail(props) {
     return (<div>
         <div>
             <Button>
-                邀请你的伙伴
+                生成邀请链接
             </Button>
         </div>
 
         <List className={'w-11/12'}>
             {!teamUsers.isLoading && teamUsers.data.data.data.map(it => {
                 return <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton className={'rounded-md'}>
                         <ListItemText primary={it.username}/>
                         <div>
                             {it.joinTime} 加入

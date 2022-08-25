@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {activeTableAtom} from "../store/tableListStore";
+import {activeTableAtom, isOnProjectAtom} from "../store/tableListStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createTable} from "../api/dbApi";
 import Button from "@mui/material/Button";
@@ -31,7 +31,6 @@ function DBTablePanel({projectId}) {
 
     const queryClient = useQueryClient()
     const navigate = useNavigate()
-
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [tableCreateOpen, setTableCreateOpen] = useState(false)
     const [searchParam, setSearchParam] = useState({projectId: projectId});
@@ -98,13 +97,12 @@ function DBTablePanel({projectId}) {
 
                     {tables.data.data.data.map(it => (
                         <ListItem key={it.id} disablePadding onClick={() => {
-                            setActiveTable({
-                                id: it.id
-                            })
+                            setActiveTable(it.id)
+
                         }}>
                             {
                                 <ListItemButton
-                                    className={`rounded-lg ${it.id === activeTable.id ? "bg-slate-200" : "bg-white"}`}>
+                                    className={`rounded-lg ${it.id === activeTable ? "bg-slate-200" : "bg-white"}`}>
                                     <ListItemText primary={it.name}/>
                                 </ListItemButton>
                             }

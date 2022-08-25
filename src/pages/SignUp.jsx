@@ -32,7 +32,7 @@ export default function SignUp() {
             // console.log(data)
             signUpMutation.mutate(data)
         })}>
-            <div className={'space-y-4 mt-6'}>
+            <div className={'flex flex-col gap-4 mt-4'}>
 
                 <div>
                     <div className={'block font-semibold text-sm text-gray-700'}>手机号</div>
@@ -40,15 +40,15 @@ export default function SignUp() {
                         {
                             ...register("phone")
                         }
-                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11'}/>
+                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11 mt-2 p-2'}/>
                 </div>
                 <div>
                     <div className={'block font-semibold text-sm text-gray-700'}>密码</div>
-                    <input
+                    <input type={"password"}
                         {
                             ...register("password")
                         }
-                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11'}/>
+                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11 mt-2 p-2'}/>
                 </div>
                 <div>
                     <div className={'block font-semibold text-sm text-gray-700'}>邮箱</div>
@@ -56,27 +56,30 @@ export default function SignUp() {
                         {
                             ...register("email")
                         }
-                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11'}/>
+                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11 mt-2 p-2'}/>
                 </div>
-            </div>
-            <div>
-                <div className={'block font-semibold text-sm text-gray-700'}>验证码</div>
-                <div className={"flex flex-row items-center justify-between gap-2"}>
 
-                    <input
-                        {
-                            ...register("code")
-                        }
-                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11'}/>
-                    <Button size={"small"} variant={"contained"} className={'h-11 w-1/3 rounded-lg'}>发送验证码</Button>
-
-                </div>
                 <div>
+                    <div className={'block font-semibold text-sm text-gray-700'}>验证码</div>
+                    <div className={"flex flex-row items-center justify-between gap-2"}>
+
+                        <input
+                            {
+                                ...register("code")
+                            }
+                            className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11 p-2'}/>
+                        <button  className={'h-11 w-1/3 rounded-md bg-indigo-600 text-white text-sm'}>发送验证码</button>
+
+                    </div>
+
+                </div>
+                <div className={'mt-2'}>
                     <input type="submit"
                            className={'bg-indigo-600 w-96 h-11 mt-2 tracking-widest text-white rounded-lg'}
                            value={"注册"}/>
                 </div>
             </div>
+
         </form>
         <div className={'w-96 mt-9 rounded-lg border-t bg-slate-300 '}></div>
         <div className={'mt-3 tracking-widest text-center'}>

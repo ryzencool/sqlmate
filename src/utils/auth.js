@@ -1,4 +1,5 @@
 import {getUserInfo} from "../api/dbApi";
+import toast from "react-hot-toast";
 
 export function handleLoginSuccess(data, setGlobalToken, setUser, navigate) {
     if (data.data.code === "000000") {
@@ -11,6 +12,11 @@ export function handleLoginSuccess(data, setGlobalToken, setUser, navigate) {
 
             })
 
-        navigate("/header/dashboard")
+        navigate("/header/dashboard/myProject")
+    }
+
+    if (data.data.code === "000003") {
+        toast.error("当前手机用户已被注册")
+        return
     }
 }

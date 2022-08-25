@@ -10,8 +10,8 @@ export default function DBMysqlDetail(props) {
 
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
 
-    const dbmlQuery = useGetDBML({tableId: activeTable.id}, {
-        enabled: !!activeTable.id,
+    const dbmlQuery = useGetDBML({tableId: activeTable}, {
+        enabled: !!activeTable,
         onSuccess: (data) => {
             let dbmlObjTemp = Parser.parse(data.data.data, 'dbml')
             setDbMlObj(dbmlObjTemp)

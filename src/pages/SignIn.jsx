@@ -27,25 +27,26 @@ export default function SignIn() {
         <div className={'space-y-4 mt-6'}>
             <form onSubmit={
                 handleSubmit(data => {
-                    console.log(data)
                     postSignIn.mutate(data)
                 })
             }>
+                <div className={'flex flex-col gap-4'}>
                 <div>
                     <div className={'block font-semibold text-sm text-gray-700'}>手机号</div>
                     <input
                         {...register("phone")}
-                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11'} />
+                        className={'border-gray-300 rounded-md border-2 mt-2 block w-96 h-11 p-2'} />
                 </div>
                 <div>
                     <div className={'block font-semibold text-sm text-gray-700'}>密码</div>
                     <input
                         {...register("password")}
-                        className={'border-gray-300 rounded-md border-2 mt-1 block w-96 h-11'}/>
+                        className={'border-gray-300 rounded-md border-2 mt-2 block w-96 h-11 p-2'}/>
                 </div>
 
                 <div>
-                    <input type={"submit"} className={'bg-indigo-600 w-96 h-11 mt-2 tracking-widest text-white'} value={"登录"}/>
+                    <input type={"submit"} className={'bg-indigo-600 w-96 h-11 mt-2 tracking-widest text-white rounded-md'} value={"登录"}/>
+                </div>
                 </div>
             </form>
         </div>

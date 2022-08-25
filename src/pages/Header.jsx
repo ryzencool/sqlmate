@@ -59,8 +59,9 @@ function Header() {
                             {/*<Button onClick={() => selectFile()}>import</Button>*/}
                             {/*<Button>export</Button>*/}
                         </div>
-                        <div className={"flex flex-row items-center pr-10 "}>
+                        <div className={"flex flex-row items-center pr-10  gap-2"}>
                             <Button>邀请伙伴</Button>
+                            <Button size={"small"} variant={"contained"}>控制台</Button>
                             <div>
                                 zmyjust@gmail.com
                             </div>

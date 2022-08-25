@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import DBTablePanel from "../components/DBTablePanel";
-import DBFeatTabs from "../components/DBFeatTabs";
+import DBContent from "../components/DBContent";
 import {useParams} from "react-router-dom";
 import {useAtom} from "jotai";
 import {activeProjectAtom} from "../store/projectStore";
@@ -28,12 +28,12 @@ export default function Home() {
             setTableRels(r.data.data)
             }
         )
-
     }, [])
     return (
         <div className="grid grid-cols-[300px_1fr] h-full">
             <DBTablePanel projectId={id}/>
-            <DBFeatTabs projectId={id}/>
+
+            <DBContent projectId={id}/>
         </div>
     )
 }

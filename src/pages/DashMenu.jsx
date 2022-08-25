@@ -57,15 +57,7 @@ export default function DashMenu() {
                     <ListItemText primary="代码模版设置"/>
                 </ListItemButton>
             </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton onClick={() => navigate("/header/dashboard/dmlSettings")}
-                                className={`rounded-lg ${pathname.includes("dmlSettings") ? "bg-slate-100": "bg-white"}`}>
-                    <ListItemIcon className={'ml-3'}>
-                        <AccountBalanceOutlinedIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="自定义DML模版"/>
-                </ListItemButton>
-            </ListItem>
+
             <ListItem disablePadding>
 
 

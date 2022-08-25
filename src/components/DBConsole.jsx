@@ -33,9 +33,9 @@ export default function DBConsole() {
     })
 
     const tableColumns = useListColumn({
-        tableId: activeTable.id
+        tableId: activeTable
     }, {
-        enabled: !!activeTable.id
+        enabled: !!activeTable
     })
 
     const tables = useListTables({projectId: 1})

@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import {useListMyProject, useListProject} from "../store/rq/reactQueryStore";
+import React, {useEffect, useState} from 'react'
+import {useListDefaultColumnTemplate, useListMyProject} from "../store/rq/reactQueryStore";
 import {
     Card,
     Chip,
@@ -14,50 +14,68 @@ import {
 import {useNavigate} from "react-router";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import SaveIcon from '@mui/icons-material/Save';
-import PrintIcon from '@mui/icons-material/Print';
-import ShareIcon from '@mui/icons-material/Share';
-import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import {useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {addProject} from "../api/dbApi";
+import {addProject, updateProject} from "../api/dbApi";
+import FormInputText from "../components/FormInputText";
+import FormSelect from "../components/FormSelect";
 
-const actions = [
-    {icon: <FileCopyIcon/>, name: 'Copy'},
-    {icon: <SaveIcon/>, name: 'Save'},
-    {icon: <PrintIcon/>, name: 'Print'},
-    {icon: <ShareIcon/>, name: 'Share'},
-];
-
-
-const ZInput = styled("input")(({theme}) => ({
-    width: '280px',
-    borderWidth: '1px',
-    borderColor: 'grey',
-    borderRadius: "6px"
-
-
-}))
 
 export default function MyProject() {
     const navigate = useNavigate()
-    const {handleSubmit, control, register, formState: {errors}} = useForm()
     const [search, setSearch] = useState({})
     const myProjects = useListMyProject(search)
     const [projectCreateOpen, setProjectCreateOpen] = useState(false)
+    const [projectUpdateOpen, setProjectUpdateOpen] = useState(false)
     const queryClient = useQueryClient()
-    const projectCreate = useMutation(addProject, {
+    const projectCreateMutation = useMutation(addProject, {
         onSuccess: data => {
-            console.log(data)
             queryClient.invalidateQueries(['myProjects'])
         }
     })
-    console.log(myProjects.data)
+
+    const projectUpdateMutation = useMutation(updateProject, {
+        onSuccess: data => {
+            queryClient.invalidateQueries(['myProjects'])
+        }
+    })
+
+    const handleCloseProjectCreateDialog = () => {
+        setProjectCreateOpen(false)
+    }
+    const handleClickProjectDetail = (it) => {
+        navigate(`/header/home/${it.id}`)
+    }
+    const handleCloseProjectSetting = () => {
+        setProjectUpdateOpen(false)
+    }
+    const handleClickSetProject = () => {
+        setProjectUpdateOpen(true)
+    }
+    const submitCreateProjectForm = (data) => {
+        projectCreateMutation.mutate({
+            ...data
+        })
+        setProjectCreateOpen(false)
+    }
+
+    const submitUpdateProjectForm = (data, id) => {
+        projectUpdateMutation.mutate({
+            ...data,
+            id: id
+        })
+        setProjectUpdateOpen(false)
+    }
+
+    if (myProjects.isLoading){
+        return <div>加载中</div>
+    }
+
 
     return (<Box>
         <div className={"flex flex-row gap-8 flex-wrap mb-10"}>
             {
-                !myProjects.isLoading && myProjects.data.data.data.map(
+                myProjects.data.data.data.map(
                     it => <Card className={"w-64 h-96"} key={it.id}>
                         <div className={"h-1/2 bg-purple-300"}>
 
@@ -76,8 +94,13 @@ export default function MyProject() {
                                 <Chip label={'Mysql'} size={'small'}/>
                                 <Chip label={'Mysql'} size={'small'}/>
                             </div>
-                            <div className={'mt-2 w-full flex-row flex justify-end'}>
-                                <Button onClick={() => navigate(`/header/home/${it.id}`)}>进入项目</Button>
+                            <div className={'mt-2 w-full flex-row flex justify-end gap-1'}>
+                                <Button size={"small"} onClick={handleClickSetProject}>设置</Button>
+                                <EditProjectDialog value={it} mode={2}
+                                                   closeDialog={handleCloseProjectSetting}
+                                                   open={projectUpdateOpen}
+                                                   submitForm={(data) => submitUpdateProjectForm(data, it.id)}/>
+                                <Button size={"small"} onClick={() => handleClickProjectDetail(it)}>详情</Button>
                             </div>
                         </div>
                     </Card>
@@ -86,44 +109,69 @@ export default function MyProject() {
 
         </div>
         <div>
-                <SpeedDial onClick={() => setProjectCreateOpen(true)}
-                           ariaLabel="SpeedDial basic example"
-                           sx={{position: 'absolute', bottom: 80, right: 80}}
-                           icon={<SpeedDialIcon/>}
-                >
+            <SpeedDial onClick={() => setProjectCreateOpen(true)}
+                       ariaLabel="SpeedDial basic example"
+                       sx={{position: 'absolute', bottom: 80, right: 80}}
+                       icon={<SpeedDialIcon/>}
+            >
 
-                </SpeedDial>
+            </SpeedDial>
+            <EditProjectDialog mode={1} closeDialog={handleCloseProjectCreateDialog}
+                               open={projectCreateOpen}
+                               submitForm={submitCreateProjectForm}/>
         </div>
 
-        <Dialog open={projectCreateOpen} onClose={() => setProjectCreateOpen(false)}>
-            <DialogTitle>新增项目</DialogTitle>
+
+    </Box>)
+}
+
+
+function EditProjectDialog({mode, value, open, closeDialog, submitForm}) {
+    // 获取所有的默认模版才行
+    const defaultColumnTemplateQuery = useListDefaultColumnTemplate({})
+
+    const {handleSubmit, control, reset} = useForm({
+        defaultValues: value
+    })
+
+    useEffect(() => {
+        if (value != null) {
+            reset(value)
+        }
+    }, [value])
+
+    if (defaultColumnTemplateQuery.isLoading) {
+        return <div>加载中</div>
+    }
+
+    const templateSelections = defaultColumnTemplateQuery.data.data.data.map(it => ({
+        key: it.id,
+        value: it.name
+    }))
+
+    return (
+        <Dialog open={open} onClose={closeDialog}>
+            <DialogTitle>{mode === 1 ? "新增项目" : "修改项目"}</DialogTitle>
             <form onSubmit={handleSubmit((data) => {
-                console.log("提交的数据", data)
-                projectCreate.mutate(data)
+                submitForm(data)
             })}>
                 <DialogContent>
-                    <Box>
-                        <div>项目名称</div>
-                        <ZInput {...register('name')}/>
-                    </Box>
-                    <Box>
-                        <div>项目简介</div>
-                        <ZInput {...register('note')}/>
-                    </Box>
-                    <Box>
-                        <div>项目标签</div>
-
-                    </Box>
+                    <FormInputText name={"name"} control={control} label={"项目名称"}/>
+                    <FormInputText name={"note"} control={control} label={"项目备注"}/>
+                    <FormSelect
+                        name={"defaultColumnTemplateId"}
+                        control={control}
+                        label={"默认字段模版"}
+                        choices={templateSelections}
+                        hasDefaultNull={true}
+                    />
 
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setProjectCreateOpen(false)}>取消</Button>
-                    <Button type={"submit"} onClick={() => {
-                        setProjectCreateOpen(false)
-
-                    }}>确定</Button>
+                    <Button onClick={closeDialog}>取消</Button>
+                    <Button type={"submit"}>确定</Button>
                 </DialogActions>
             </form>
         </Dialog>
-    </Box>)
+    )
 }

@@ -43,15 +43,15 @@ function DBDoc() {
     const columnsMemo = useMemo(() => columnHeader, [])
 
     // query
-    const tableQuery = useGetTable({tableId: activeTableState.id}, {
-        enabled: !!activeTableState.id
+    const tableQuery = useGetTable({tableId: activeTableState}, {
+        enabled: !!activeTableState
     })
-    const tableIndexesQuery = useListIndex({tableId: activeTableState.id}, {
-        enabled: !!activeTableState.id
+    const tableIndexesQuery = useListIndex({tableId: activeTableState}, {
+        enabled: !!activeTableState
     })
     const projectQuery = useGetProject({projectId: 1})
-    const tableColumnsQuery = useListColumn({tableId: activeTableState.id}, {
-        enabled: !!activeTableState.id,
+    const tableColumnsQuery = useListColumn({tableId: activeTableState}, {
+        enabled: !!activeTableState
     })
 
 
@@ -128,7 +128,7 @@ function DBDoc() {
                         submitForm={(e) => {
                             tableUpdateMutation.mutate({
                                 ...e,
-                                tableId: activeTableState.id
+                                tableId: activeTableState
                             })
                         }}/>
 
@@ -160,7 +160,7 @@ function DBDoc() {
                             submitForm={data => {
                                 columnAddMutation.mutate({
                                     ...data,
-                                    tableId: activeTableState.id
+                                    tableId: activeTableState
                                 })
                             }}/>
                         <Button size={"small"} variant={"contained"} onClick={() => {
@@ -225,7 +225,7 @@ function DBDoc() {
                             closeDialog={() => setIndexAddOpen(false)}
                             submitForm={data => {
                                 console.log("添加index", data)
-                                indexAddMutation.mutate({...data, tableId: activeTableState.id})
+                                indexAddMutation.mutate({...data, tableId: activeTableState})
                             }}/>
                         <Button size={"small"} variant={"contained"}
                                 onClick={() => {
@@ -246,7 +246,7 @@ function DBDoc() {
                             submitForm={data => {
                                 indexUpdateMutation.mutate({
                                     ...data,
-                                    tableId: activeTableState.id,
+                                    tableId: activeTableState,
                                     id: indexesSelectedState[0]
                                 })
                             }}
@@ -467,6 +467,7 @@ const indexHeader = [
     },
 ]
 
+
 const columnHeader = [
     {
         id: "select",
@@ -531,19 +532,17 @@ const columnHeader = [
             return <div>
                 {!!info.getValue() && !!info.getValue().leftColumns && info.getValue().leftColumns.map(it =>
                     (<div onClick={() => {
-                        setActiveTable({
-                            ...activeTable,
-                            id: it.rightTableId
-                        })
+                        setActiveTable(
+                            it.rightTableId
+                        )
                     }}>
                         -- {it.rightTableName}.{it.rightColumnName}
                     </div>))}
                 {!!info.getValue() && !!info.getValue().rightColumns && info.getValue().rightColumns.map(it => (
                     <div onClick={() => {
-                        setActiveTable({
-                            ...activeTable,
-                            id: it.leftTableId
-                        })
+                        setActiveTable(
+                            it.leftTableId
+                        )
                     }}>
                         -- {it.leftTableName}.{it.leftColumnName}</div>))}
             </div>
@@ -555,6 +554,7 @@ const columnHeader = [
         cell: (info) => info.getValue(),
     },
 ]
+
 
 
 export default DBDoc

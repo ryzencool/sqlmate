@@ -11,14 +11,15 @@ export default function PublicProject() {
 
     const publicProjects = usePagePublicProject()
 
-    if (!publicProjects.isLoading) {
-        console.log("公开的项目:", publicProjects.data.data.data.dataList)
-    }
+
     const [project, setProject] = useAtom(activeProjectAtom)
     const navigate = useNavigate()
 
+    if (publicProjects.isLoading) {
+        return <div>加载中</div>
+    }
     return <div className={'overflow-auto'}>
-        <div className={" flex flex-row flex-wrap gap-10"}>
+        <div className={" flex flex-row flex-wrap gap-10 mb-10"}>
             {
                 !publicProjects.isLoading && publicProjects.data.data.data.dataList.map(
                     it => (

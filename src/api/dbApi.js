@@ -2,6 +2,7 @@ import {get, post} from '../utils/httpUtil'
 
 const getProjectUrl = "/project/get"
 const addProjectUrl = "/project/add"
+const updateProjectUrl = "/project/update"
 const listTablesUrl = "/table/list"
 const listTablesDetailUrl = "/table/listAll"
 const getTableUrl = "/table/get"
@@ -46,6 +47,37 @@ const listProjectSnapshotsUrl = "/snapshot/list"
 const createSnapshotUrl = "/snapshot/create"
 const queryProjectDBMLUrl = "/dbml/project"
 const importProjectDbmlUrl = "/dbml/import"
+const addDefaultColumnTemplateUrl = "/defaultColumn/template/add"
+const listDefaultColumnTemplateUrl = "/defaultColumn/template/list"
+const delDefaultColumnTemplateUrl = "/defaultColumn/template/del"
+const updateDefaultColumnTemplateUrl = "/defaultColumn/template/update"
+const listDefaultColumnsUrl = "/defaultColumn/detail/list"
+const addDefaultColumnUrl = "/defaultColumn/detail/add"
+const updateDefaultColumnUrl = "/defaultColumn/detail/update"
+
+export function updateDefaultColumn(params) {
+    return post(updateDefaultColumnUrl, params)
+}
+
+export function addDefaultColumn(params) {
+    return post(addDefaultColumnUrl, params)
+}
+
+export function listDefaultColumns(params) {
+    return get(listDefaultColumnsUrl, params)
+}
+
+export function updateDefaultColumnTemplate(params) {
+    return post(updateDefaultColumnTemplateUrl, params)
+}
+
+export function listDefaultColumnTemplate(params) {
+    return get(listDefaultColumnTemplateUrl, params)
+}
+
+export function addDefaultColumnTemplate(params) {
+    return post(addDefaultColumnTemplateUrl, params)
+}
 
 export function importProjectDbml(params) {
     return post(importProjectDbmlUrl, params)
@@ -201,6 +233,10 @@ export function getUserInfo(params) {
 
 export function addProject(params) {
     return post(addProjectUrl, params)
+}
+
+export function updateProject(params) {
+    return post(updateProjectUrl, params)
 }
 
 export function listMyProject(params) {

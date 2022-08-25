@@ -35,8 +35,8 @@ export default function DBCode() {
 
     // const [dbmlObj, setDbmlObj] = useState(null)
 
-    const dbmlQuery = useGetDBML({tableId: activeTable.id},
-        {enabled: !!activeTable.id})
+    const dbmlQuery = useGetDBML({tableId: activeTable},
+        {enabled: !!activeTable})
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
