@@ -5,7 +5,7 @@ import {addColumn, addIndex, deleteColumns, deleteIndex, updateColumn, updateInd
 import * as _ from 'lodash'
 import {Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import ZTable, {IndeterminateCheckbox} from "./ZTable";
-import {useGetProject, useGetTable, useListColumn, useListIndex} from "../store/rq/reactQueryStore";
+import {useGetProjectDetail, useGetTable, useListColumn, useListIndex} from "../store/rq/reactQueryStore";
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import {useAtom} from "jotai";
 import TableViewOutlinedIcon from '@mui/icons-material/TableViewOutlined';
@@ -49,7 +49,7 @@ function DBDoc() {
     const tableIndexesQuery = useListIndex({tableId: activeTableState}, {
         enabled: !!activeTableState
     })
-    const projectQuery = useGetProject({projectId: 1})
+    const projectQuery = useGetProjectDetail({projectId: 1})
     const tableColumnsQuery = useListColumn({tableId: activeTableState}, {
         enabled: !!activeTableState
     })

@@ -1,7 +1,7 @@
-import React, {useState} from "react";
-import {activeTableAtom, isOnProjectAtom} from "../store/tableListStore";
+import React, {useEffect, useState} from "react";
+import {activeTableAtom} from "../store/tableListStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {createTable} from "../api/dbApi";
+import {createTable, updateProject} from "../api/dbApi";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import {
@@ -19,34 +19,71 @@ import {
     Select,
     TextField
 } from "@mui/material";
-import {useListTables} from "../store/rq/reactQueryStore";
+import {useGetProject, useListDefaultColumnTemplate, useListTables} from "../store/rq/reactQueryStore";
 import {useAtom} from "jotai";
 import {databaseTypeAtom} from "../store/databaseStore";
 import FormInputText from "./FormInputText";
 import {useForm} from "react-hook-form";
-import {useNavigate} from "react-router";
+import FormSelect from "./FormSelect";
 
-// 左侧的数据表栏目
 function DBTablePanel({projectId}) {
 
     const queryClient = useQueryClient()
-    const navigate = useNavigate()
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
     const [tableCreateOpen, setTableCreateOpen] = useState(false)
     const [searchParam, setSearchParam] = useState({projectId: projectId});
     const [databaseType, setDatabaseType] = useAtom(databaseTypeAtom)
-    const tables = useListTables(searchParam)
-
+    const projectQuery = useGetProject({id: projectId}, {
+        onSuccess: data => {
+            setDatabaseType(data.data.data.dbType)
+        }
+    })
+    const tablesQuery = useListTables(searchParam)
 
     const tableCreateMutation = useMutation(createTable, {
-            onSuccess: (data, variables, context) => {
-                console.log("请求成功", data, variables, context)
-                queryClient.invalidateQueries(['projectTables'])
+        onSuccess: (data) => {
+            queryClient.invalidateQueries(['projectTables'])
+        }
+    })
+
+    const projectMutation = useMutation(updateProject, {
+        onSuccess: data => {
+            queryClient.invalidateQueries(['project'])
+        }
+
+    })
+
+    const handleSelectDbType = (evt) => {
+        let dbType = evt.target.value
+        console.log(dbType)
+        projectMutation.mutate({
+            id: projectId,
+            dbType: dbType
+        }, {
+            onSuccess: data => {
+                setDatabaseType(dbType)
             }
         })
-    if (tables.isLoading) {
+
+    }
+
+    const submitCreateTableForm = (data, reset) => {
+        tableCreateMutation.mutate({
+            ...data,
+            projectId: projectId
+        }, {
+            onSuccess: data => {
+                setTableCreateOpen(false)
+                reset({})
+            }
+        })
+
+    }
+
+    if (tablesQuery.isLoading || projectQuery.isLoading ) {
         return <div>加载中</div>
     }
+
     return (
         <div>
             <div className="flex flex-col items-center h-20 w-full gap-2 ">
@@ -67,14 +104,12 @@ function DBTablePanel({projectId}) {
                             id="demo-select-small"
                             value={databaseType}
                             label="Age"
-                            onChange={(evt) => {
-                                setDatabaseType(evt.target.value)
-                            }}
+                            onChange={handleSelectDbType}
                         >
 
-                            <MenuItem value={1}>Sqlite</MenuItem>
-                            <MenuItem value={2}>Mysql</MenuItem>
-                            <MenuItem value={3}>Postgresql</MenuItem>
+                            <MenuItem value={0}>Sqlite</MenuItem>
+                            <MenuItem value={1}>Mysql</MenuItem>
+                            <MenuItem value={2}>Postgresql</MenuItem>
                         </Select>
                     </FormControl>
                     <Button className={"bg-black text-white w-1/2"} onClick={() => {
@@ -82,20 +117,18 @@ function DBTablePanel({projectId}) {
                     }}>
                         创建表
                     </Button>
-                    <TableCreateDialog closeDialog={() => setTableCreateOpen(false)} open={tableCreateOpen}
-                                       submitForm={data => {
-                                           tableCreateMutation.mutate({
-                                               ...data,
-                                               projectId: projectId
-                                           })
-                                       }}/>
+                    <TableCreateDialog
+                    value={{defaultColumnTemplateId: projectQuery.data.data.data.defaultColumnTemplateId}}
+                        closeDialog={() => setTableCreateOpen(false)}
+                                       open={tableCreateOpen}
+                                       submitForm={submitCreateTableForm}/>
                 </div>
 
             </div>
             <Box className={"w-full flex flex-col  items-center text-sm "}>
                 <List className={"w-10/12 overflow-auto mt-4 h-[calc(100vh-11rem)]"}>
 
-                    {tables.data.data.data.map(it => (
+                    {tablesQuery.data.data.data.map(it => (
                         <ListItem key={it.id} disablePadding onClick={() => {
                             setActiveTable(it.id)
 
@@ -118,14 +151,30 @@ function DBTablePanel({projectId}) {
 export default DBTablePanel;
 
 
-function TableCreateDialog({open, closeDialog, submitForm}) {
+function TableCreateDialog({value, open, closeDialog, submitForm}) {
 
-    const {control, handleSubmit} = useForm()
+    const {control, handleSubmit, reset} = useForm()
+    const defaultColumTemplateQuery = useListDefaultColumnTemplate({})
+
+    useEffect(() => {
+        reset(value)
+    }, [])
+
+    if (defaultColumTemplateQuery.isLoading) {
+        return <div>加载中</div>
+    }
+    const defaultColumnTemplates = defaultColumTemplateQuery.data.data.data.map(it => (
+        {
+            key: it.id,
+            value: it.name
+        }
+    ))
+
 
     return <Dialog open={open} onClose={closeDialog}>
         <DialogTitle>创建表</DialogTitle>
         <form onSubmit={handleSubmit(data => {
-            submitForm(data)
+            submitForm(data, reset)
         })}>
             <DialogContent>
 
@@ -141,17 +190,19 @@ function TableCreateDialog({open, closeDialog, submitForm}) {
                     label={"备注"}
                 />
 
-                <FormInputText
-                    control={control}
-                    name={"comment"}
-                    label={"注释"}
-                />
+                <FormSelect name={"defaultColumnTemplateId"}
+                            control={control}
+                            label={"默认字段模版"}
+                            hasDefaultNull={true}
+                            choices={defaultColumnTemplates}/>
+
             </DialogContent>
             <DialogActions>
-                <Button onClick={closeDialog}>取消</Button>
-                <Button type={"submit"} onClick={() => {
-                    closeDialog()
-                }}>确定</Button>
+                <Button onClick={() => {
+                    closeDialog();
+                    reset({})
+                }}>取消</Button>
+                <Button type={"submit"} >确定</Button>
             </DialogActions>
         </form>
 

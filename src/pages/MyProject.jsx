@@ -68,8 +68,8 @@ export default function MyProject() {
             {
                 myProjects.data.data.data.map(
                     it => <Card className={"w-52 h-80 flex  flex-col justify-between"} key={it.id}   >
-                        <div className={"h-1/2 bg-purple-300"}>
-
+                        <div className={"h-1/2 "}>
+                            <img  className={'w-full h-full object-cover'} src={"https://sqlmate-1259183164.cos.ap-shanghai.myqcloud.com/%E5%8D%A1%E7%89%87%E8%83%8C%E6%99%AF/pexels-pixabay-162318.jpg"}/>
                         </div>
                         <div className={"pl-2 pt-2 pb-1 flex-col flex "}>
                             <div className={" font-bold "}>

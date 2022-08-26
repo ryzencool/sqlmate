@@ -2,12 +2,12 @@ import React from 'react'
 import {List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import {useNavigate} from "react-router";
 import {useLocation} from "react-router-dom";
-
+import DataObjectOutlinedIcon from '@mui/icons-material/DataObjectOutlined';
+import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
+import Grid4x4OutlinedIcon from '@mui/icons-material/Grid4x4Outlined';
 
 export default function DashMenu() {
 
@@ -42,8 +42,7 @@ export default function DashMenu() {
                     <ListItemIcon className={'ml-3'}>
                         <AccountTreeIcon/>
                     </ListItemIcon>
-                    <ListItemText primary="公共模版"
-                    />
+                    <ListItemText primary="公共模版"/>
                 </ListItemButton>
             </ListItem>
 
@@ -51,9 +50,9 @@ export default function DashMenu() {
                 <ListItemButton onClick={() => navigate("/header/dashboard/codeSettings")}
                                 className={`rounded-lg ${pathname.includes("codeSettings") ? "bg-slate-100" : "bg-white"}`}>
                     <ListItemIcon className={'ml-3'}>
-                        <SchoolOutlinedIcon/>
+                        <DataObjectOutlinedIcon/>
                     </ListItemIcon>
-                    <ListItemText primary="代码模版设置"/>
+                    <ListItemText primary="代码模版配置"/>
                 </ListItemButton>
             </ListItem>
 
@@ -63,7 +62,7 @@ export default function DashMenu() {
                 <ListItemButton onClick={() => navigate("/header/dashboard/teams")}
                                 className={`rounded-lg ${pathname.includes("teams") ? "bg-slate-100" : "bg-white"}`}>
                     <ListItemIcon className={'ml-3'}>
-                        <GroupsOutlinedIcon/>
+                        <GroupAddOutlinedIcon/>
                     </ListItemIcon>
                     <ListItemText primary="我的团队"/>
                 </ListItemButton>
@@ -72,9 +71,9 @@ export default function DashMenu() {
                 <ListItemButton onClick={() => navigate("/header/dashboard/defaultColumnTemplate")}
                                 className={`rounded-lg ${pathname.includes("defaultColumnTemplate") ? "bg-slate-100" : "bg-white"}`}>
                     <ListItemIcon className={'ml-3'}>
-                        <FavoriteBorderIcon/>
+                        <Grid4x4OutlinedIcon/>
                     </ListItemIcon>
-                    <ListItemText primary="自定义默认字段"/>
+                    <ListItemText primary="默认字段配置"/>
                 </ListItemButton>
             </ListItem>
         </List>

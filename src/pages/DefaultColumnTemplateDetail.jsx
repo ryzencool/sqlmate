@@ -1,4 +1,4 @@
-import React, {useMemo, useState, useEffect} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {useParams} from "react-router-dom";
 import {useListDefaultColumn} from "../store/rq/reactQueryStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -104,6 +104,7 @@ const EditColumnDialog = ({
         <DialogTitle>{mode === 1 ? "新增字段" : "编辑字段"}</DialogTitle>
         <form onSubmit={handleSubmit(data => {
             submitForm(data)
+            reset({})
         })}>
             <DialogContent>
                 <FormInputText name={"name"} control={control} label={"字段名称"}/>
@@ -111,13 +112,16 @@ const EditColumnDialog = ({
                 <FormInputText name={"note"} control={control} label={"备注"}/>
                 <FormInputText name={"defaultValue"} control={control} label={"默认值"}/>
                 <FormCheckBox name={"isPrimaryKey"} control={control} label={"主键"}/>
-                <FormCheckBox name={"isNull"} control={control} label={"可空"}/>
+                <FormCheckBox name={"isNull"} control={control} label={"非空"}/>
                 <FormCheckBox name={"isAutoIncrement"} control={control} label={"自增"}/>
                 <FormCheckBox name={"isUniqueKey"} control={control} label={"唯一"}/>
             </DialogContent>
             <DialogActions>
-                <Button onClick={closeDialog}>取消</Button>
-                <Button type={"submit"} onClick={closeDialog}>确定</Button>
+                <Button onClick={() => {
+                    closeDialog();
+                    reset({});
+                }}>取消</Button>
+                <Button type={"submit"}>确定</Button>
             </DialogActions>
         </form>
     </Dialog>

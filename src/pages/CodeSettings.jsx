@@ -5,8 +5,6 @@ import {useListCodeTemplate} from "../store/rq/reactQueryStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addCodeTemplate} from "../api/dbApi";
 import {useNavigate} from "react-router";
-import {useAtom} from "jotai";
-import {activeProjectAtom} from "../store/projectStore";
 
 
 export default function CodeSettings() {
@@ -15,17 +13,11 @@ export default function CodeSettings() {
 
     const [open, setOpen] = React.useState(false);
 
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
     const handleClose = () => {
         setOpen(false);
     };
 
     const codeTemplates = useListCodeTemplate()
-
 
     const queryClient = useQueryClient()
     const handleSubmitTemplate = useMutation(addCodeTemplate, {

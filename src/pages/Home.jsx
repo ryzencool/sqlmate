@@ -30,7 +30,7 @@ export default function Home() {
         )
     }, [])
     return (
-        <div className="grid grid-cols-[300px_1fr] h-full">
+        <div className="grid grid-cols-[280px_1fr] h-full">
             <DBTablePanel projectId={id}/>
 
             <DBContent projectId={id}/>

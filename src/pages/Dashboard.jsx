@@ -13,12 +13,12 @@ export default function Dashboard() {
     const menuItems = pathname.split("/").slice(2, 4);
 
     console.log(menuItems)
-    return (<div className="grid grid-cols-[300px_1fr] h-full ">
+    return (<div className="grid grid-cols-[280px_1fr] h-full ">
         <div>
             <DashMenu/>
         </div>
-        <div className={'mt-4 ml-4'}>
-            <div>
+        <div className={'mt-4 ml-2'}>
+            <div className={'pl-2'}>
                 <Breadcrumbs aria-label="breadcrumb">
 
                     {
@@ -66,7 +66,7 @@ export default function Dashboard() {
                     {/*</Link>*/}
                 </Breadcrumbs>
             </div>
-            <div className={'mt-6 overflow-auto h-[calc(100vh-9.5rem)]  '}>
+            <div className={'mt-6 overflow-auto h-[calc(100vh-9.5rem)]  pl-2'}>
                 <Outlet/>
             </div>
         </div>

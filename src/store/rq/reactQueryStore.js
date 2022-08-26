@@ -1,35 +1,45 @@
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
 import {
     dbmlTable,
     getCodeTemplate,
     getProject,
+    getProjectDetail,
     getTable,
     getTemplateFile,
-    getUserInfo,
-    listCodeTemplate, listDefaultColumns, listDefaultColumnTemplate,
+    listCodeTemplate,
+    listDefaultColumns,
+    listDefaultColumnTemplate,
     listFavoriteProject,
     listMyProject,
-    listProject, listProjectSnapshots,
+    listProject,
+    listProjectSnapshots,
     listProjectSql,
     listTableColumns,
-    listTableIndexes, listTableRel,
-    listTables, listTablesDetail,
+    listTableIndexes,
+    listTableRel,
+    listTables,
+    listTablesDetail,
     listTeam,
     listTeamUser,
     listTemplateFile,
     pagePublicProject,
-    queryOptimizer, queryProjectDBML
+    queryOptimizer,
+    queryProjectDBML
 } from "../../api/dbApi";
-import {createFilterOptions} from "@mui/material";
 
-export const useGetProject = (params, options) => useQuery(['project', params], () => getProject(params), options)
+
+export const useGetProject = (params, options) => useQuery(['project', params],
+    () => getProject(params), options)
+
+export const useGetProjectDetail = (params, options) => useQuery(['projectDetail', params],
+    () => getProjectDetail(params), options)
 
 
 export const useListColumn = (search, options = {}) => {
     return useQuery(["tableColumns", search], () => listTableColumns(search), options)
 }
 
-export const useListIndex = (search , options = {}) => {
+export const useListIndex = (search, options = {}) => {
     return useQuery(['tableIndexes', search], () => listTableIndexes(search), options)
 }
 
@@ -47,7 +57,7 @@ export const useListTables = (search, options = {}) => {
     })
 }
 
-export const useListTableDetail = (search, options= {}) => {
+export const useListTableDetail = (search, options = {}) => {
     return useQuery(['projectTablesDetail', search], () => listTablesDetail(search))
 }
 
@@ -58,38 +68,38 @@ export const useQueryOptimizer = (params = {}, options = {}) => {
 
 
 export const useListCodeTemplate = (params = {}, options = {}) => {
-    return useQuery(['codeTemplates'], () => listCodeTemplate(params),options)
+    return useQuery(['codeTemplates'], () => listCodeTemplate(params), options)
 }
 
-export const useListTemplateFile = (params , options = {} ) => {
+export const useListTemplateFile = (params, options = {}) => {
     return useQuery(['templateFiles', params], () => listTemplateFile(params), options)
 }
 
 
-export const useGetTemplateFile = (params , options = {}) => {
+export const useGetTemplateFile = (params, options = {}) => {
     return useQuery(['templateFile', params], () => getTemplateFile(params), options)
 }
 
-export const usePagePublicProject = (params = {}, options= {}) => {
+export const usePagePublicProject = (params = {}, options = {}) => {
     console.log("进入公共版")
     return useQuery(["publicProjects"], () => pagePublicProject(params), options)
 }
 
-export const useGetTable = (search , options = {}) => {
+export const useGetTable = (search, options = {}) => {
     return useQuery(['table', search], () => getTable(search), options)
 }
 
 
-export const useListTeam = (params = {}, options= {}) => {
+export const useListTeam = (params = {}, options = {}) => {
     return useQuery(['teams'], () => listTeam(params), options)
 }
 
-export const useListTeamUser = (search, options= {}) => {
+export const useListTeamUser = (search, options = {}) => {
     return useQuery(['teamUsers', search], () => listTeamUser(search), options)
 }
 
 
-export const useGetDBML = (search, options={}) => {
+export const useGetDBML = (search, options = {}) => {
     return useQuery(['dbml', search], () => dbmlTable(search), options)
 }
 
@@ -102,7 +112,7 @@ export const useListProject = (search, options = {}) => {
     return useQuery(['projects', search], () => listProject(search), options)
 }
 
-export const useListMyProject = (search, options= {}) => {
+export const useListMyProject = (search, options = {}) => {
     return useQuery(['myProjects', search], () => listMyProject(search), options)
 }
 
@@ -112,7 +122,7 @@ export const useListSnapshot = (search, options = {}) => {
 }
 
 export const useProjectDBML = (search, options = {}) => {
-    return useQuery(['projectDBML',  search], () => queryProjectDBML(search),options )
+    return useQuery(['projectDBML', search], () => queryProjectDBML(search), options)
 }
 
 
@@ -125,6 +135,6 @@ export const useListDefaultColumnTemplate = (search, options = {}) => {
 }
 
 
-export const useListDefaultColumn = (search, options={}) => {
+export const useListDefaultColumn = (search, options = {}) => {
     return useQuery(['defaultColumns', search], () => listDefaultColumns(search), options)
 }

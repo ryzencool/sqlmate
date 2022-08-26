@@ -12,7 +12,7 @@ import {activeTableAtom} from "../store/tableListStore";
 import DBSnapshot from "./DBSnapshot";
 import {useAtom} from "jotai";
 import {activeProjectAtom} from "../store/projectStore";
-import {useGetProject} from "../store/rq/reactQueryStore";
+import {useGetProjectDetail} from "../store/rq/reactQueryStore";
 import {a11yProps, ZTabPanel} from "./ZTabPanel";
 
 
@@ -36,7 +36,7 @@ export default DBContent
 function DBProjectInterface() {
     const [project, setProject] = useAtom(activeProjectAtom)
 
-    const projectQuery = useGetProject({projectId: project.id}, {
+    const projectQuery = useGetProjectDetail({projectId: project.id}, {
         enabled: !!project.id
     })
 

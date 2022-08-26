@@ -41,7 +41,7 @@ export default function DefaultColumnTemplate(props) {
 
     return <div>
 
-        <div>
+        <div className={'flex flex-row flex-wrap gap-8'}>
             {listTemplateQuery.data.data.data.map(it => (
                 <Card className={'w-52 h-72 flex flex-col gap-2'}>
                     <div className={'h-2/3  w-full bg-purple-300'}>
@@ -53,9 +53,9 @@ export default function DefaultColumnTemplate(props) {
                     </div>
 
                     <div className={'flex flex-row justify-end p-2'}>
-                        <Button onClick={() => navigate(`/header/dashboard/defaultColumnTemplate/detail/${it.id}`)}>详情</Button>
+                        <Button
+                            onClick={() => navigate(`/header/dashboard/defaultColumnTemplate/detail/${it.id}`)}>详情</Button>
                     </div>
-
                 </Card>))}
         </div>
 
@@ -63,8 +63,6 @@ export default function DefaultColumnTemplate(props) {
         <div>
             <SpeedDial onClick={() => {
                 setAddTemplateOpen(true)
-
-                // setDbmlSearch({projectId: activeProject.id})
             }}
                        ariaLabel="SpeedDial basic example"
                        sx={{position: 'absolute', bottom: 100, right: 100}}
@@ -96,16 +94,19 @@ const EditTemplateDialog = ({mode, value, open, closeDialog, submitForm}) => {
 
         <DialogTitle>{mode === 1 ? '创建模版' : "编辑模版"}</DialogTitle>
         <form onSubmit={handleSubmit(data => {
-            console.log("内部提交", data)
             submitForm(data)
+            reset({})
         })}>
             <DialogContent>
                 <FormInputText name={"name"} control={control} label={"模版名称"}/>
                 <FormInputText name={"note"} control={control} label={"备注"}/>
             </DialogContent>
             <DialogActions>
-                <Button onClick={closeDialog}>取消</Button>
-                <Button type={"submit"} onClick={closeDialog}>确定</Button>
+                <Button onClick={() => {
+                    closeDialog();
+                    reset({});
+                }}>取消</Button>
+                <Button type={"submit"} >确定</Button>
             </DialogActions>
         </form>
     </Dialog>;

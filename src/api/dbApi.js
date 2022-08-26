@@ -1,5 +1,6 @@
 import {get, post} from '../utils/httpUtil'
 
+const getProjectDetailUrl = "/project/get/detail"
 const getProjectUrl = "/project/get"
 const addProjectUrl = "/project/add"
 const updateProjectUrl = "/project/update"
@@ -94,6 +95,10 @@ export function createSnapshot(params) {
 
 export function listProjectSnapshots(params) {
     return get(listProjectSnapshotsUrl, params)
+}
+
+export function getProjectDetail(params) {
+    return get(getProjectDetailUrl, params)
 }
 
 export function getProject(params) {
