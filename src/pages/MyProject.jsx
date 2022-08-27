@@ -10,6 +10,7 @@ import {addProject, updateProject} from "../api/dbApi";
 import FormInputText from "../components/FormInputText";
 import FormSelect from "../components/FormSelect";
 import FormMultiSelect from "../components/FormMultiSelect";
+import FormCheckBox from "../components/FormCheckBox";
 
 
 export default function MyProject() {
@@ -155,7 +156,8 @@ function EditProjectDialog({mode, value, open, closeDialog, submitForm}) {
 
     return (
         <Dialog open={open} onClose={() => {
-            closeDialog()
+            closeDialog();
+            reset({})
         }}>
             <DialogTitle>{mode === 1 ? "新增项目" : "修改项目"}</DialogTitle>
             <form onSubmit={handleSubmit((data) => {
@@ -174,6 +176,7 @@ function EditProjectDialog({mode, value, open, closeDialog, submitForm}) {
                     />
                     <FormMultiSelect name={"teamIds"} label={'团队'} control={control} choices={teamSelections}/>
                     <FormMultiSelect name={"tags"} label={'标签'} control={control} choices={tagSelections}/>
+                    <FormCheckBox control={control} label={'公开'} name={'isPublic'}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => {

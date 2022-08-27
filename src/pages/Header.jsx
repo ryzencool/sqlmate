@@ -61,7 +61,7 @@ function Header() {
                         </div>
                         <div className={"flex flex-row items-center pr-10  gap-2"}>
                             <Button>邀请伙伴</Button>
-                            <Button size={"small"} variant={"contained"}>控制台</Button>
+                            <Button size={"small"} variant={"contained"} onClick={() => navigate('/header/dashboard/myProject')}>控制台</Button>
                             <div>
                                 zmyjust@gmail.com
                             </div>

@@ -38,7 +38,9 @@ function DBTablePanel({projectId}) {
             setDatabaseType(data.data.data.dbType)
         }
     })
-    const tablesQuery = useListTables(searchParam)
+    const tablesQuery = useListTables(searchParam, {
+        enabled: !!projectId
+    })
 
     const tableCreateMutation = useMutation(createTable, {
         onSuccess: (data) => {

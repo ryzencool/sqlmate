@@ -2,7 +2,7 @@ import React from 'react'
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Tab, Tabs} from "@mui/material";
-import DBMysqlDetail from "./DBMysqlDetail";
+import DBDmlDetail from "./DBMysqlDetail";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -55,13 +55,20 @@ export default function DBDml() {
                 aria-label="Vertical tabs example"
                 sx={{ borderRight: 1, borderColor: 'divider' }}
             >
-                <Tab label="MYSQL" {...a11yProps(0)} />
+                <Tab label="mysql" {...a11yProps(0)} />
+                <Tab label="postgres" {...a11yProps(1)} />
+                <Tab label="sql server" {...a11yProps(2)} />
 
             </Tabs>
             <TabPanel value={value} index={0} className={"w-full"}>
-                <DBMysqlDetail props={"mysql"} />
+                <DBDmlDetail dbType={"mysql"} />
             </TabPanel>
-
+            <TabPanel value={value} index={1} className={"w-full"}>
+                <DBDmlDetail dbType={"postgres"} />
+            </TabPanel>
+            <TabPanel value={value} index={2} className={"w-full"}>
+                <DBDmlDetail dbType={"mssql"} />
+            </TabPanel>
         </Box>
 
     </div>

@@ -15,12 +15,14 @@ import {databaseTypeAtom} from "../store/databaseStore";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {executeSql} from "../api/dbApi";
 import * as _ from "lodash"
+import {activeProjectAtom} from "../store/projectStore";
 
 export default function DBConsole() {
 
     const [db, setDb] = useAtom(dbAtom)
     const [consoleSql, setConsoleSql] = useAtom(consoleSqlAtom)
     const [activeTable, setActiveTable] = useAtom(activeTableAtom)
+    const [project, setProject] = useAtom(activeProjectAtom)
     const [databaseType, setDatabaseType] = useAtom(databaseTypeAtom)
     const [selectedSql, setSelectedSql] = useState("")
     const [resultHeader, setResultHeader] = useState([])
@@ -38,7 +40,6 @@ export default function DBConsole() {
         enabled: !!activeTable
     })
 
-    const tables = useListTables({projectId: 1})
 
     const queryClient = useQueryClient();
 
@@ -89,7 +90,7 @@ export default function DBConsole() {
 
     const executeSqlOnline = () => {
         setSqlResult(null)
-        if (databaseType === 1) {
+        if (databaseType === 0) {
             try {
                 const res = db.exec(selectedSql)
                 console.log(res)

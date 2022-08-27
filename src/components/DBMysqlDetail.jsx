@@ -6,9 +6,10 @@ import {useAtom} from "jotai";
 import {useGetDBML} from "../store/rq/reactQueryStore";
 
 
-export default function DBMysqlDetail(props) {
+export default function DBDmlDetail({dbType}) {
 
-    const [activeTable, setActiveTable] = useAtom(activeTableAtom)
+    const [activeTable] = useAtom(activeTableAtom)
+
 
     const dbmlQuery = useGetDBML({tableId: activeTable}, {
         enabled: !!activeTable,
@@ -84,7 +85,7 @@ ALTER table ${tableName} ADD UNIQUE [indexName] (column_name(length));
             <div>
                 <div className={'font-bold text-lg border-b pb-3'}>表操作</div>
                 <div className={'mt-4 flex flex-col gap-4'}>
-                    <CodeComponent title={"创建表"} code={exporter.export(dbmlQuery.data.data.data, "postgres")}/>
+                    <CodeComponent title={"创建表"} code={exporter.export(dbmlQuery.data.data.data, dbType)}/>
                     <CodeComponent title={"删除表"} code={dropTableDML}/>
                     <CodeComponent title={"修改表"} code={alterTableNameDML}/>
                 </div>

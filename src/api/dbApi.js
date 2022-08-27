@@ -31,6 +31,7 @@ const listTeamUrl = "/team/list"
 const createTeamUrl = "/team/add"
 const listTeamUserUrl = "/team/member/list"
 const listFavoriteProjectUrl = "/favoriteProject/list"
+const addFavoriteProjectUrl = "/favoriteProject/add"
 const listProjectUrl = "/project/list"
 const signUpUserUrl = "/auth/signUp"
 const signInUserUrl = "/auth/signIn"
@@ -218,6 +219,9 @@ export function listFavoriteProject(params) {
     return get(listFavoriteProjectUrl, params)
 }
 
+export function addFavoriteProject(params) {
+    return get(addFavoriteProjectUrl, params)
+}
 
 export function listProject(params) {
     return get(listProjectUrl, params)

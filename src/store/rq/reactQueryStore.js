@@ -57,6 +57,10 @@ export const useListTables = (search, options = {}) => {
     })
 }
 
+export const useListTablesDetail = (search, options={}) => {
+    return useQuery(['projectTablesDetail', search], () => listTablesDetail(search), options)
+}
+
 export const useListTableDetail = (search, options = {}) => {
     return useQuery(['projectTablesDetail', search], () => listTablesDetail(search))
 }

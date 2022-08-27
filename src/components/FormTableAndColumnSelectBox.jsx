@@ -11,7 +11,9 @@ export default function FormTableAndColumnSelectBox({nameTable, nameColumn, cont
 
     console.log("当前的项目", project)
 
-    const listTable = useListTables({projectId: project.id})
+    const listTable = useListTables({projectId: project.id}, {
+        enabled: !!project.id
+    })
 
 
     const [search, setSearch] = useState()
